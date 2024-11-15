@@ -1,0 +1,15 @@
+# ignore all logs
+*.log
+
+# ignore archive files
+*.tar.gz
+*.zip
+*.tar
+*.7z
+
+# ignore IDE files
+.idea/
+*.iml
+
+# ignore compiled Java classes
+*.class
