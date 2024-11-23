@@ -1,7 +1,7 @@
 -- ENUM
-CREATE TYPE property_type AS ENUM ('квартира', 'дом', 'офис');
-CREATE TYPE status AS ENUM ('ожидает', 'одобрено', 'отклонено');
-CREATE TYPE report_type AS ENUM ('отзыв', 'объявление');
+CREATE TYPE property_type AS ENUM ('APARTMENT', 'HOUSE', 'OFFICE');
+CREATE TYPE status AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
+CREATE TYPE report_type AS ENUM ('REVIEW', 'ADVERTISEMENT');
 
 -- Последовательности
 CREATE SEQUENCE users_id_seq START WITH 1 INCREMENT BY 1;
@@ -177,5 +177,3 @@ CREATE INDEX idx_properties_owner_id ON Properties (owner_id);
 CREATE INDEX idx_applications_property_id ON Applications (property_id);
 CREATE INDEX idx_users_username ON Users (username);
 CREATE INDEX idx_favorites_user_property ON Favorites (user_id, property_id);
-CREATE INDEX idx_deleted_users ON Users (deleted);
-CREATE INDEX idx_deleted_properties ON Properties (deleted);

@@ -3,7 +3,7 @@ UPDATE Users
 SET deleted = TRUE  WHERE username = 'ivanov';
 
 UPDATE Properties 
-SET deleted = TRUE WHERE type = 'дом' AND price < 1000;
+SET deleted = TRUE WHERE type = 'HOUSE' AND price < 1000;
 
 UPDATE Applications 
 SET deleted = TRUE WHERE property_id = 1 AND tenant_id = 2;
@@ -12,7 +12,7 @@ UPDATE Reviews
 SET deleted = TRUE WHERE property_id = 3 AND user_id = 1;
 
 UPDATE Reports 
-SET deleted = TRUE WHERE content_id = 2 AND type = 'объявление';
+SET deleted = TRUE WHERE content_id = 2 AND type = 'ADVERTISEMENT';
 
 -- Примеры strong-delete
 DELETE FROM Favorites 
@@ -25,7 +25,7 @@ DELETE FROM Images
 WHERE property_id = 3 AND filepath = 'images/ofis1.png';
 
 DELETE FROM Applications 
-WHERE tenant_id = 2 AND property_id = 1 AND status = 'ожидает';
+WHERE tenant_id = 2 AND property_id = 1 AND status = 'PENDING';
 
 DELETE FROM Addresses 
 WHERE property_id = 2 AND city = 'Гомель' AND street = 'Ленина';
@@ -34,10 +34,10 @@ DELETE FROM Properties_Parameters
 WHERE property_id = 1 AND value = 'Да';
 
 DELETE FROM Properties 
-WHERE owner_id = 1 AND type = 'квартира' AND area < 60;
+WHERE owner_id = 1 AND type = 'APARTMENT' AND area < 60;
 
 DELETE FROM Reports 
-WHERE user_id = 1 AND type = 'отзыв' AND status = 'ожидает';
+WHERE user_id = 1 AND type = 'REVIEW' AND status = 'PENDING';
 
 DELETE FROM Users_Roles 
 WHERE user_id = 3 AND role_id = 3;
