@@ -3,8 +3,11 @@ package senla.dao.impl;
 import senla.dao.AbstractDAO;
 import senla.model.Role;
 import senla.util.ConnectionHolder;
+import senla.util.mapper.RoleMapper;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class RoleDAOImpl extends AbstractDAO<Role, Integer> {
 
@@ -39,11 +42,7 @@ public class RoleDAOImpl extends AbstractDAO<Role, Integer> {
 
     @Override
     protected Role mapRow(ResultSet resultSet) throws SQLException {
-        return new Role.Builder()
-                .setId(resultSet.getInt("id"))
-                .setRoleName(resultSet.getString("role_name"))
-                .setDescription(resultSet.getString("description"))
-                .build();
+        return RoleMapper.mapRow(resultSet);
     }
 
     private RoleDAOImpl(ConnectionHolder connectionHolder) {

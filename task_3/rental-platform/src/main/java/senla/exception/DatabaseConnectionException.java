@@ -5,7 +5,7 @@ public class DatabaseConnectionException extends RuntimeException {
         super(message);
     }
 
-    public DatabaseConnectionException(String message, Throwable cause) {
-        super(message, cause);
+    public DatabaseConnectionException(Throwable cause) {
+        super(ExceptionEnum.DATABASE_CONNECTION_ERROR.getMessage(), cause);
     }
 }

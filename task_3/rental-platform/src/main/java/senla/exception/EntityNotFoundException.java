@@ -5,7 +5,8 @@ public class EntityNotFoundException extends RuntimeException{
         super(message);
     }
 
-    public EntityNotFoundException(String message, Throwable cause) {
-        super(message, cause);
+    public static EntityNotFoundException forParam(Object param) {
+        String message = String.format(ExceptionEnum.ENTITY_NOT_FOUND.getMessage(), param);
+        return new EntityNotFoundException(message);
     }
 }

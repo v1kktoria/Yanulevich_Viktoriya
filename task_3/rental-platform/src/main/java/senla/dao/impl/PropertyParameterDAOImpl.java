@@ -1,11 +1,11 @@
 package senla.dao.impl;
 
 import senla.dao.PropertyParameterDAO;
-import senla.model.mapper.PropertyMapper;
 import senla.model.Parameter;
 import senla.model.Property;
 import senla.model.PropertyParameter;
 import senla.util.ConnectionHolder;
+import senla.util.mapper.PropertyParameterMapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -133,18 +133,6 @@ public class PropertyParameterDAOImpl implements PropertyParameterDAO {
     }
 
     private PropertyParameter mapRow(ResultSet resultSet) throws SQLException {
-        Property property = PropertyMapper.mapRow(resultSet);
-
-        Parameter parameter = new Parameter.Builder()
-                .setId(resultSet.getInt("parameter_id"))
-                .setName(resultSet.getString("name"))
-                .setDescription(resultSet.getString("parameter_description"))
-                .build();
-
-        return new PropertyParameter.Builder()
-                .setProperty(property)
-                .setParameter(parameter)
-                .setValue(resultSet.getString("value"))
-                .build();
+        return PropertyParameterMapper.mapRow(resultSet);
     }
 }

@@ -1,9 +1,8 @@
 package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
-import senla.model.mapper.PropertyMapper;
+import senla.util.mapper.ImageMapper;
 import senla.model.Image;
-import senla.model.Property;
 import senla.util.ConnectionHolder;
 
 import java.sql.PreparedStatement;
@@ -48,13 +47,7 @@ public class ImageDAOImpl extends AbstractDAO<Image, Integer> {
 
     @Override
     protected Image mapRow(ResultSet resultSet) throws SQLException {
-        Property property = PropertyMapper.mapRow(resultSet);
-
-        return new Image.Builder()
-                .setId(resultSet.getInt("id"))
-                .setProperty(property)
-                .setFilepath(resultSet.getString("filepath"))
-                .build();
+        return ImageMapper.mapRow(resultSet);
     }
 
     private ImageDAOImpl(ConnectionHolder connectionHolder) {

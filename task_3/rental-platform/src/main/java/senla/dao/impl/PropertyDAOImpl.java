@@ -2,12 +2,15 @@ package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
 import senla.model.User;
-import senla.model.mapper.PropertyMapper;
+import senla.util.mapper.PropertyMapper;
 import senla.model.Property;
 import senla.util.ConnectionHolder;
 
 import java.math.BigDecimal;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 
 public class PropertyDAOImpl extends AbstractDAO<Property, Integer> {
     private static volatile PropertyDAOImpl instance;

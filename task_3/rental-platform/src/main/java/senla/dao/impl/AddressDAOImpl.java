@@ -1,7 +1,7 @@
 package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
-import senla.model.mapper.PropertyMapper;
+import senla.util.mapper.AddressMapper;
 import senla.model.Address;
 import senla.model.Property;
 import senla.util.ConnectionHolder;
@@ -55,16 +55,7 @@ public class AddressDAOImpl extends AbstractDAO<Address, Integer> {
 
     @Override
     protected Address mapRow(ResultSet resultSet) throws SQLException {
-        Property property = PropertyMapper.mapRow(resultSet);
-
-        return new Address.Builder()
-                .setId(resultSet.getInt("id"))
-                .setProperty(property)
-                .setCountry(resultSet.getString("country"))
-                .setCity(resultSet.getString("city"))
-                .setStreet(resultSet.getString("street"))
-                .setHouseNumber(resultSet.getString("house_number"))
-                .build();
+        return AddressMapper.mapRow(resultSet);
     }
 
     private AddressDAOImpl(ConnectionHolder connectionHolder) {

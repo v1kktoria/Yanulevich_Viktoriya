@@ -5,7 +5,7 @@ public class TransactionException extends RuntimeException {
         super(message);
     }
 
-    public TransactionException(String message, Throwable cause) {
-        super(message, cause);
+    public TransactionException(Throwable cause) {
+        super(ExceptionEnum.TRANSACTION_ERROR.getMessage(), cause);
     }
 }

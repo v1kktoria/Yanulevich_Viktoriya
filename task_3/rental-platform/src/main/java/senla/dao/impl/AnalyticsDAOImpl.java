@@ -1,7 +1,7 @@
 package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
-import senla.model.mapper.PropertyMapper;
+import senla.util.mapper.AnalyticsMapper;
 import senla.model.Analytics;
 import senla.model.Property;
 import senla.util.ConnectionHolder;
@@ -52,15 +52,7 @@ public class AnalyticsDAOImpl extends AbstractDAO<Analytics, Integer> {
 
     @Override
     protected Analytics mapRow(ResultSet resultSet) throws SQLException {
-        Property property = PropertyMapper.mapRow(resultSet);
-
-        return new Analytics.Builder()
-                .setId(resultSet.getInt("id"))
-                .setProperty(property)
-                .setViews(resultSet.getInt("views"))
-                .setApplicationsCount(resultSet.getInt("applications_count"))
-                .setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime())
-                .build();
+        return AnalyticsMapper.mapRow(resultSet);
     }
 
     public AnalyticsDAOImpl(ConnectionHolder connectionHolder) {

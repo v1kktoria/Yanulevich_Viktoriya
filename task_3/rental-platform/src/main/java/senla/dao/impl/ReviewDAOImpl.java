@@ -1,11 +1,8 @@
 package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
-import senla.model.mapper.PropertyMapper;
-import senla.model.mapper.UserMapper;
-import senla.model.Property;
+import senla.util.mapper.ReviewMapper;
 import senla.model.Review;
-import senla.model.User;
 import senla.util.ConnectionHolder;
 
 import java.sql.PreparedStatement;
@@ -59,18 +56,7 @@ public class ReviewDAOImpl extends AbstractDAO<Review, Integer> {
 
     @Override
     protected Review mapRow(ResultSet resultSet) throws SQLException {
-        Property property = PropertyMapper.mapRow(resultSet);
-        User user = UserMapper.mapRow(resultSet, "review_user_");
-
-        return new Review.Builder()
-                .setId(resultSet.getInt("id"))
-                .setProperty(property)
-                .setUser(user)
-                .setRating(resultSet.getInt("rating"))
-                .setComment(resultSet.getString("comment"))
-                .setCreatedAt(resultSet.getTimestamp("created_at"))
-                .setDeleted(resultSet.getBoolean("deleted"))
-                .build();
+        return ReviewMapper.mapRow(resultSet);
     }
 
     private ReviewDAOImpl(ConnectionHolder connectionHolder) {

@@ -1,10 +1,8 @@
 package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
-import senla.model.mapper.PropertyMapper;
-import senla.model.mapper.UserMapper;
+import senla.util.mapper.FavoriteMapper;
 import senla.model.Favorite;
-import senla.model.Property;
 import senla.model.User;
 import senla.util.ConnectionHolder;
 
@@ -56,14 +54,7 @@ public class FavoriteDAOImpl extends AbstractDAO<Favorite, Integer> {
 
     @Override
     protected Favorite mapRow(ResultSet resultSet) throws SQLException {
-        Property property = PropertyMapper.mapRow(resultSet);
-        User user = UserMapper.mapRow(resultSet, "fav_user_");
-
-        return new Favorite.Builder()
-                .setId(resultSet.getInt("id"))
-                .setUser(user)
-                .setProperty(property)
-                .build();
+        return FavoriteMapper.mapRow(resultSet);
     }
 
     private FavoriteDAOImpl(ConnectionHolder connectionHolder) {

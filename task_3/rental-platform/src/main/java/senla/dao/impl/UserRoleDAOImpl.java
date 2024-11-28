@@ -1,11 +1,11 @@
 package senla.dao.impl;
 
 import senla.dao.UserRoleDAO;
-import senla.model.mapper.UserMapper;
 import senla.model.Role;
 import senla.model.User;
 import senla.model.UserRole;
 import senla.util.ConnectionHolder;
+import senla.util.mapper.UserRoleMapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -126,17 +126,6 @@ public class UserRoleDAOImpl implements UserRoleDAO {
     }
 
     private UserRole mapRow(ResultSet resultSet) throws SQLException {
-        User user = UserMapper.mapRow(resultSet, "");
-
-        Role role = new Role.Builder()
-                .setId(resultSet.getInt("role_id"))
-                .setRoleName(resultSet.getString("role_name"))
-                .setDescription(resultSet.getString("description"))
-                .build();
-
-        return new UserRole.Builder()
-                .setUser(user)
-                .setRole(role)
-                .build();
+        return UserRoleMapper.mapRow(resultSet);
     }
 }

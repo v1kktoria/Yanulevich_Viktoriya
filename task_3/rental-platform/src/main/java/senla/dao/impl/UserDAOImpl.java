@@ -1,7 +1,7 @@
 package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
-import senla.model.mapper.UserMapper;
+import senla.util.mapper.UserMapper;
 import senla.model.User;
 import senla.util.ConnectionHolder;
 

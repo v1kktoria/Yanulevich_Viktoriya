@@ -1,11 +1,8 @@
 package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
-import senla.model.mapper.UserMapper;
-import senla.model.ENUM.ReportType;
-import senla.model.ENUM.Status;
+import senla.util.mapper.ReportMapper;
 import senla.model.Report;
-import senla.model.User;
 import senla.util.ConnectionHolder;
 
 import java.sql.PreparedStatement;
@@ -57,21 +54,7 @@ public class ReportDAOImpl extends AbstractDAO<Report, Integer> {
 
     @Override
     protected Report mapRow(ResultSet resultSet) throws SQLException {
-        User user = UserMapper.mapRow(resultSet, "user_");
-
-        ReportType reportType = resultSet.getString("type") != null ? ReportType.valueOf(resultSet.getString("type")) : null;
-        Status status = resultSet.getString("status") != null ? Status.valueOf(resultSet.getString("status")) : null;
-
-        return new Report.Builder()
-                .setId(resultSet.getInt("id"))
-                .setUser(user)
-                .setType(reportType)
-                .setContentId(resultSet.getInt("content_id"))
-                .setMessage(resultSet.getString("message"))
-                .setStatus(status)
-                .setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime())
-                .setDeleted(resultSet.getBoolean("deleted"))
-                .build();
+        return ReportMapper.mapRow(resultSet);
     }
 
     private ReportDAOImpl(ConnectionHolder connectionHolder) {

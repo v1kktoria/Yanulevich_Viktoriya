@@ -1,10 +1,16 @@
 package senla.dao;
 
+import senla.exception.EntityFieldAccessException;
 import senla.exception.EntityNotFoundException;
+import senla.exception.InvalidParameterException;
 import senla.util.ConnectionHolder;
 
 import java.lang.reflect.Field;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +47,7 @@ public abstract class AbstractDAO<T, ID> implements ParentDAO<T, ID> {
                 setCurrentSeqValue(connection, entity);
                 connectionHolder.commit(threadName);
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                throw new RuntimeException(e);
+                throw new EntityFieldAccessException(e);
             }
         } catch (SQLException e) {
             connectionHolder.rollback(threadName);
@@ -60,7 +66,7 @@ public abstract class AbstractDAO<T, ID> implements ParentDAO<T, ID> {
             Connection connection = connectionHolder.getConnection(threadName);
             String query = getByParamQuery(param);
             if (query == null) {
-                throw new IllegalArgumentException("Некорректное значение параметра: " + param);
+                throw InvalidParameterException.forParam(param);
             }
             try (PreparedStatement statement = connection.prepareStatement(query)) {
 
@@ -74,7 +80,7 @@ public abstract class AbstractDAO<T, ID> implements ParentDAO<T, ID> {
                     if (resultSet.next()) {
                         entity = mapRow(resultSet);
                     } else {
-                        throw new EntityNotFoundException("Сущность не найдена для параметра: " + param);
+                        throw EntityNotFoundException.forParam(param);
                     }
                 }
             }
@@ -120,7 +126,7 @@ public abstract class AbstractDAO<T, ID> implements ParentDAO<T, ID> {
                 prepareStatementForSave(statement, entity, true, id);
                 int rowsUpdated = statement.executeUpdate();
                 if (rowsUpdated == 0) {
-                    throw new EntityNotFoundException("Сущность с ID " + id + " не найдена для обновления");
+                    throw EntityNotFoundException.forParam(id);
                 }
                 connectionHolder.commit(threadName);
             }
@@ -140,7 +146,7 @@ public abstract class AbstractDAO<T, ID> implements ParentDAO<T, ID> {
                 statement.setObject(1, id);
                 int rowsUpdated = statement.executeUpdate();
                 if (rowsUpdated == 0) {
-                    throw new EntityNotFoundException("Сущность с ID " + id + " не найдена для удаения");
+                    throw EntityNotFoundException.forParam(id);
                 }
                 connectionHolder.commit(threadName);
                 System.out.println("Сущность с ID " + id + " успешно удалена");
@@ -158,7 +164,7 @@ public abstract class AbstractDAO<T, ID> implements ParentDAO<T, ID> {
             field.setAccessible(true);
             return field.get(entity);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new EntityFieldAccessException(e);
         }
     }
 

@@ -1,12 +1,14 @@
 package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
-import senla.model.mapper.UserMapper;
+import senla.util.mapper.ProfileMapper;
 import senla.model.Profile;
-import senla.model.User;
 import senla.util.ConnectionHolder;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 
 public class ProfileDAOImpl extends AbstractDAO<Profile, Integer> {
 
@@ -50,17 +52,7 @@ public class ProfileDAOImpl extends AbstractDAO<Profile, Integer> {
 
     @Override
     protected Profile mapRow(ResultSet resultSet) throws SQLException {
-        User user = UserMapper.mapRow(resultSet, "user_");
-
-        return new Profile.Builder()
-                .setId(resultSet.getInt("id"))
-                .setFirstname(resultSet.getString("first_name"))
-                .setLastname(resultSet.getString("last_name"))
-                .setEmail(resultSet.getString("email"))
-                .setPhone(resultSet.getString("phone"))
-                .setRegistrationDate(resultSet.getTimestamp("registration_date").toLocalDateTime())
-                .setUser(user)
-                .build();
+        return ProfileMapper.mapRow(resultSet);
     }
 
     private ProfileDAOImpl(ConnectionHolder connectionHolder) {

@@ -1,12 +1,9 @@
 package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
-import senla.model.mapper.PropertyMapper;
-import senla.model.mapper.UserMapper;
+import senla.util.mapper.ApplicationMapper;
 import senla.model.Application;
-import senla.model.ENUM.Status;
 import senla.model.Property;
-import senla.model.User;
 import senla.util.ConnectionHolder;
 
 import java.sql.PreparedStatement;
@@ -62,19 +59,7 @@ public class ApplicationDAOImpl extends AbstractDAO<Application, Integer> {
 
     @Override
     protected Application mapRow(ResultSet resultSet) throws SQLException {
-        Property property = PropertyMapper.mapRow(resultSet);
-
-        User tenant = UserMapper.mapRow(resultSet, "tenant_");
-
-        return new Application.Builder()
-                .setId(resultSet.getInt("id"))
-                .setProperty(property)
-                .setTenant(tenant)
-                .setMessage(resultSet.getString("message"))
-                .setStatus(Status.valueOf(resultSet.getString("status")))
-                .setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime())
-                .setDeleted(resultSet.getBoolean("deleted"))
-                .build();
+        return ApplicationMapper.mapRow(resultSet);
     }
 
     private ApplicationDAOImpl(ConnectionHolder connectionHolder) {

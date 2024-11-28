@@ -1,8 +1,11 @@
 package senla;
 
 import senla.dao.PropertyParameterDAO;
-import senla.dao.impl.*;
-import senla.model.ENUM.PropertyType;
+import senla.dao.impl.ParameterDAOImpl;
+import senla.dao.impl.PropertyDAOImpl;
+import senla.dao.impl.PropertyParameterDAOImpl;
+import senla.dao.impl.UserDAOImpl;
+import senla.model.constant.PropertyType;
 import senla.model.Property;
 import senla.model.PropertyParameter;
 import senla.model.User;
@@ -18,9 +21,9 @@ public class Main {
         ParameterDAOImpl parameterDAO = ParameterDAOImpl.getInstance(connectionHolder);
         PropertyParameterDAO propertyParameterDAO = PropertyParameterDAOImpl.getInstance(connectionHolder);
 
-        User user = new User.Builder()
-                .setUsername("egorov")
-                .setPassword("password1234")
+        User user = User.builder()
+                .username("egorov")
+                .password("password1234")
                 .build();
 
         userDAO.create(user);
@@ -31,23 +34,23 @@ public class Main {
 
         System.out.println("Обновлен пароль пользователя " + userDAO.getByParam(user.getId()));
 
-        Property property = new Property.Builder()
-                .setOwner(user1)
-                .setType(PropertyType.APARTMENT)
-                .setArea(85.5)
-                .setPrice(1200)
-                .setRooms(3)
-                .setDescription("Просторная трехкомнатная квартира")
-                .setCreatedAt(LocalDateTime.now())
+        Property property = Property.builder()
+                .owner(user1)
+                .type(PropertyType.APARTMENT)
+                .area(85.5)
+                .price(1200)
+                .rooms(3)
+                .description("Просторная трехкомнатная квартира")
+                .createdAt(LocalDateTime.now())
                 .build();
 
         propertyDAO.create(property);
         System.out.println("Создана новая недвижимость " + propertyDAO.getByParam(user1));
 
-        propertyParameterDAO.create(new PropertyParameter.Builder()
-                .setProperty(propertyDAO.getByParam(user1))
-                .setParameter(parameterDAO.getByParam(1))
-                .setValue("Да")
+        propertyParameterDAO.create(PropertyParameter.builder()
+                .property(propertyDAO.getByParam(user1))
+                .parameter(parameterDAO.getByParam(1))
+                .value("Да")
                 .build());
 
 

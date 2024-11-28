@@ -1,4 +1,4 @@
-package senla.model.ENUM;
+package senla.model.constant;
 
 public enum Status {
     PENDING,

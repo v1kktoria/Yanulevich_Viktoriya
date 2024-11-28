@@ -3,6 +3,7 @@ package senla.dao.impl;
 import senla.dao.AbstractDAO;
 import senla.model.Parameter;
 import senla.util.ConnectionHolder;
+import senla.util.mapper.ParameterMapper;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -40,11 +41,7 @@ public class ParameterDAOImpl extends AbstractDAO<Parameter, Integer> {
 
     @Override
     protected Parameter mapRow(ResultSet resultSet) throws SQLException {
-        return new Parameter.Builder()
-                .setId(resultSet.getInt("id"))
-                .setName(resultSet.getString("name"))
-                .setDescription(resultSet.getString("description"))
-                .build();
+        return ParameterMapper.mapRow(resultSet);
     }
 
     private ParameterDAOImpl(ConnectionHolder connectionHolder) {

@@ -5,7 +5,7 @@ public class ConnectionCloseException extends RuntimeException {
         super(message);
     }
 
-    public ConnectionCloseException(String message, Throwable cause) {
-        super(message, cause);
+    public ConnectionCloseException(Throwable cause) {
+        super(ExceptionEnum.CONNECTION_CLOSE_ERROR.getMessage(), cause);
     }
 }

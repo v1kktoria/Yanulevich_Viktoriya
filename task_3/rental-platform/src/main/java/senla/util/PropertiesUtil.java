@@ -1,6 +1,7 @@
 package senla.util;
 
 import lombok.experimental.UtilityClass;
+import senla.exception.ConfigurationLoadException;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -21,7 +22,7 @@ public class PropertiesUtil {
         try (var stream = PropertiesUtil.class.getClassLoader().getResourceAsStream("application.properties")){
             PROPERTIES.load(stream);
         } catch (IOException e) {
-            throw new RuntimeException("Ошибка при загрузке application.properties", e);
+            throw new ConfigurationLoadException(e);
         }
     }
 }

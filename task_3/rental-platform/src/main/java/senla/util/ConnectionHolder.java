@@ -56,7 +56,7 @@ public class ConnectionHolder {
             connectionMap.put(threadName, connection);
             return connection;
         } catch (SQLException e) {
-            throw new DatabaseConnectionException("Ошибка при получении соединения", e);
+            throw new DatabaseConnectionException(e);
         }
     }
 
@@ -66,7 +66,7 @@ public class ConnectionHolder {
             connection.commit();
             unusedConnection.add(connection);
         } catch (SQLException e) {
-            throw new TransactionException("Ошибка при коммите транзакции", e);
+            throw new TransactionException(e);
         }
     }
 
@@ -76,7 +76,7 @@ public class ConnectionHolder {
             connection.rollback();
             unusedConnection.add(connection);
         } catch (SQLException e) {
-            throw new TransactionException("Ошибка при коммите транзакции", e);
+            throw new TransactionException(e);
         }
     }
 
@@ -85,7 +85,7 @@ public class ConnectionHolder {
             try {
                 connection.close();
             } catch (SQLException e) {
-                throw new ConnectionCloseException("Ошибка при закрытии соединения", e);
+                throw new ConnectionCloseException(e);
             }
         }
     }
