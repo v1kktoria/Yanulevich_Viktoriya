@@ -1,6 +1,8 @@
 package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
+import senla.dicontainer.annotation.Autowired;
+import senla.dicontainer.annotation.Component;
 import senla.util.mapper.FavoriteMapper;
 import senla.model.Favorite;
 import senla.model.User;
@@ -10,19 +12,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Component
 public class FavoriteDAOImpl extends AbstractDAO<Favorite, Integer> {
 
-    private static volatile FavoriteDAOImpl instance;
-
-    public static FavoriteDAOImpl getInstance(ConnectionHolder connectionHolder) {
-        if (instance == null) {
-            synchronized (FavoriteDAOImpl.class) {
-                if (instance == null) {
-                    instance = new FavoriteDAOImpl(connectionHolder);
-                }
-            }
-        }
-        return instance;
+    @Autowired
+    private FavoriteDAOImpl(ConnectionHolder connectionHolder) {
+        super(connectionHolder);
     }
 
     private static final String SQL_CREATE = "INSERT INTO Favorites (user_id, property_id) VALUES (?, ?)";
@@ -55,10 +50,6 @@ public class FavoriteDAOImpl extends AbstractDAO<Favorite, Integer> {
     @Override
     protected Favorite mapRow(ResultSet resultSet) throws SQLException {
         return FavoriteMapper.mapRow(resultSet);
-    }
-
-    private FavoriteDAOImpl(ConnectionHolder connectionHolder) {
-        super(connectionHolder);
     }
 
     @Override

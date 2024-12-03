@@ -1,6 +1,8 @@
 package senla.dao.impl;
 
 import senla.dao.UserRoleDAO;
+import senla.dicontainer.annotation.Autowired;
+import senla.dicontainer.annotation.Component;
 import senla.model.Role;
 import senla.model.User;
 import senla.model.UserRole;
@@ -14,20 +16,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class UserRoleDAOImpl implements UserRoleDAO {
 
-    private static volatile UserRoleDAOImpl instance;
-    private final ConnectionHolder connectionHolder;
+    private ConnectionHolder connectionHolder;
 
-    public static UserRoleDAOImpl getInstance(ConnectionHolder connectionHolder) {
-        if (instance == null) {
-            synchronized (UserRoleDAOImpl.class) {
-                if (instance == null) {
-                    instance = new UserRoleDAOImpl(connectionHolder);
-                }
-            }
-        }
-        return instance;
+    @Autowired
+    private void setConnectionHolder(ConnectionHolder connectionHolder) {
+        this.connectionHolder = connectionHolder;
     }
 
     private static final String SQL_CREATE = "INSERT INTO Users_Roles (user_id, role_id) VALUES (?, ?)";
@@ -39,10 +35,9 @@ public class UserRoleDAOImpl implements UserRoleDAO {
     private static final String SQL_GET_BY_USER_AND_ROLE = SQL_GET_ALL + " WHERE ur.user_id = ? AND ur.role_id = ?";
     private static final String SQL_DELETE_BY_USER_AND_ROLE = "DELETE FROM Users_Roles WHERE user_id = ? AND role_id = ?";
 
-    private UserRoleDAOImpl(ConnectionHolder connectionHolder) {
-        this.connectionHolder = connectionHolder;
-    }
+    private UserRoleDAOImpl() {
 
+    }
 
     @Override
     public void create(UserRole userRole) {

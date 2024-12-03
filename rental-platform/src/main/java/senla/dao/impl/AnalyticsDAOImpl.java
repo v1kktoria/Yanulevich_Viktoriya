@@ -1,6 +1,8 @@
 package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
+import senla.dicontainer.annotation.Autowired;
+import senla.dicontainer.annotation.Component;
 import senla.util.mapper.AnalyticsMapper;
 import senla.model.Analytics;
 import senla.model.Property;
@@ -11,19 +13,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+@Component
 public class AnalyticsDAOImpl extends AbstractDAO<Analytics, Integer> {
 
-    private static volatile AnalyticsDAOImpl instance;
-
-    public static AnalyticsDAOImpl getInstance(ConnectionHolder connectionHolder) {
-        if (instance == null) {
-            synchronized (AnalyticsDAOImpl.class) {
-                if (instance == null) {
-                    instance = new AnalyticsDAOImpl(connectionHolder);
-                }
-            }
-        }
-        return instance;
+    @Autowired
+    public AnalyticsDAOImpl(ConnectionHolder connectionHolder) {
+        super(connectionHolder);
     }
 
     private static final String SQL_CREATE = "INSERT INTO Analytics (property_id, views, applications_count, created_at) VALUES (?, ?, ?, ?)";
@@ -53,10 +48,6 @@ public class AnalyticsDAOImpl extends AbstractDAO<Analytics, Integer> {
     @Override
     protected Analytics mapRow(ResultSet resultSet) throws SQLException {
         return AnalyticsMapper.mapRow(resultSet);
-    }
-
-    public AnalyticsDAOImpl(ConnectionHolder connectionHolder) {
-        super(connectionHolder);
     }
 
     @Override

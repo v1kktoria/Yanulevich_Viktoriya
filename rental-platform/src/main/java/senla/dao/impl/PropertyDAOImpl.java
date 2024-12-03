@@ -1,6 +1,8 @@
 package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
+import senla.dicontainer.annotation.Autowired;
+import senla.dicontainer.annotation.Component;
 import senla.model.User;
 import senla.util.mapper.PropertyMapper;
 import senla.model.Property;
@@ -12,18 +14,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+@Component
 public class PropertyDAOImpl extends AbstractDAO<Property, Integer> {
-    private static volatile PropertyDAOImpl instance;
 
-    public static PropertyDAOImpl getInstance(ConnectionHolder connectionHolder) {
-        if (instance == null) {
-            synchronized (PropertyDAOImpl.class) {
-                if (instance == null) {
-                    instance = new PropertyDAOImpl(connectionHolder);
-                }
-            }
-        }
-        return instance;
+    @Autowired
+    private PropertyDAOImpl(ConnectionHolder connectionHolder) {
+        super(connectionHolder);
     }
 
     private static final String SQL_CREATE = "INSERT INTO Properties (owner_id, type, area, price, rooms, description, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -40,10 +36,6 @@ public class PropertyDAOImpl extends AbstractDAO<Property, Integer> {
 
     private static final String SQL_UPDATE_BY_ID = "UPDATE Properties SET owner_id = ?, type = ?, area = ?, price = ?, rooms = ?, description = ?, created_at = ?, deleted = ? WHERE id = ?";
     private static final String SQL_DELETE_BY_ID = "UPDATE Properties SET deleted = TRUE WHERE id = ?";
-
-    private PropertyDAOImpl(ConnectionHolder connectionHolder) {
-        super(connectionHolder);
-    }
 
     @Override
     protected void prepareStatementForSave(PreparedStatement statement, Property property, boolean isUpdate, Integer id) throws SQLException {

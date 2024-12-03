@@ -1,6 +1,8 @@
 package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
+import senla.dicontainer.annotation.Autowired;
+import senla.dicontainer.annotation.Component;
 import senla.model.Parameter;
 import senla.util.ConnectionHolder;
 import senla.util.mapper.ParameterMapper;
@@ -9,19 +11,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Component
 public class ParameterDAOImpl extends AbstractDAO<Parameter, Integer> {
 
-    private static volatile ParameterDAOImpl instance;
-
-    public static ParameterDAOImpl getInstance(ConnectionHolder connectionHolder) {
-        if (instance == null) {
-            synchronized (ParameterDAOImpl.class) {
-                if (instance == null) {
-                    instance = new ParameterDAOImpl(connectionHolder);
-                }
-            }
-        }
-        return instance;
+    @Autowired
+    private ParameterDAOImpl(ConnectionHolder connectionHolder) {
+        super(connectionHolder);
     }
 
     private static final String SQL_CREATE = "INSERT INTO Parameters (name, description) VALUES (?, ?)";
@@ -42,10 +37,6 @@ public class ParameterDAOImpl extends AbstractDAO<Parameter, Integer> {
     @Override
     protected Parameter mapRow(ResultSet resultSet) throws SQLException {
         return ParameterMapper.mapRow(resultSet);
-    }
-
-    private ParameterDAOImpl(ConnectionHolder connectionHolder) {
-        super(connectionHolder);
     }
 
     @Override

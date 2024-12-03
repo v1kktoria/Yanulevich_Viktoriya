@@ -1,6 +1,8 @@
 package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
+import senla.dicontainer.annotation.Autowired;
+import senla.dicontainer.annotation.Component;
 import senla.util.mapper.ReportMapper;
 import senla.model.Report;
 import senla.util.ConnectionHolder;
@@ -10,19 +12,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+@Component
 public class ReportDAOImpl extends AbstractDAO<Report, Integer> {
 
-    private static volatile ReportDAOImpl instance;
-
-    public static ReportDAOImpl getInstance(ConnectionHolder connectionHolder) {
-        if (instance == null) {
-            synchronized (ReportDAOImpl.class) {
-                if (instance == null) {
-                    instance = new ReportDAOImpl(connectionHolder);
-                }
-            }
-        }
-        return instance;
+    @Autowired
+    private ReportDAOImpl(ConnectionHolder connectionHolder) {
+        super(connectionHolder);
     }
 
     private static final String SQL_CREATE = "INSERT INTO Reports (user_id, type, content_id, message, status, created_at) VALUES (?, ?, ?, ?, ?, ?)";
@@ -55,10 +50,6 @@ public class ReportDAOImpl extends AbstractDAO<Report, Integer> {
     @Override
     protected Report mapRow(ResultSet resultSet) throws SQLException {
         return ReportMapper.mapRow(resultSet);
-    }
-
-    private ReportDAOImpl(ConnectionHolder connectionHolder) {
-        super(connectionHolder);
     }
 
     @Override

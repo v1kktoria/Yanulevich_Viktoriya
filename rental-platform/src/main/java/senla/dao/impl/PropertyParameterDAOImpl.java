@@ -1,6 +1,8 @@
 package senla.dao.impl;
 
 import senla.dao.PropertyParameterDAO;
+import senla.dicontainer.annotation.Autowired;
+import senla.dicontainer.annotation.Component;
 import senla.model.Parameter;
 import senla.model.Property;
 import senla.model.PropertyParameter;
@@ -14,28 +16,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class PropertyParameterDAOImpl implements PropertyParameterDAO {
 
-    private static volatile PropertyParameterDAOImpl instance;
-    private final ConnectionHolder connectionHolder;
+    @Autowired
+    private ConnectionHolder connectionHolder;
 
-    public static PropertyParameterDAOImpl getInstance(ConnectionHolder connectionHolder) {
-        if (instance == null) {
-            synchronized (PropertyParameterDAOImpl.class) {
-                if (instance == null) {
-                    instance = new PropertyParameterDAOImpl(connectionHolder);
-                }
-            }
-        }
-        return instance;
-    }
+    private PropertyParameterDAOImpl() {}
 
     private static final String SQL_CREATE =
             "INSERT INTO Properties_Parameters (property_id, parameter_id, value) VALUES (?, ?, ?)";
     private static final String SQL_GET_ALL =
             "SELECT pp.property_id, pp.parameter_id, pp.value, " +
                     "p.id AS property_id, p.type AS type, p.area, p.price, p.rooms, p.description, p.created_at AS property_created_at, p.deleted AS property_deleted, " +
-                    "pr.id AS parameter_id, pr.name, pr.description AS parameter_description, " +
+                    "pr.id, pr.name, pr.description, " +
                     "u.id AS user_id, u.username AS user_username, u.password AS user_password, u.deleted AS user_deleted " +
                     "FROM Properties_Parameters pp " +
                     "JOIN ActiveProperties p ON pp.property_id = p.id " +
@@ -46,9 +40,6 @@ public class PropertyParameterDAOImpl implements PropertyParameterDAO {
     private static final String SQL_GET_BY_PROPERTY_AND_PARAMETER = SQL_GET_ALL + " WHERE pp.property_id = ? AND pp.parameter_id = ?";
     private static final String SQL_DELETE_BY_PROPERTY_AND_PARAMETER = "DELETE FROM Properties_Parameters WHERE property_id = ? AND parameter_id = ?";
 
-    private PropertyParameterDAOImpl(ConnectionHolder connectionHolder) {
-        this.connectionHolder = connectionHolder;
-    }
 
     @Override
     public void create(PropertyParameter propertyParameter) {

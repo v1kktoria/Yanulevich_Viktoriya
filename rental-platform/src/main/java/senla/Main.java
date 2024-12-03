@@ -1,25 +1,28 @@
 package senla;
 
 import senla.dao.PropertyParameterDAO;
+import senla.dao.UserRoleDAO;
 import senla.dao.impl.ParameterDAOImpl;
 import senla.dao.impl.PropertyDAOImpl;
-import senla.dao.impl.PropertyParameterDAOImpl;
 import senla.dao.impl.UserDAOImpl;
-import senla.model.constant.PropertyType;
+import senla.dicontainer.DIContainer;
 import senla.model.Property;
 import senla.model.PropertyParameter;
 import senla.model.User;
-import senla.util.ConnectionHolder;
+import senla.model.constant.PropertyType;
 
 import java.time.LocalDateTime;
 
 public class Main {
     public static void main(String[] args) {
-        ConnectionHolder connectionHolder = new ConnectionHolder();
-        UserDAOImpl userDAO = UserDAOImpl.getInstance(connectionHolder);
-        PropertyDAOImpl propertyDAO = PropertyDAOImpl.getInstance(connectionHolder);
-        ParameterDAOImpl parameterDAO = ParameterDAOImpl.getInstance(connectionHolder);
-        PropertyParameterDAO propertyParameterDAO = PropertyParameterDAOImpl.getInstance(connectionHolder);
+        DIContainer.startApplication(Main.class);
+        UserDAOImpl userDAO = DIContainer.getBean(UserDAOImpl.class);
+        PropertyDAOImpl propertyDAO = DIContainer.getBean(PropertyDAOImpl.class);
+        ParameterDAOImpl parameterDAO = DIContainer.getBean(ParameterDAOImpl.class);
+        PropertyParameterDAO propertyParameterDAO = DIContainer.getBean(PropertyParameterDAO.class);
+        UserRoleDAO userRoleDAO = DIContainer.getBean(UserRoleDAO.class);
+
+        System.out.println("Все связи между пользователями и ролями: " + userRoleDAO.getAll());
 
         User user = User.builder()
                 .username("egorov")
@@ -62,5 +65,4 @@ public class Main {
          System.out.println("Удаление недвижимости");
          propertyDAO.deleteById(property.getId());
     }
-
 }

@@ -1,6 +1,8 @@
 package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
+import senla.dicontainer.annotation.Autowired;
+import senla.dicontainer.annotation.Component;
 import senla.util.mapper.ReviewMapper;
 import senla.model.Review;
 import senla.util.ConnectionHolder;
@@ -9,19 +11,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Component
 public class ReviewDAOImpl extends AbstractDAO<Review, Integer> {
 
-    private static volatile ReviewDAOImpl instance;
-
-    public static ReviewDAOImpl getInstance(ConnectionHolder connectionHolder) {
-        if (instance == null) {
-            synchronized (ReviewDAOImpl.class) {
-                if (instance == null) {
-                    instance = new ReviewDAOImpl(connectionHolder);
-                }
-            }
-        }
-        return instance;
+    @Autowired
+    private ReviewDAOImpl(ConnectionHolder connectionHolder) {
+        super(connectionHolder);
     }
 
     private static final String SQL_CREATE = "INSERT INTO Reviews (property_id, user_id, rating, comment, created_at) VALUES (?, ?, ?, ?, ?)";
@@ -57,10 +52,6 @@ public class ReviewDAOImpl extends AbstractDAO<Review, Integer> {
     @Override
     protected Review mapRow(ResultSet resultSet) throws SQLException {
         return ReviewMapper.mapRow(resultSet);
-    }
-
-    private ReviewDAOImpl(ConnectionHolder connectionHolder) {
-        super(connectionHolder);
     }
 
     @Override

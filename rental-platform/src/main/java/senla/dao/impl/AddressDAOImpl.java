@@ -1,6 +1,8 @@
 package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
+import senla.dicontainer.annotation.Autowired;
+import senla.dicontainer.annotation.Component;
 import senla.util.mapper.AddressMapper;
 import senla.model.Address;
 import senla.model.Property;
@@ -10,20 +12,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Component
 public class AddressDAOImpl extends AbstractDAO<Address, Integer> {
 
-    private static volatile AddressDAOImpl instance;
-
-    public static AddressDAOImpl getInstance(ConnectionHolder connectionHolder) {
-        if (instance == null) {
-            synchronized (AddressDAOImpl.class) {
-                if (instance == null) {
-                    instance = new AddressDAOImpl(connectionHolder);
-                }
-            }
-        }
-        return instance;
+    @Autowired
+    private AddressDAOImpl(ConnectionHolder connectionHolder) {
+        super(connectionHolder);
     }
+
 
     private static final String SQL_CREATE = "INSERT INTO Addresses (property_id, country, city, street, house_number) VALUES (?, ?, ?, ?, ?)";
 
@@ -56,10 +52,6 @@ public class AddressDAOImpl extends AbstractDAO<Address, Integer> {
     @Override
     protected Address mapRow(ResultSet resultSet) throws SQLException {
         return AddressMapper.mapRow(resultSet);
-    }
-
-    private AddressDAOImpl(ConnectionHolder connectionHolder) {
-        super(connectionHolder);
     }
 
     @Override

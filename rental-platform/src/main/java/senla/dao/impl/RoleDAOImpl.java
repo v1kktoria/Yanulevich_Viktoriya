@@ -1,6 +1,8 @@
 package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
+import senla.dicontainer.annotation.Autowired;
+import senla.dicontainer.annotation.Component;
 import senla.model.Role;
 import senla.util.ConnectionHolder;
 import senla.util.mapper.RoleMapper;
@@ -9,19 +11,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Component
 public class RoleDAOImpl extends AbstractDAO<Role, Integer> {
 
-    private static volatile RoleDAOImpl instance;
-
-    public static RoleDAOImpl getInstance(ConnectionHolder connectionHolder) {
-        if (instance == null) {
-            synchronized (RoleDAOImpl.class) {
-                if (instance == null) {
-                    instance = new RoleDAOImpl(connectionHolder);
-                }
-            }
-        }
-        return instance;
+    @Autowired
+    private RoleDAOImpl(ConnectionHolder connectionHolder) {
+        super(connectionHolder);
     }
 
     private static final String SQL_CREATE = "INSERT INTO Roles (role_name, description) VALUES (?, ?)";
@@ -43,10 +38,6 @@ public class RoleDAOImpl extends AbstractDAO<Role, Integer> {
     @Override
     protected Role mapRow(ResultSet resultSet) throws SQLException {
         return RoleMapper.mapRow(resultSet);
-    }
-
-    private RoleDAOImpl(ConnectionHolder connectionHolder) {
-        super(connectionHolder);
     }
 
     @Override
