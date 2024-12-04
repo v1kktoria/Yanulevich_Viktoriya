@@ -1,5 +1,7 @@
 package senla.util;
 
+import senla.dicontainer.annotation.Component;
+import senla.dicontainer.annotation.Value;
 import senla.exception.ConnectionCloseException;
 import senla.exception.DatabaseConnectionException;
 import senla.exception.TransactionException;
@@ -12,11 +14,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class ConnectionHolder {
 
-    private static final String URL_KEY = "db.url";
-    private static final String PASSWORD_KEY = "db.password";
-    private static final String USERNAME_KEY = "db.username";
+    @Value("db.url")
+    private static String URL_KEY;
+
+    @Value("db.password")
+    private static String PASSWORD_KEY;
+
+    @Value("db.username")
+    private static String USERNAME_KEY;
 
     private final Map<String, Connection> connectionMap;
     private final List<Connection> unusedConnection;
@@ -32,10 +40,6 @@ public class ConnectionHolder {
         }
 
         try {
-            String url = PropertiesUtil.get(URL_KEY);
-            String username = PropertiesUtil.get(USERNAME_KEY);
-            String password = PropertiesUtil.get(PASSWORD_KEY);
-
             Connection connection;
             if (!unusedConnection.isEmpty()) {
                 while (true) {
@@ -43,13 +47,13 @@ public class ConnectionHolder {
                     if (!connection.isClosed()) break;
                     unusedConnection.remove(connection);
                     if (unusedConnection.isEmpty()) {
-                        connection = DriverManager.getConnection(url, username, password);
+                        connection = DriverManager.getConnection(URL_KEY, USERNAME_KEY, PASSWORD_KEY);
                         break;
                     }
                 }
             }
             else {
-                connection = DriverManager.getConnection(url, username, password);
+                connection = DriverManager.getConnection(URL_KEY, USERNAME_KEY, PASSWORD_KEY);
             }
 
             connection.setAutoCommit(false);

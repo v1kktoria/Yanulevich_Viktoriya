@@ -1,6 +1,8 @@
 package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
+import senla.dicontainer.annotation.Autowired;
+import senla.dicontainer.annotation.Component;
 import senla.util.mapper.UserMapper;
 import senla.model.User;
 import senla.util.ConnectionHolder;
@@ -9,19 +11,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Component
 public class UserDAOImpl extends AbstractDAO<User, Integer> {
 
-    private static volatile UserDAOImpl instance;
-
-    public static UserDAOImpl getInstance(ConnectionHolder connectionHolder) {
-        if (instance == null) {
-            synchronized (UserDAOImpl.class) {
-                if (instance == null) {
-                    instance = new UserDAOImpl(connectionHolder);
-                }
-            }
-        }
-        return instance;
+    @Autowired
+    private UserDAOImpl(ConnectionHolder connectionHolder) {
+        super(connectionHolder);
     }
 
     private static final String SQL_CREATE_USER = "INSERT INTO Users (username, password) VALUES (?, ?)";
@@ -46,10 +41,6 @@ public class UserDAOImpl extends AbstractDAO<User, Integer> {
     @Override
     protected User mapRow(ResultSet resultSet) throws SQLException {
         return UserMapper.mapRow(resultSet, "user_");
-    }
-
-    private UserDAOImpl(ConnectionHolder connectionHolder) {
-        super(connectionHolder);
     }
 
     @Override

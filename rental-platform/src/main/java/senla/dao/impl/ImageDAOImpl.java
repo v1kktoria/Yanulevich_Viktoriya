@@ -1,6 +1,8 @@
 package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
+import senla.dicontainer.annotation.Autowired;
+import senla.dicontainer.annotation.Component;
 import senla.util.mapper.ImageMapper;
 import senla.model.Image;
 import senla.util.ConnectionHolder;
@@ -9,19 +11,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Component
 public class ImageDAOImpl extends AbstractDAO<Image, Integer> {
 
-    private static volatile ImageDAOImpl instance;
-
-    public static ImageDAOImpl getInstance(ConnectionHolder connectionHolder) {
-        if (instance == null) {
-            synchronized (ImageDAOImpl.class) {
-                if (instance == null) {
-                    instance = new ImageDAOImpl(connectionHolder);
-                }
-            }
-        }
-        return instance;
+    @Autowired
+    private ImageDAOImpl(ConnectionHolder connectionHolder) {
+        super(connectionHolder);
     }
 
     private static final String SQL_CREATE = "INSERT INTO Images (property_id, filepath) VALUES (?, ?)";
@@ -48,10 +43,6 @@ public class ImageDAOImpl extends AbstractDAO<Image, Integer> {
     @Override
     protected Image mapRow(ResultSet resultSet) throws SQLException {
         return ImageMapper.mapRow(resultSet);
-    }
-
-    private ImageDAOImpl(ConnectionHolder connectionHolder) {
-        super(connectionHolder);
     }
 
     @Override

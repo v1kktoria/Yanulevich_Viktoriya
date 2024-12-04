@@ -1,6 +1,8 @@
 package senla.dao.impl;
 
 import senla.dao.AbstractDAO;
+import senla.dicontainer.annotation.Autowired;
+import senla.dicontainer.annotation.Component;
 import senla.util.mapper.ProfileMapper;
 import senla.model.Profile;
 import senla.util.ConnectionHolder;
@@ -10,19 +12,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+@Component
 public class ProfileDAOImpl extends AbstractDAO<Profile, Integer> {
 
-    private static volatile ProfileDAOImpl instance;
-
-    public static ProfileDAOImpl getInstance(ConnectionHolder connectionHolder) {
-        if (instance == null) {
-            synchronized (ProfileDAOImpl.class) {
-                if (instance == null) {
-                    instance = new ProfileDAOImpl(connectionHolder);
-                }
-            }
-        }
-        return instance;
+    @Autowired
+    private ProfileDAOImpl(ConnectionHolder connectionHolder) {
+        super(connectionHolder);
     }
 
     private static final String SQL_CREATE = "INSERT INTO Profiles (first_name, last_name, email, phone, registration_date) VALUES (?, ?, ?, ?, ?)";
@@ -53,10 +48,6 @@ public class ProfileDAOImpl extends AbstractDAO<Profile, Integer> {
     @Override
     protected Profile mapRow(ResultSet resultSet) throws SQLException {
         return ProfileMapper.mapRow(resultSet);
-    }
-
-    private ProfileDAOImpl(ConnectionHolder connectionHolder) {
-        super(connectionHolder);
     }
 
     @Override
