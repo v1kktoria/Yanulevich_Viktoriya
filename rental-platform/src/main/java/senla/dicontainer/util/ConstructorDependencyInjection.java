@@ -9,15 +9,16 @@ import senla.dicontainer.exception.DIExceptionEnum;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.Optional;
 
 public class ConstructorDependencyInjection{
 
     public static Object inject(DIContainer diContainer, Class<?> clazz) {
-        Constructor<?> autowiredConstructor = findAutowiredConstructor(clazz);
-        if (autowiredConstructor != null) {
-            Object[] parameters = resolveConstructorParameters(diContainer, autowiredConstructor);
+        Optional<Constructor<?>> autowiredConstructor = findAutowiredConstructor(clazz);
+        if (autowiredConstructor.isPresent()) {
+            Object[] parameters = resolveConstructorParameters(diContainer, autowiredConstructor.get());
             try {
-                return autowiredConstructor.newInstance(parameters);
+                return autowiredConstructor.get().newInstance(parameters);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new DIException(DIExceptionEnum.CONSTRUCTOR_INJECTION_FAILED);
             }
@@ -37,12 +38,11 @@ public class ConstructorDependencyInjection{
         }
     }
 
-    private static Constructor<?> findAutowiredConstructor(Class<?> clazz) {
+    private static Optional<Constructor<?>> findAutowiredConstructor(Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredConstructors())
                 .filter(constructor -> constructor.isAnnotationPresent(Autowired.class))
                 .peek(constructor -> constructor.setAccessible(true))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
     private static Object[] resolveConstructorParameters(DIContainer diContainer, Constructor<?> constructor) {

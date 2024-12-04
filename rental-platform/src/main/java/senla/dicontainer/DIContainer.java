@@ -83,12 +83,18 @@ public class DIContainer {
 
         if (implementationClasses.isEmpty()) {
             throw new DIException(DIExceptionEnum.NO_IMPLEMENTATION_FOUND, interfaceClass.getName());
-        } else if (implementationClasses.size() == 1) return implementationClasses.iterator().next().getKey();
+        } else if (implementationClasses.size() == 1) {
+            return implementationClasses.iterator().next().getKey();
+        }
 
         else {
             String findBy;
-            if (qualifier == null || qualifier.trim().isEmpty()) findBy = fieldName;
-            else findBy = qualifier;
+            if (qualifier == null || qualifier.trim().isEmpty()) {
+                findBy = fieldName;
+            }
+            else {
+                findBy = qualifier;
+            }
             return implementationClasses.stream()
                     .filter(entry -> entry.getKey().getSimpleName().equalsIgnoreCase(findBy))
                     .map(Map.Entry::getKey)

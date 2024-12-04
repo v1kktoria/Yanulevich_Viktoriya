@@ -17,26 +17,33 @@ public class ClassScanner {
         String packagePath = packageName.replace('.', '/');
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         URL packageURL = classLoader.getResource(packagePath);
-        if (packageURL == null) return Set.of();
+        if (packageURL == null) {
+            return Set.of();
+        }
         Set<Class<?>> classes = new HashSet<>();
         String decodedPath = URLDecoder.decode(packageURL.getFile(), StandardCharsets.UTF_8);
         File directory = new File(decodedPath);
-        if (directory.exists()) processDirectory(directory, packageName, classes);
+        if (directory.exists()) {
+            classes.addAll(processDirectory(directory, packageName));
+        }
 
         return classes.stream()
                 .filter(clazz -> clazz.isAnnotationPresent(Component.class))
                 .collect(HashSet::new, HashSet::add, HashSet::addAll);
     }
 
-    private void processDirectory(File directory, String packageName, Set<Class<?>> classes)  {
+    private Set<Class<?>> processDirectory(File directory, String packageName)  {
+        Set<Class<?>> classes = new HashSet<>();
         File[] files = directory.listFiles();
-        if (files == null) return;
+        if (files == null) {
+            return classes;
+        }
 
         for (File file : files) {
             if (file.isDirectory()) {
-                processDirectory(file, packageName + "." + file.getName(), classes);
+                classes.addAll(processDirectory(file, packageName + "." + file.getName()));
             } else if (file.getName().endsWith(".class")) {
-                String className = packageName + "." + file.getName().replace(".class", "");
+                String className = new StringBuilder(packageName).append(".").append(file.getName().replace(".class", "")).toString();
                 try {
                     classes.add(Class.forName(className));
                 } catch (ClassNotFoundException e) {
@@ -44,5 +51,6 @@ public class ClassScanner {
                 }
             }
         }
+        return classes;
     }
 }
