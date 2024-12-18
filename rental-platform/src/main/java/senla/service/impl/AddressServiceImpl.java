@@ -9,8 +9,10 @@ import senla.exception.ServiceExceptionEnum;
 import senla.model.Address;
 import senla.model.Property;
 import senla.service.AddressService;
+import senla.util.validator.AddressValidator;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class AddressServiceImpl implements AddressService {
@@ -22,20 +24,20 @@ public class AddressServiceImpl implements AddressService {
     private PropertyDAOImpl propertyDAO;
 
     @Override
-    public Address create(Address address) {
-        validate(address);
-        return addressDAO.create(address);
+    public Optional<Address> create(Address address) {
+        AddressValidator.validate(address);
+        return Optional.ofNullable(addressDAO.create(address));
     }
 
     @Override
-    public Address getById(Integer id) {
-        return addressDAO.getByParam(id);
+    public Optional<Address> getById(Integer id) {
+        return Optional.ofNullable(addressDAO.getByParam(id));
     }
 
     @Override
-    public Address getByPropertyId(Integer id) {
+    public Optional<Address> getByPropertyId(Integer id) {
         Property property = propertyDAO.getByParam(id);
-        return addressDAO.getByParam(property);
+        return Optional.ofNullable(addressDAO.getByParam(property));
     }
 
     @Override
@@ -45,24 +47,12 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public void updateById(Integer id, Address address) {
-        validate(address);
+        AddressValidator.validate(address);
         addressDAO.updateById(id, address);
     }
 
     @Override
     public void deleteById(Integer id) {
         addressDAO.deleteById(id);
-    }
-
-    private void validate(Address address) {
-        if (address.getCountry().isEmpty()) {
-            throw new ServiceException(ServiceExceptionEnum.INVALID_DATA, "Название страны не может быть пустым");
-        } else if (address.getCity().isEmpty()) {
-            throw new ServiceException(ServiceExceptionEnum.INVALID_DATA, "Название города не может быть пустым");
-        } else if (address.getHouseNumber().isEmpty()) {
-            throw new ServiceException(ServiceExceptionEnum.INVALID_DATA, "Номер дома не может быть пустым");
-        } else if (address.getStreet().isEmpty()) {
-            throw new ServiceException(ServiceExceptionEnum.INVALID_DATA, "Название улицы не может быть пустым");
-        }
     }
 }

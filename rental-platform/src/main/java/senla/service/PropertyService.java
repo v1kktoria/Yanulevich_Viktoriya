@@ -3,14 +3,15 @@ package senla.service;
 import senla.model.Property;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PropertyService {
 
-    Property create(Property property);
+    Optional<Property> create(Property property);
 
-    Property getById(Integer id);
+    Optional<Property> getById(Integer id);
 
-    Property getByUserId(Integer id);
+    Optional<Property> getByUserId(Integer id);
 
     List<Property> getAll();
 

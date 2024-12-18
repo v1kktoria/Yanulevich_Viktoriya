@@ -3,14 +3,15 @@ package senla.service;
 import senla.model.Application;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ApplicationService {
 
-    Application create(Application application);
+    Optional<Application> create(Application application);
 
-    Application getById(Integer id);
+    Optional<Application> getById(Integer id);
 
-    Application getByPropertyId(Integer id);
+    Optional<Application> getByPropertyId(Integer id);
 
     List<Application> getAll();
 

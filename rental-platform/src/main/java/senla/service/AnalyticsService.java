@@ -3,14 +3,15 @@ package senla.service;
 import senla.model.Analytics;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AnalyticsService {
 
-    Analytics create(Analytics analytics);
+    Optional<Analytics> create(Analytics analytics);
 
-    Analytics getById(Integer id);
+    Optional<Analytics> getById(Integer id);
 
-    Analytics getByPropertyId(Integer id);
+    Optional<Analytics> getByPropertyId(Integer id);
 
     List<Analytics> getAll();
 

@@ -9,8 +9,10 @@ import senla.exception.ServiceExceptionEnum;
 import senla.model.Analytics;
 import senla.model.Property;
 import senla.service.AnalyticsService;
+import senla.util.validator.AnalyticsValidator;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class AnalyticsServiceImpl implements AnalyticsService {
@@ -22,20 +24,20 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     private PropertyDAOImpl propertyDAO;
 
     @Override
-    public Analytics create(Analytics analytics) {
-        validate(analytics);
-        return analyticsDAO.create(analytics);
+    public Optional<Analytics> create(Analytics analytics) {
+        AnalyticsValidator.validate(analytics);
+        return Optional.ofNullable(analyticsDAO.create(analytics));
     }
 
     @Override
-    public Analytics getById(Integer id) {
-        return analyticsDAO.getByParam(id);
+    public Optional<Analytics> getById(Integer id) {
+        return Optional.ofNullable(analyticsDAO.getByParam(id));
     }
 
     @Override
-    public Analytics getByPropertyId(Integer id) {
+    public Optional<Analytics> getByPropertyId(Integer id) {
         Property property = propertyDAO.getByParam(id);
-        return analyticsDAO.getByParam(property);
+        return Optional.ofNullable(analyticsDAO.getByParam(property));
     }
 
     @Override
@@ -45,20 +47,12 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
     @Override
     public void updateById(Integer id, Analytics analytics) {
-        validate(analytics);
+        AnalyticsValidator.validate(analytics);
         analyticsDAO.updateById(id, analytics);
     }
 
     @Override
     public void deleteById(Integer id) {
         analyticsDAO.deleteById(id);
-    }
-
-    private void validate(Analytics analytics) {
-        if (analytics.getViews() < 0) {
-            throw new ServiceException(ServiceExceptionEnum.INVALID_DATA, "Количество просмотров не может быть меньше нуля");
-        } else if (analytics.getApplicationsCount() < 0) {
-            throw new ServiceException(ServiceExceptionEnum.INVALID_DATA, "Количество заявок не может быть меньше нуля");
-        }
     }
 }

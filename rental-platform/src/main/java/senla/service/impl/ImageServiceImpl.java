@@ -5,10 +5,13 @@ import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
+import senla.model.Favorite;
 import senla.model.Image;
 import senla.service.ImageService;
+import senla.util.validator.ImageValidator;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class ImageServiceImpl implements ImageService {
@@ -17,14 +20,14 @@ public class ImageServiceImpl implements ImageService {
     private ImageDAOImpl imageDAO;
 
     @Override
-    public Image create(Image image) {
-        validate(image);
-        return imageDAO.create(image);
+    public Optional<Image> create(Image image) {
+        ImageValidator.validate(image);
+        return Optional.ofNullable(imageDAO.create(image));
     }
 
     @Override
-    public Image getById(Integer id) {
-        return imageDAO.getByParam(id);
+    public Optional<Image> getById(Integer id) {
+        return Optional.ofNullable(imageDAO.getByParam(id));
     }
 
     @Override
@@ -34,18 +37,12 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public void updateById(Integer id, Image image) {
-        validate(image);
+        ImageValidator.validate(image);
         imageDAO.updateById(id, image);
     }
 
     @Override
     public void deleteById(Integer id) {
         imageDAO.deleteById(id);
-    }
-
-    private void validate(Image image) {
-        if (image.getFilepath().isEmpty()) {
-            throw new ServiceException(ServiceExceptionEnum.INVALID_DATA, "Путь файла не может быть пустым");
-        }
     }
 }

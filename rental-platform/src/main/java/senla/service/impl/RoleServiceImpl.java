@@ -7,8 +7,10 @@ import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Role;
 import senla.service.RoleService;
+import senla.util.validator.RoleValidator;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -18,14 +20,14 @@ public class RoleServiceImpl implements RoleService {
     private RoleDAOImpl roleDAO;
 
     @Override
-    public Role create(Role role) {
-        validate(role);
-        return roleDAO.create(role);
+    public Optional<Role> create(Role role) {
+        RoleValidator.validate(role);
+        return Optional.ofNullable(roleDAO.create(role));
     }
 
     @Override
-    public Role getById(Integer id) {
-        return roleDAO.getByParam(id);
+    public Optional<Role> getById(Integer id) {
+        return Optional.ofNullable(roleDAO.getByParam(id));
     }
 
     @Override
@@ -35,18 +37,12 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public void updateById(Integer id, Role role) {
-        validate(role);
+        RoleValidator.validate(role);
         roleDAO.updateById(id, role);
     }
 
     @Override
     public void deleteById(Integer id) {
         roleDAO.deleteById(id);
-    }
-
-    private void validate(Role role) {
-        if (role.getRoleName().isEmpty()) {
-            throw new ServiceException(ServiceExceptionEnum.INVALID_DATA, "Имя роли не может быть пустым");
-        }
     }
 }

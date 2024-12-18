@@ -9,6 +9,7 @@ import senla.model.UserRole;
 import senla.service.UserRoleService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class UserRoleServiceImpl implements UserRoleService {
@@ -22,8 +23,8 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     @Override
-    public UserRole getByUserAndRole(User user, Role role) {
-        return userRoleDAO.getByUserAndRole(user, role);
+    public Optional<UserRole> getByUserAndRole(User user, Role role) {
+        return Optional.ofNullable(userRoleDAO.getByUserAndRole(user, role));
     }
 
     @Override

@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import senla.dicontainer.DIContainer;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Property;
 import senla.service.PropertyService;
 import senla.service.UserService;
@@ -31,7 +33,8 @@ public class PropertyController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Property property = PropertyMapper.fromRequest(request, userService);
-        propertyService.create(property);
+        propertyService.create(property)
+                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.CREATION_FAILED));
         response.sendRedirect(request.getContextPath() + "/properties");
     }
 
@@ -41,10 +44,11 @@ public class PropertyController extends HttpServlet {
 
         if (idParam != null && !idParam.isEmpty()) {
             Integer propertyId = Integer.parseInt(idParam);
-            Property property = propertyService.getById(propertyId);
-            if (property != null) {
-                request.setAttribute("property", property);
-            }
+            propertyService.getById(propertyId)
+                    .ifPresentOrElse(
+                            property -> request.setAttribute("property", property),
+                            () -> { throw new ServiceException(ServiceExceptionEnum.SEARCH_FAILED); }
+                    );
         }
         List<Property> properties = propertyService.getAll();
         request.setAttribute("properties", properties);

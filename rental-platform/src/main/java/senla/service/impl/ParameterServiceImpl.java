@@ -7,8 +7,10 @@ import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Parameter;
 import senla.service.ParameterService;
+import senla.util.validator.ParameterValidator;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class ParameterServiceImpl implements ParameterService {
@@ -17,14 +19,14 @@ public class ParameterServiceImpl implements ParameterService {
     private ParameterDAOImpl parameterDAO;
 
     @Override
-    public Parameter create(Parameter parameter) {
-        validate(parameter);
-        return parameterDAO.create(parameter);
+    public Optional<Parameter> create(Parameter parameter) {
+        ParameterValidator.validate(parameter);
+        return Optional.ofNullable(parameterDAO.create(parameter));
     }
 
     @Override
-    public Parameter getById(Integer id) {
-        return parameterDAO.getByParam(id);
+    public Optional<Parameter> getById(Integer id) {
+        return Optional.ofNullable(parameterDAO.getByParam(id));
     }
 
     @Override
@@ -34,18 +36,12 @@ public class ParameterServiceImpl implements ParameterService {
 
     @Override
     public void updateById(Integer id, Parameter parameter) {
-        validate(parameter);
+        ParameterValidator.validate(parameter);
         parameterDAO.updateById(id, parameter);
     }
 
     @Override
     public void deleteById(Integer id) {
         parameterDAO.deleteById(id);
-    }
-
-    private void validate(Parameter parameter) {
-        if (parameter.getName().isEmpty()) {
-            throw new ServiceException(ServiceExceptionEnum.INVALID_DATA, "Название параметра не может быть пустым");
-        }
     }
 }

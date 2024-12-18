@@ -7,8 +7,10 @@ import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Review;
 import senla.service.ReviewService;
+import senla.util.validator.ReviewValidator;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class ReviewServiceImpl implements ReviewService {
@@ -17,14 +19,14 @@ public class ReviewServiceImpl implements ReviewService {
     private ReviewDAOImpl reviewDAO;
 
     @Override
-    public Review create(Review review) {
-        validate(review);
-        return reviewDAO.create(review);
+    public Optional<Review> create(Review review) {
+        ReviewValidator.validate(review);
+        return Optional.ofNullable(reviewDAO.create(review));
     }
 
     @Override
-    public Review getById(Integer id) {
-        return reviewDAO.getByParam(id);
+    public Optional<Review> getById(Integer id) {
+        return Optional.ofNullable(reviewDAO.getByParam(id));
     }
 
     @Override
@@ -34,18 +36,12 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public void updateById(Integer id, Review review) {
-        validate(review);
+        ReviewValidator.validate(review);
         reviewDAO.updateById(id, review);
     }
 
     @Override
     public void deleteById(Integer id) {
         reviewDAO.deleteById(id);
-    }
-
-    private void validate(Review review) {
-        if (review.getRating() < 1 || review.getRating() > 5) {
-            throw new ServiceException(ServiceExceptionEnum.INVALID_DATA, "Рейтинг должен быть в диапазоне от 1 до 5");
-        }
     }
 }

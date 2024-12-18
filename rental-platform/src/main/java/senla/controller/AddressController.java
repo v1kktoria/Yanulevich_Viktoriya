@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import senla.dicontainer.DIContainer;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Address;
 import senla.service.AddressService;
 import senla.service.PropertyService;
@@ -31,7 +33,8 @@ public class AddressController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Address address = AddressMapper.fromRequest(request, propertyService);
-        addressService.create(address);
+        addressService.create(address)
+                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.CREATION_FAILED));
         response.sendRedirect(request.getContextPath() + "/addresses");
     }
 
@@ -41,10 +44,11 @@ public class AddressController extends HttpServlet {
 
         if (idParam != null && !idParam.isEmpty()) {
             Integer addressId = Integer.parseInt(idParam);
-            Address address = addressService.getById(addressId);
-            if (address != null) {
-                request.setAttribute("address", address);
-            }
+            addressService.getById(addressId)
+                    .ifPresentOrElse(
+                            address -> request.setAttribute("address", address),
+                            () -> { throw new ServiceException(ServiceExceptionEnum.SEARCH_FAILED); }
+                    );
         }
         List<Address> addresses = addressService.getAll();
         request.setAttribute("addresses", addresses);

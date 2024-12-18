@@ -4,11 +4,13 @@ import senla.dao.impl.ApplicationDAOImpl;
 import senla.dao.impl.PropertyDAOImpl;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
+import senla.model.Analytics;
 import senla.model.Application;
 import senla.model.Property;
 import senla.service.ApplicationService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class ApplicationServiceImpl implements ApplicationService {
@@ -20,19 +22,19 @@ public class ApplicationServiceImpl implements ApplicationService {
     private PropertyDAOImpl propertyDAO;
 
     @Override
-    public Application create(Application application) {
-        return applicationDAO.create(application);
+    public Optional<Application> create(Application application) {
+        return Optional.ofNullable(applicationDAO.create(application));
     }
 
     @Override
-    public Application getById(Integer id) {
-        return applicationDAO.getByParam(id);
+    public Optional<Application> getById(Integer id) {
+        return Optional.ofNullable(applicationDAO.getByParam(id));
     }
 
     @Override
-    public Application getByPropertyId(Integer id) {
+    public Optional<Application> getByPropertyId(Integer id) {
         Property property = propertyDAO.getByParam(id);
-        return applicationDAO.getByParam(property);
+        return Optional.ofNullable(applicationDAO.getByParam(property));
     }
 
     @Override

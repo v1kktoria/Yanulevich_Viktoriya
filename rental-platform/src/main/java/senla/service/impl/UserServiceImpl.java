@@ -7,8 +7,10 @@ import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.User;
 import senla.service.UserService;
+import senla.util.validator.UserValidator;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class UserServiceImpl implements UserService {
@@ -17,17 +19,17 @@ public class UserServiceImpl implements UserService {
     private UserDAOImpl userDAO;
 
     @Override
-    public User create(User user) {
-        validate(user);
+    public Optional<User> create(User user) {
+        UserValidator.validate(user);
         if (userDAO.existsByUsername(user.getUsername())) {
             throw new ServiceException(ServiceExceptionEnum.USER_ALREADY_EXISTS, user.getUsername());
         }
-        return userDAO.create(user);
+        return Optional.ofNullable(userDAO.create(user));
     }
 
     @Override
-    public User getById(Integer id) {
-        return userDAO.getByParam(id);
+    public Optional<User> getById(Integer id) {
+        return Optional.ofNullable(userDAO.getByParam(id));
     }
 
     @Override
@@ -37,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateById(Integer id, User user) {
-        validate(user);
+        UserValidator.validate(user);
         if (!user.getUsername().equals(userDAO.getByParam(id).getUsername()) && userDAO.existsByUsername(user.getUsername())) {
             throw new ServiceException(ServiceExceptionEnum.USER_ALREADY_EXISTS, user.getUsername());
         }
@@ -47,15 +49,5 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteById(Integer id) {
         userDAO.deleteById(id);
-    }
-
-    private void validate(User user) {
-        if (user.getUsername().isEmpty()) {
-            throw new ServiceException(ServiceExceptionEnum.INVALID_DATA, "Имя пользователя не может быть пустым");
-        }
-
-        if (user.getPassword().isEmpty() || user.getPassword().length() < 8) {
-            throw new ServiceException(ServiceExceptionEnum.INVALID_DATA, "Пароль должен быть не меньше 8 символов");
-        }
     }
 }

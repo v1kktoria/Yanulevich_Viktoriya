@@ -1,6 +1,8 @@
 package senla.util.mapper;
 
 import jakarta.servlet.http.HttpServletRequest;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Property;
 import senla.model.Review;
 import senla.model.User;
@@ -33,8 +35,10 @@ public class ReviewMapper {
         String comment = request.getParameter("comment");
 
         return Review.builder()
-                .property(propertyService.getById(propertyId))
-                .user(userService.getById(userId))
+                .property(propertyService.getById(propertyId)
+                        .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.SEARCH_FAILED)))
+                .user(userService.getById(userId)
+                        .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.SEARCH_FAILED)))
                 .rating(rating)
                 .comment(comment)
                 .createdAt(new java.sql.Timestamp(System.currentTimeMillis()))

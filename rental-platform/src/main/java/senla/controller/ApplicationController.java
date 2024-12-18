@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import senla.dicontainer.DIContainer;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Application;
 import senla.service.ApplicationService;
 import senla.service.PropertyService;
@@ -35,7 +37,8 @@ public class ApplicationController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Application application = ApplicationMapper.fromRequest(request, propertyService, userService);
-        applicationService.create(application);
+        applicationService.create(application)
+                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.CREATION_FAILED));
         response.sendRedirect(request.getContextPath() + "/applications");
     }
 
@@ -45,10 +48,11 @@ public class ApplicationController extends HttpServlet {
 
         if (idParam != null && !idParam.isEmpty()) {
             Integer applicationId = Integer.parseInt(idParam);
-            Application application = applicationService.getById(applicationId);
-            if (application != null) {
-                request.setAttribute("application", application);
-            }
+            applicationService.getById(applicationId)
+                    .ifPresentOrElse(
+                            application -> request.setAttribute("application", application),
+                            () -> { throw new ServiceException(ServiceExceptionEnum.SEARCH_FAILED); }
+                    );
         }
         List<Application> applications = applicationService.getAll();
         request.setAttribute("applications", applications);

@@ -3,12 +3,13 @@ package senla.service;
 import senla.model.Parameter;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ParameterService {
 
-    Parameter create(Parameter parameter);
+    Optional<Parameter> create(Parameter parameter);
 
-    Parameter getById(Integer id);
+    Optional<Parameter> getById(Integer id);
 
     List<Parameter> getAll();
 

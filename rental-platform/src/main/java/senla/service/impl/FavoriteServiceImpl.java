@@ -9,6 +9,7 @@ import senla.model.User;
 import senla.service.FavoriteService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class FavoriteServiceImpl implements FavoriteService {
@@ -20,19 +21,19 @@ public class FavoriteServiceImpl implements FavoriteService {
     private UserDAOImpl userDAO;
 
     @Override
-    public Favorite create(Favorite favorite) {
-        return favoriteDAO.create(favorite);
+    public Optional<Favorite> create(Favorite favorite) {
+        return Optional.ofNullable(favoriteDAO.create(favorite));
     }
 
     @Override
-    public Favorite getById(Integer id) {
-        return favoriteDAO.getByParam(id);
+    public Optional<Favorite> getById(Integer id) {
+        return Optional.ofNullable(favoriteDAO.getByParam(id));
     }
 
     @Override
-    public Favorite getByUserId(Integer id) {
+    public Optional<Favorite> getByUserId(Integer id) {
         User user = userDAO.getByParam(id);
-        return favoriteDAO.getByParam(user);
+        return Optional.ofNullable(favoriteDAO.getByParam(user));
     }
 
     @Override

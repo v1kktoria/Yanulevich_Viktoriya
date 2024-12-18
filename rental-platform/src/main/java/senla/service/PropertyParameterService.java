@@ -5,12 +5,13 @@ import senla.model.Property;
 import senla.model.PropertyParameter;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PropertyParameterService {
 
     void create(PropertyParameter propertyParameter);
 
-    PropertyParameter getByPropertyAndParameter(Property property, Parameter parameter);
+    Optional<PropertyParameter> getByPropertyAndParameter(Property property, Parameter parameter);
 
     List<PropertyParameter> getAll();
 

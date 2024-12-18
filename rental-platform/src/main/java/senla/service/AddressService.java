@@ -3,14 +3,15 @@ package senla.service;
 import senla.model.Address;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AddressService {
 
-    Address create(Address address);
+    Optional<Address> create(Address address);
 
-    Address getById(Integer id);
+    Optional<Address> getById(Integer id);
 
-    Address getByPropertyId(Integer id);
+    Optional<Address> getByPropertyId(Integer id);
 
     List<Address> getAll();
 

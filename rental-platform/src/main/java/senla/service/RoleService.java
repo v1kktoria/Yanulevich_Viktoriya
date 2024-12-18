@@ -4,12 +4,13 @@ package senla.service;
 import senla.model.Role;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RoleService {
 
-    Role create(Role role);
+    Optional<Role> create(Role role);
 
-    Role getById(Integer id);
+    Optional<Role> getById(Integer id);
 
     List<Role> getAll();
 

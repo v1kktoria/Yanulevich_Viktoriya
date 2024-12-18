@@ -7,6 +7,7 @@ import senla.model.Report;
 import senla.service.ReportService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -16,13 +17,13 @@ public class ReportServiceImpl implements ReportService {
     private ReportDAOImpl reportDAO;
 
     @Override
-    public Report create(Report report) {
-        return reportDAO.create(report);
+    public Optional<Report> create(Report report) {
+        return Optional.ofNullable(reportDAO.create(report));
     }
 
     @Override
-    public Report getById(Integer id) {
-        return reportDAO.getByParam(id);
+    public Optional<Report> getById(Integer id) {
+        return Optional.ofNullable(reportDAO.getByParam(id));
     }
 
     @Override

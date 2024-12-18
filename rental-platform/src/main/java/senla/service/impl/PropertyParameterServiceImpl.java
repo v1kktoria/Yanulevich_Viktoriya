@@ -9,6 +9,7 @@ import senla.model.PropertyParameter;
 import senla.service.PropertyParameterService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -23,8 +24,8 @@ public class PropertyParameterServiceImpl implements PropertyParameterService {
     }
 
     @Override
-    public PropertyParameter getByPropertyAndParameter(Property property, Parameter parameter) {
-        return propertyParameterDAO.getByPropertyAndParameter(property, parameter);
+    public Optional<PropertyParameter> getByPropertyAndParameter(Property property, Parameter parameter) {
+        return Optional.ofNullable(propertyParameterDAO.getByPropertyAndParameter(property, parameter));
     }
 
     @Override

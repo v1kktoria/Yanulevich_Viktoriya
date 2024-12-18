@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import senla.dicontainer.DIContainer;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.User;
 import senla.service.UserService;
 import senla.util.mapper.UserMapper;
@@ -27,7 +29,8 @@ public class UserController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         User user = UserMapper.fromRequest(request);
-        userService.create(user);
+        userService.create(user)
+                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.CREATION_FAILED));
         response.sendRedirect(request.getContextPath() + "/users");
     }
 
@@ -37,10 +40,11 @@ public class UserController extends HttpServlet {
 
         if (idParam != null && !idParam.isEmpty()) {
             Integer userId = Integer.parseInt(idParam);
-            User user = userService.getById(userId);
-            if (user != null) {
-                request.setAttribute("user", user);
-            }
+            userService.getById(userId)
+                    .ifPresentOrElse(
+                            user -> request.setAttribute("user", user),
+                            () -> { throw new ServiceException(ServiceExceptionEnum.SEARCH_FAILED); }
+                    );
         }
         List<User> users = userService.getAll();
         request.setAttribute("users", users);

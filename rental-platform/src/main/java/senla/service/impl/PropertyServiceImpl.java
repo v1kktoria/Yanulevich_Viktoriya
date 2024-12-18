@@ -9,9 +9,11 @@ import senla.exception.ServiceExceptionEnum;
 import senla.model.Property;
 import senla.model.User;
 import senla.service.PropertyService;
+import senla.util.validator.PropertyValidator;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -24,20 +26,20 @@ public class PropertyServiceImpl implements PropertyService {
     private UserDAOImpl userDAO;
 
     @Override
-    public Property create(Property property) {
-        validate(property);
-        return propertyDAO.create(property);
+    public Optional<Property> create(Property property) {
+        PropertyValidator.validate(property);
+        return Optional.ofNullable(propertyDAO.create(property));
     }
 
     @Override
-    public Property getById(Integer id) {
-        return propertyDAO.getByParam(id);
+    public Optional<Property> getById(Integer id) {
+        return Optional.ofNullable(propertyDAO.getByParam(id));
     }
 
     @Override
-    public Property getByUserId(Integer id) {
+    public Optional<Property> getByUserId(Integer id) {
         User user = userDAO.getByParam(id);
-        return propertyDAO.getByParam(user);
+        return Optional.ofNullable(propertyDAO.getByParam(user));
     }
 
     @Override
@@ -47,7 +49,7 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public void updateById(Integer id, Property property) {
-        validate(property);
+        PropertyValidator.validate(property);
         propertyDAO.updateById(id, property);
     }
 
@@ -56,13 +58,4 @@ public class PropertyServiceImpl implements PropertyService {
         propertyDAO.deleteById(id);
     }
 
-    private void validate(Property property) {
-        if (property.getArea() < 0) {
-            throw new ServiceException(ServiceExceptionEnum.INVALID_DATA, "Площадь не может быть меньше нуля");
-        } else if (property.getRooms() < 0) {
-            throw new ServiceException(ServiceExceptionEnum.INVALID_DATA, "Количество комнат не может быть меньше нуля");
-        } else if (property.getPrice() < 0) {
-            throw new ServiceException(ServiceExceptionEnum.INVALID_DATA, "Цена не может быть меньше нуля");
-        }
-    }
 }

@@ -3,14 +3,15 @@ package senla.service;
 import senla.model.Favorite;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FavoriteService {
 
-    Favorite create(Favorite favorite);
+    Optional<Favorite> create(Favorite favorite);
 
-    Favorite getById(Integer id);
+    Optional<Favorite> getById(Integer id);
 
-    Favorite getByUserId(Integer id);
+    Optional<Favorite> getByUserId(Integer id);
 
     List<Favorite> getAll();
 

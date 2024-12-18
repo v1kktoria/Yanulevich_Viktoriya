@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import senla.dicontainer.DIContainer;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Review;
 import senla.service.PropertyService;
 import senla.service.ReviewService;
@@ -35,7 +37,8 @@ public class ReviewController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Review review = ReviewMapper.fromRequest(request, propertyService, userService);
-        reviewService.create(review);
+        reviewService.create(review)
+                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.CREATION_FAILED));
         response.sendRedirect(request.getContextPath() + "/reviews");
     }
 
@@ -45,10 +48,11 @@ public class ReviewController extends HttpServlet {
 
         if (idParam != null && !idParam.isEmpty()) {
             Integer reviewId = Integer.parseInt(idParam);
-            Review review = reviewService.getById(reviewId);
-            if (review != null) {
-                request.setAttribute("review", review);
-            }
+            reviewService.getById(reviewId)
+                    .ifPresentOrElse(
+                            review -> request.setAttribute("review", review),
+                            () -> { throw new ServiceException(ServiceExceptionEnum.SEARCH_FAILED); }
+                    );
         }
         List<Review> reviews = reviewService.getAll();
         request.setAttribute("reviews", reviews);

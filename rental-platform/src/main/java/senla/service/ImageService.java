@@ -3,12 +3,13 @@ package senla.service;
 import senla.model.Image;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ImageService {
 
-    Image create(Image image);
+    Optional<Image> create(Image image);
 
-    Image getById(Integer id);
+    Optional<Image> getById(Integer id);
 
     List<Image> getAll();
 
