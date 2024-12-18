@@ -12,7 +12,8 @@ public enum ExceptionEnum {
     TRANSACTION_ERROR("Ошибка транзакции"),
     CONNECTION_CLOSE_ERROR("Ошибка при закрытии соединения"),
     DATABASE_CONNECTION_ERROR("Ошибка при подключении к базе данных"),
-    INVALID_PARAMETER_ERROR("Некорректное значение параметра: %s");
+    INVALID_PARAMETER_ERROR("Некорректное значение параметра: %s"),
+    CLASS_LOAD_ERROR("Не удалось найти класс: %s");
 
     private final String message;
 }

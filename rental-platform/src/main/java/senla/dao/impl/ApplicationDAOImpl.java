@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 
 @Component
 public class ApplicationDAOImpl extends AbstractDAO<Application, Integer> {
@@ -24,7 +25,7 @@ public class ApplicationDAOImpl extends AbstractDAO<Application, Integer> {
     private static final String SQL_CREATE = "INSERT INTO Applications (property_id, tenant_id, message, status, created_at) VALUES (?, ?, ?, ?, ?)";
 
     private static final String SQL_GET_ALL =
-            "SELECT a.id AS application_id, a.property_id, a.tenant_id, a.message, a.status, a.created_at, a.deleted, " +
+            "SELECT a.id, a.property_id, a.tenant_id, a.message, a.status, a.created_at, a.deleted, " +
                     "p.id AS property_id, p.*, p.created_at AS property_created_at, p.deleted AS property_deleted, " +
                     "u.id AS tenant_id, u.username AS tenant_username, u.password AS tenant_password, u.deleted AS tenant_deleted, " +
                     "pu.id AS user_id, pu.username AS user_username, pu.password AS user_password, pu.deleted AS user_deleted FROM ActiveApplications a " +
@@ -44,7 +45,7 @@ public class ApplicationDAOImpl extends AbstractDAO<Application, Integer> {
         statement.setInt(1, application.getProperty().getId());
         statement.setInt(2, application.getTenant().getId());
         statement.setString(3, application.getMessage());
-        statement.setString(4, application.getStatus().name());
+        statement.setObject(4, application.getStatus(), Types.OTHER);
         statement.setTimestamp(5, Timestamp.valueOf(application.getCreatedAt()));
         if (isUpdate) {
             statement.setBoolean(6, application.isDeleted());

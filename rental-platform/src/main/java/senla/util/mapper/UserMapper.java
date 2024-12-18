@@ -1,5 +1,6 @@
 package senla.util.mapper;
 
+import jakarta.servlet.http.HttpServletRequest;
 import senla.model.User;
 
 import java.sql.ResultSet;
@@ -13,5 +14,11 @@ public class UserMapper {
                 .password(resultSet.getString(prefix +"password"))
                 .deleted(resultSet.getBoolean(prefix +"deleted"))
                 .build();
+    }
+
+    public static User fromRequest(HttpServletRequest request) {
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        return User.builder().username(username).password(password).build();
     }
 }
