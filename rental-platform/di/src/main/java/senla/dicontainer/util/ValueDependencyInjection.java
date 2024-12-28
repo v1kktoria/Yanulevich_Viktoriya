@@ -3,8 +3,6 @@ package senla.dicontainer.util;
 import senla.dicontainer.annotation.Value;
 import senla.dicontainer.exception.DIException;
 import senla.dicontainer.exception.DIExceptionEnum;
-import senla.util.PropertiesUtil;
-
 import java.util.Arrays;
 
 public class ValueDependencyInjection {
