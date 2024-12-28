@@ -173,6 +173,7 @@ public abstract class AbstractDAO<T, ID> implements ParentDAO<T, ID> {
         String tableName = className.replace("DAOImpl", "").toLowerCase();
         String seqName;
         if (tableName.equals("property")) tableName = "propertie";
+        if (tableName.equals("address")) tableName = "addresse";
         if (tableName.equals("analytics")) seqName = tableName + "_id_seq";
         else seqName = tableName + "s_id_seq";
         String query = "SELECT currval('" + seqName + "')";

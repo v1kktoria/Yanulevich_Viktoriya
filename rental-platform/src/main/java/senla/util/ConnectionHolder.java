@@ -2,6 +2,7 @@ package senla.util;
 
 import senla.dicontainer.annotation.Component;
 import senla.dicontainer.annotation.Value;
+import senla.exception.ClassLoadingException;
 import senla.exception.ConnectionCloseException;
 import senla.exception.DatabaseConnectionException;
 import senla.exception.TransactionException;
@@ -41,6 +42,7 @@ public class ConnectionHolder {
 
         try {
             Connection connection;
+            Class.forName("org.postgresql.Driver");
             if (!unusedConnection.isEmpty()) {
                 while (true) {
                     connection = unusedConnection.remove(0);
@@ -61,6 +63,8 @@ public class ConnectionHolder {
             return connection;
         } catch (SQLException e) {
             throw new DatabaseConnectionException(e);
+        } catch (ClassNotFoundException e) {
+            throw ClassLoadingException.forClass("org.postgresql.Driver");
         }
     }
 
