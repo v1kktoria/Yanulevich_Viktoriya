@@ -11,7 +11,7 @@ public interface AddressService {
 
     Optional<Address> getById(Integer id);
 
-    Optional<Address> getByPropertyId(Integer id);
+    List<Address> getByPropertyId(Integer id);
 
     List<Address> getAll();
 

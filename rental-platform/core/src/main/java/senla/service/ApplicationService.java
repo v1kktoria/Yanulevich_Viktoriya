@@ -11,7 +11,7 @@ public interface ApplicationService {
 
     Optional<Application> getById(Integer id);
 
-    Optional<Application> getByPropertyId(Integer id);
+    List<Application> getByPropertyId(Integer id);
 
     List<Application> getAll();
 

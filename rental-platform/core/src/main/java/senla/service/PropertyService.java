@@ -11,11 +11,13 @@ public interface PropertyService {
 
     Optional<Property> getById(Integer id);
 
-    Optional<Property> getByUserId(Integer id);
+    List<Property> getByUserId(Integer id);
 
     List<Property> getAll();
 
     void updateById(Integer id, Property property);
 
     void deleteById(Integer id);
+
+    List<Property> getAllWithEssentialDetails();
 }

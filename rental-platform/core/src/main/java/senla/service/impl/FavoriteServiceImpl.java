@@ -7,6 +7,7 @@ import senla.dicontainer.annotation.Component;
 import senla.model.Favorite;
 import senla.model.User;
 import senla.service.FavoriteService;
+import senla.util.TransactionManager;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,32 +23,47 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Override
     public Optional<Favorite> create(Favorite favorite) {
-        return Optional.ofNullable(favoriteDAO.create(favorite));
+        return TransactionManager.executeInTransaction(() -> {
+            return Optional.ofNullable(favoriteDAO.save(favorite));
+        });
     }
 
     @Override
     public Optional<Favorite> getById(Integer id) {
-        return Optional.ofNullable(favoriteDAO.getByParam(id));
+        return TransactionManager.executeInTransaction(() -> {
+            return Optional.ofNullable(favoriteDAO.findById(id));
+        });
     }
 
     @Override
-    public Optional<Favorite> getByUserId(Integer id) {
-        User user = userDAO.getByParam(id);
-        return Optional.ofNullable(favoriteDAO.getByParam(user));
+    public List<Favorite> getByUserId(Integer id) {
+        return TransactionManager.executeInTransaction(() -> {
+            User user = userDAO.findById(id);
+            return favoriteDAO.findByUser(user);
+        });
     }
 
     @Override
     public List<Favorite> getAll() {
-        return favoriteDAO.getAll();
+        return TransactionManager.executeInTransaction(() -> {
+            return favoriteDAO.findAll();
+        });
     }
 
     @Override
     public void updateById(Integer id, Favorite favorite) {
-        favoriteDAO.updateById(id, favorite);
+        TransactionManager.executeInTransaction(() -> {
+            favorite.setId(id);
+            favoriteDAO.update(favorite);
+            return Optional.empty();
+        });
     }
 
     @Override
     public void deleteById(Integer id) {
-        favoriteDAO.deleteById(id);
+        TransactionManager.executeInTransaction(() -> {
+            favoriteDAO.deleteById(id);
+            return Optional.empty();
+        });
     }
 }

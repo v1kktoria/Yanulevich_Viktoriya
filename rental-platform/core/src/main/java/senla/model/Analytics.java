@@ -1,22 +1,33 @@
 package senla.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
+@Data
 @Builder
-public class Analytics {
-    private int id;
+@NoArgsConstructor
+@AllArgsConstructor
+@jakarta.persistence.Entity
+@Table(name = "analytics")
+public class Analytics extends Entity{
+    @OneToOne
+    @JoinColumn(name = "property_id")
     private Property property;
+
+    @Column(name = "views")
     private int views;
+
+    @Column(name = "applications_count")
     private int applicationsCount;
+
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 }

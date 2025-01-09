@@ -29,12 +29,13 @@ CREATE TABLE Users (
 
 CREATE TABLE Profiles (
                           id INT PRIMARY KEY DEFAULT nextval('profiles_id_seq'),
+                          user_id INT NOT NULL,
                           first_name VARCHAR(255) NOT NULL,
                           last_name VARCHAR(255) NOT NULL,
                           email VARCHAR(255) NOT NULL UNIQUE,
                           phone VARCHAR(20) NOT NULL,
                           registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                          FOREIGN KEY (id) REFERENCES Users(id) ON DELETE CASCADE,
+                          FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
                           CONSTRAINT chk_first_name_length CHECK (length(first_name) > 0),
                           CONSTRAINT chk_last_name_length CHECK (length(last_name) > 0),
                           CONSTRAINT chk_email_length CHECK (length(email) > 3)
@@ -148,9 +149,15 @@ CREATE TABLE Images (
 CREATE TABLE Favorites (
                            id INT PRIMARY KEY DEFAULT nextval('favorites_id_seq'),
                            user_id INT NOT NULL,
-                           property_id INT NOT NULL,
-                           FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
-                           FOREIGN KEY (property_id) REFERENCES Properties(id) ON DELETE CASCADE
+                           FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE Favorites_Properties (
+                                      favorite_id INT NOT NULL,
+                                      property_id INT NOT NULL,
+                                      PRIMARY KEY (favorite_id, property_id),
+                                      FOREIGN KEY (favorite_id) REFERENCES Favorites(id) ON DELETE CASCADE,
+                                      FOREIGN KEY (property_id) REFERENCES Properties(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Reports (
@@ -176,4 +183,4 @@ CREATE VIEW ActiveReports AS SELECT * FROM Reports WHERE deleted = FALSE;
 CREATE INDEX idx_properties_owner_id ON Properties (owner_id);
 CREATE INDEX idx_applications_property_id ON Applications (property_id);
 CREATE INDEX idx_users_username ON Users (username);
-CREATE INDEX idx_favorites_user_property ON Favorites (user_id, property_id);
+CREATE INDEX idx_favorites_user ON Favorites (user_id);

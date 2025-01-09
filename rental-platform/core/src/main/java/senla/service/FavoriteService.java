@@ -11,7 +11,7 @@ public interface FavoriteService {
 
     Optional<Favorite> getById(Integer id);
 
-    Optional<Favorite> getByUserId(Integer id);
+    List<Favorite> getByUserId(Integer id);
 
     List<Favorite> getAll();
 

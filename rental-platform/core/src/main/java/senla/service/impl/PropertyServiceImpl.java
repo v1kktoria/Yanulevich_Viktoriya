@@ -4,17 +4,14 @@ import senla.dao.impl.PropertyDAOImpl;
 import senla.dao.impl.UserDAOImpl;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
-import senla.exception.ServiceException;
-import senla.exception.ServiceExceptionEnum;
 import senla.model.Property;
 import senla.model.User;
 import senla.service.PropertyService;
+import senla.util.TransactionManager;
 import senla.util.validator.PropertyValidator;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 public class PropertyServiceImpl implements PropertyService {
@@ -27,35 +24,58 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public Optional<Property> create(Property property) {
-        PropertyValidator.validate(property);
-        return Optional.ofNullable(propertyDAO.create(property));
+        return TransactionManager.executeInTransaction(() -> {
+            PropertyValidator.validate(property);
+            return Optional.ofNullable(propertyDAO.save(property));
+        });
     }
 
     @Override
     public Optional<Property> getById(Integer id) {
-        return Optional.ofNullable(propertyDAO.getByParam(id));
+        return TransactionManager.executeInTransaction(() -> {
+            return Optional.ofNullable(propertyDAO.findById(id));
+        });
     }
 
     @Override
-    public Optional<Property> getByUserId(Integer id) {
-        User user = userDAO.getByParam(id);
-        return Optional.ofNullable(propertyDAO.getByParam(user));
+    public List<Property> getByUserId(Integer id) {
+        return TransactionManager.executeInTransaction(() -> {
+            User user = userDAO.findById(id);
+            return propertyDAO.findByUser(user);
+        });
     }
 
     @Override
     public List<Property> getAll() {
-        return propertyDAO.getAll();
+        return TransactionManager.executeInTransaction(() -> {
+            List<Property> properties = propertyDAO.findAll();
+            properties.forEach(Property::loadLazyFields);
+            return properties;
+        });
     }
 
     @Override
     public void updateById(Integer id, Property property) {
-        PropertyValidator.validate(property);
-        propertyDAO.updateById(id, property);
+        TransactionManager.executeInTransaction(() -> {
+            property.setId(id);
+            PropertyValidator.validate(property);
+            propertyDAO.update(property);
+            return Optional.empty();
+        });
     }
 
     @Override
     public void deleteById(Integer id) {
-        propertyDAO.deleteById(id);
+        TransactionManager.executeInTransaction(() -> {
+            propertyDAO.deleteById(id);
+            return Optional.empty();
+        });
     }
 
+    @Override
+    public List<Property> getAllWithEssentialDetails() {
+        return TransactionManager.executeInTransaction(() -> {
+            return propertyDAO.findAllWithEssentialDetails();
+        });
+    }
 }

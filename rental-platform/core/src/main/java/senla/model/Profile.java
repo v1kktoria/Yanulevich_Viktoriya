@@ -1,24 +1,39 @@
 package senla.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
+@Data
 @Builder
-public class Profile {
-    private int id;
+@NoArgsConstructor
+@AllArgsConstructor
+@jakarta.persistence.Entity
+@Table(name = "profiles")
+public class Profile extends Entity{
+    @Column(name = "first_name")
     private String firstname;
+
+    @Column(name = "last_name")
     private String lastname;
+
+    @Column(name = "email")
     private String email;
+
+    @Column(name = "phone")
     private String phone;
+
+    @Column(name = "registration_date")
     private LocalDateTime registrationDate;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
     private User user;
 }

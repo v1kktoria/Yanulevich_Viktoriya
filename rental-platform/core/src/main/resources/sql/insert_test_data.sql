@@ -15,12 +15,6 @@ DO $$
         INSERT INTO Users (username, password) VALUES ('alekseev', 'admin789');
         user_id3 := currval('users_id_seq');
 
-        INSERT INTO Profiles (first_name, last_name, email, phone)
-        VALUES
-            ('Иван', 'Иванов', 'ivanov@example.com', '+3752910020030'),
-            ('Петр', 'Петров', 'petrov@example.com', '+3752910020031'),
-            ('Алексей', 'Алексеев', 'alekseev@example.com', '+3752910020032');
-
         INSERT INTO Roles (role_name, description)
         VALUES ('Администратор', 'Полный доступ ко всем функциям системы');
         role_id1 := currval('roles_id_seq');
@@ -98,12 +92,6 @@ DO $$
             (property_id1, 'images/kvartira1.png'),
             (property_id2, 'images/dom1.png'),
             (property_id3, 'images/ofis1.png');
-
-        INSERT INTO Favorites (user_id, property_id)
-        VALUES
-            (user_id1, property_id1),
-            (user_id2, property_id2),
-            (user_id3, property_id3);
 
         INSERT INTO Reports (user_id, type, content_id, message, status)
         VALUES

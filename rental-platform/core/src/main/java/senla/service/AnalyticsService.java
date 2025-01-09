@@ -11,7 +11,7 @@ public interface AnalyticsService {
 
     Optional<Analytics> getById(Integer id);
 
-    Optional<Analytics> getByPropertyId(Integer id);
+    List<Analytics> getByPropertyId(Integer id);
 
     List<Analytics> getAll();
 

@@ -17,4 +17,6 @@ public interface UserService {
     void updateById(Integer id, User user);
 
     void deleteById(Integer id);
+
+    List<User> getAllWithEssentialDetails();
 }

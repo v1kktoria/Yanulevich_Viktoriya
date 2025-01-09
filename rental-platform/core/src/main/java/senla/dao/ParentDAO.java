@@ -1,12 +1,14 @@
 package senla.dao;
 
+import senla.model.Identifiable;
+
+import java.io.Serializable;
 import java.util.List;
 
-public interface ParentDAO <T, ID>{
-    T create (T entity);
-    T getByParam(Object param);
-    List<T> getAll();
-    void updateById(ID id, T entity);
+public interface ParentDAO <T extends Identifiable<ID>, ID extends Serializable>{
+    T save (T entity);
+    T findById(ID id);
+    List<T> findAll();
+    void update(T entity);
     void deleteById(ID id);
-
 }

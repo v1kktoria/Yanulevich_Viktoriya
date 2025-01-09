@@ -1,18 +1,30 @@
 package senla.model;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
+import java.util.HashSet;
+import java.util.Set;
+
+@Data
 @Builder
-public class Parameter {
-    private int id;
+@NoArgsConstructor
+@AllArgsConstructor
+@jakarta.persistence.Entity
+@Table(name = "parameters")
+public class Parameter extends Entity{
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "description")
     private String description;
+
+    @OneToMany(mappedBy = "parameter", cascade = CascadeType.REMOVE)
+    private Set<PropertyParameter> propertyParameters = new HashSet<>();
 }

@@ -7,6 +7,7 @@ import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.User;
 import senla.service.UserService;
+import senla.util.TransactionManager;
 import senla.util.validator.UserValidator;
 
 import java.util.List;
@@ -20,34 +21,54 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> create(User user) {
-        UserValidator.validate(user);
-        if (userDAO.existsByUsername(user.getUsername())) {
-            throw new ServiceException(ServiceExceptionEnum.USER_ALREADY_EXISTS, user.getUsername());
-        }
-        return Optional.ofNullable(userDAO.create(user));
+        return TransactionManager.executeInTransaction(() -> {
+            UserValidator.validate(user);
+            if (userDAO.existsByUsername(user.getUsername())) {
+                throw new ServiceException(ServiceExceptionEnum.USER_ALREADY_EXISTS, user.getUsername());
+            }
+            return Optional.ofNullable(userDAO.save(user));
+        });
     }
 
     @Override
     public Optional<User> getById(Integer id) {
-        return Optional.ofNullable(userDAO.getByParam(id));
+        return TransactionManager.executeInTransaction(() -> {
+            return Optional.ofNullable(userDAO.findById(id));
+        });
     }
 
     @Override
     public List<User> getAll() {
-        return userDAO.getAll();
+        return TransactionManager.executeInTransaction(() -> {
+            return userDAO.findAll();
+        });
     }
 
     @Override
     public void updateById(Integer id, User user) {
-        UserValidator.validate(user);
-        if (!user.getUsername().equals(userDAO.getByParam(id).getUsername()) && userDAO.existsByUsername(user.getUsername())) {
-            throw new ServiceException(ServiceExceptionEnum.USER_ALREADY_EXISTS, user.getUsername());
-        }
-        userDAO.updateById(id, user);
+        TransactionManager.executeInTransaction(() -> {
+            user.setId(id);
+            UserValidator.validate(user);
+            if (!user.getUsername().equals(userDAO.findById(id).getUsername()) && userDAO.existsByUsername(user.getUsername())) {
+                throw new ServiceException(ServiceExceptionEnum.USER_ALREADY_EXISTS, user.getUsername());
+            }
+            userDAO.update(user);
+            return Optional.empty();
+        });
     }
 
     @Override
     public void deleteById(Integer id) {
-        userDAO.deleteById(id);
+        TransactionManager.executeInTransaction(() -> {
+            userDAO.deleteById(id);
+            return Optional.empty();
+        });
+    }
+
+    @Override
+    public List<User> getAllWithEssentialDetails() {
+        return TransactionManager.executeInTransaction(() -> {
+            return userDAO.findAllWithEssentialDetails();
+        });
     }
 }

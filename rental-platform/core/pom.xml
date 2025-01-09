@@ -26,5 +26,45 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>${jakarta.persistence-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-jcache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <classifier>jakarta</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.xml.bind</groupId>
+                    <artifactId>jaxb-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.glassfish.jaxb</groupId>
+                    <artifactId>jaxb-runtime</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
 </project>

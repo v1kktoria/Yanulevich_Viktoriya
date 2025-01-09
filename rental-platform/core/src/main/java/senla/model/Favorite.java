@@ -1,18 +1,34 @@
 package senla.model;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
+import java.util.Set;
+
+@Data
 @Builder
-public class Favorite {
-    private int id;
+@NoArgsConstructor
+@AllArgsConstructor
+@jakarta.persistence.Entity
+@Table(name = "favorites")
+public class Favorite extends Entity{
+    @OneToOne
+    @JoinColumn(name = "user_id")
     private User user;
-    private Property property;
+
+    @ManyToMany(cascade = CascadeType.REMOVE)
+    @JoinTable(
+            name = "favorite_properties",
+            joinColumns = @JoinColumn(name = "favorite_id"),
+            inverseJoinColumns = @JoinColumn(name = "property_id")
+    )
+    private Set<Property> property;
 }

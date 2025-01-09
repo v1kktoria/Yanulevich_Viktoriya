@@ -1,190 +1,79 @@
 package senla.dao;
 
-import senla.exception.EntityFieldAccessException;
-import senla.exception.EntityNotFoundException;
-import senla.exception.InvalidParameterException;
-import senla.util.ConnectionHolder;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import senla.exception.DatabaseException;
+import senla.exception.DatabaseExceptionEnum;
+import senla.model.Identifiable;
+import senla.util.JpaUtil;
 
-import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
 
-public abstract class AbstractDAO<T, ID> implements ParentDAO<T, ID> {
-
-    private final ConnectionHolder connectionHolder;
-
-    public AbstractDAO(ConnectionHolder connectionHolder) {
-        this.connectionHolder = connectionHolder;
-    }
-
-    protected abstract String getCreateQuery();
-
-    protected abstract String getByParamQuery(Object param);
-
-    protected abstract String getAllQuery();
-
-    protected abstract String getUpdateQuery();
-
-    protected abstract String getDeleteQuery();
-
-    protected abstract T mapRow(ResultSet resultSet) throws SQLException;
-
-    protected abstract void prepareStatementForSave(PreparedStatement statement, T entity, boolean isUpdate, ID id) throws SQLException;
+public abstract class AbstractDAO<T extends Identifiable<ID>, ID extends Serializable> implements ParentDAO<T, ID> {
+    protected abstract Class<T> getEntityClass();
 
     @Override
-    public T create(T entity) {
-        String threadName = Thread.currentThread().getName();
+    public T save(T entity) {
         try {
-            Connection connection = connectionHolder.getConnection(threadName);
-            try (PreparedStatement statement = connection.prepareStatement(getCreateQuery())) {
-                prepareStatementForSave(statement, entity, false, null);
-                statement.executeUpdate();
-                setCurrentSeqValue(connection, entity);
-                connectionHolder.commit(threadName);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                throw new EntityFieldAccessException(e);
-            }
-        } catch (SQLException e) {
-            connectionHolder.rollback(threadName);
-        } finally {
-            connectionHolder.close(threadName);
+            EntityManager entityManager = JpaUtil.getEntityManager();
+            entityManager.persist(entity);
+            return entity;
+        } catch (PersistenceException e) {
+            throw new DatabaseException(DatabaseExceptionEnum.SAVE_FAILED);
         }
-        return entity;
     }
 
     @Override
-    public T getByParam(Object param) {
-        T entity = null;
-        String threadName = Thread.currentThread().getName();
-
+    public T findById(ID id) {
         try {
-            Connection connection = connectionHolder.getConnection(threadName);
-            String query = getByParamQuery(param);
-            if (query == null) {
-                throw InvalidParameterException.forParam(param);
+            EntityManager entityManager = JpaUtil.getEntityManager();
+            T entity = entityManager.find(getEntityClass(), id);
+            if (entity == null) {
+                throw new DatabaseException(DatabaseExceptionEnum.ENTITY_NOT_FOUND, id);
             }
-            try (PreparedStatement statement = connection.prepareStatement(query)) {
-
-                if (param != null && !(param instanceof Integer)) {
-                    Object paramId = getIdFromEntity(param);
-                    if (paramId != null) statement.setObject(1, paramId);
-                }
-                else statement.setObject(1, param);
-
-                try (ResultSet resultSet = statement.executeQuery()) {
-                    if (resultSet.next()) {
-                        entity = mapRow(resultSet);
-                    } else {
-                        throw EntityNotFoundException.forParam(param);
-                    }
-                }
-            }
-            connectionHolder.commit(threadName);
-        } catch (SQLException e) {
-            connectionHolder.rollback(threadName);
-        } finally {
-            connectionHolder.close(threadName);
+            return entity;
+        } catch (PersistenceException e) {
+            throw new DatabaseException(DatabaseExceptionEnum.DATABASE_ERROR);
         }
-        return entity;
     }
-
     @Override
-    public List<T> getAll() {
-        List<T> entities = new ArrayList<>();
-        String threadName = Thread.currentThread().getName();
-
+    public List<T> findAll() {
         try {
-            Connection connection = connectionHolder.getConnection(threadName);
-            try (PreparedStatement statement = connection.prepareStatement(getAllQuery());
-                 ResultSet resultSet = statement.executeQuery()) {
-
-                while (resultSet.next()) {
-                    entities.add(mapRow(resultSet));
-                }
-            }
-            connectionHolder.commit(threadName);
-        } catch (SQLException e) {
-            connectionHolder.rollback(threadName);
-        } finally {
-            connectionHolder.close(threadName);
+            EntityManager entityManager = JpaUtil.getEntityManager();
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(getEntityClass());
+            criteriaQuery.select(criteriaQuery.from(getEntityClass()));
+            return entityManager.createQuery(criteriaQuery).getResultList();
+        } catch (PersistenceException e) {
+            throw new DatabaseException(DatabaseExceptionEnum.DATABASE_ERROR, e.getMessage());
         }
-
-        return entities;
     }
 
     @Override
-    public void updateById(ID id, T entity) {
-        String threadName = Thread.currentThread().getName();
+    public void update(T entity) {
         try {
-            Connection connection = connectionHolder.getConnection(threadName);
-            try (PreparedStatement statement = connection.prepareStatement(getUpdateQuery())) {
-                prepareStatementForSave(statement, entity, true, id);
-                int rowsUpdated = statement.executeUpdate();
-                if (rowsUpdated == 0) {
-                    throw EntityNotFoundException.forParam(id);
-                }
-                connectionHolder.commit(threadName);
-            }
-        } catch (SQLException e) {
-            connectionHolder.rollback(threadName);
-        } finally {
-            connectionHolder.close(threadName);
+            EntityManager entityManager = JpaUtil.getEntityManager();
+            entityManager.merge(entity);
+            entityManager.flush();
+        } catch (PersistenceException e) {
+            throw new DatabaseException(DatabaseExceptionEnum.UPDATE_FAILED);
         }
     }
 
     @Override
     public void deleteById(ID id) {
-        String threadName = Thread.currentThread().getName();
         try {
-            Connection connection = connectionHolder.getConnection(threadName);
-            try (PreparedStatement statement = connection.prepareStatement(getDeleteQuery())) {
-                statement.setObject(1, id);
-                int rowsUpdated = statement.executeUpdate();
-                if (rowsUpdated == 0) {
-                    throw EntityNotFoundException.forParam(id);
-                }
-                connectionHolder.commit(threadName);
-                System.out.println("Сущность с ID " + id + " успешно удалена");
+            EntityManager entityManager = JpaUtil.getEntityManager();
+            T entity = entityManager.find(getEntityClass(), id);
+            if (entity == null) {
+                throw new DatabaseException(DatabaseExceptionEnum.ENTITY_NOT_FOUND, id);
             }
-        } catch (SQLException e) {
-            connectionHolder.rollback(threadName);
-        } finally {
-            connectionHolder.close(threadName);
-        }
-    }
-
-    private Object getIdFromEntity(Object entity) {
-        try {
-            Field field = entity.getClass().getDeclaredField("id");
-            field.setAccessible(true);
-            return field.get(entity);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new EntityFieldAccessException(e);
-        }
-    }
-
-    private void setCurrentSeqValue(Connection connection, T entity) throws SQLException, NoSuchFieldException, IllegalAccessException {
-        String className = this.getClass().getSimpleName();
-        String tableName = className.replace("DAOImpl", "").toLowerCase();
-        String seqName;
-        if (tableName.equals("property")) tableName = "propertie";
-        if (tableName.equals("address")) tableName = "addresse";
-        if (tableName.equals("analytics")) seqName = tableName + "_id_seq";
-        else seqName = tableName + "s_id_seq";
-        String query = "SELECT currval('" + seqName + "')";
-        try (Statement stmt = connection.createStatement()) {
-            ResultSet resultSet = stmt.executeQuery(query);
-            if (resultSet.next()) {
-                int id = resultSet.getInt("currval");
-                Field idField = entity.getClass().getDeclaredField("id");
-                idField.setAccessible(true);
-                idField.set(entity, id);
-            }
+            entityManager.remove(entity);
+        } catch (PersistenceException e) {
+            throw new DatabaseException(DatabaseExceptionEnum.DELETE_FAILED, id);
         }
     }
 }
