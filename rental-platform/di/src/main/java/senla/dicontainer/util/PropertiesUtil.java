@@ -1,7 +1,8 @@
-package senla.util;
+package senla.dicontainer.util;
 
 import lombok.experimental.UtilityClass;
-import senla.exception.ConfigurationLoadException;
+import senla.dicontainer.exception.DIException;
+import senla.dicontainer.exception.DIExceptionEnum;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -22,7 +23,7 @@ public class PropertiesUtil {
         try (var stream = PropertiesUtil.class.getClassLoader().getResourceAsStream("application.properties")){
             PROPERTIES.load(stream);
         } catch (IOException e) {
-            throw new ConfigurationLoadException(e);
+            throw new DIException(DIExceptionEnum.CONFIGURATION_LOAD_ERROR);
         }
     }
 }
