@@ -2,23 +2,27 @@ package senla.model;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@jakarta.persistence.Entity
+@Entity
 @Table(name = "parameters")
-public class Parameter extends Entity{
+public class Parameter extends BaseEntity {
+
     @Column(name = "name")
     private String name;
 

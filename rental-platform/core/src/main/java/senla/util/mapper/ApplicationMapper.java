@@ -18,10 +18,8 @@ public class ApplicationMapper {
         String message = request.getParameter("message");
 
         return Application.builder()
-                .property(propertyService.getById(propertyId)
-                        .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.SEARCH_FAILED)))
-                .tenant(userService.getById(tenantId)
-                        .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.SEARCH_FAILED)))
+                .property(propertyService.getById(propertyId))
+                .tenant(userService.getById(tenantId))
                 .message(message)
                 .status(Status.PENDING)
                 .createdAt(LocalDateTime.now())

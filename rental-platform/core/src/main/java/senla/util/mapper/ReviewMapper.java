@@ -17,10 +17,8 @@ public class ReviewMapper {
         String comment = request.getParameter("comment");
 
         return Review.builder()
-                .property(propertyService.getById(propertyId)
-                        .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.SEARCH_FAILED)))
-                .user(userService.getById(userId)
-                        .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.SEARCH_FAILED)))
+                .property(propertyService.getById(propertyId))
+                .user(userService.getById(userId))
                 .rating(rating)
                 .comment(comment)
                 .createdAt(new java.sql.Timestamp(System.currentTimeMillis()))

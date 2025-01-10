@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface ProfileService {
 
-    Optional<Profile> create(Profile profile);
+    Profile create(Profile profile);
 
-    Optional<Profile> getById(Integer id);
+    Profile getById(Integer id);
 
     List<Profile> getAll();
 

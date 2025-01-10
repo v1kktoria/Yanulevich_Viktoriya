@@ -1,52 +1,45 @@
 package senla.service.impl;
 
-import senla.dao.impl.ApplicationDAOImpl;
-import senla.dao.impl.PropertyDAOImpl;
+import senla.dao.ApplicationDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
 import senla.model.Application;
-import senla.model.Property;
 import senla.service.ApplicationService;
 import senla.util.TransactionManager;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class ApplicationServiceImpl implements ApplicationService {
 
     @Autowired
-    private ApplicationDAOImpl applicationDAO;
-
-    @Autowired
-    private PropertyDAOImpl propertyDAO;
+    private ApplicationDao applicationDao;
 
     @Override
-    public Optional<Application> create(Application application) {
+    public Application create(Application application) {
         return TransactionManager.executeInTransaction(() -> {
-            return Optional.ofNullable(applicationDAO.save(application));
+            return applicationDao.save(application);
         });
     }
 
     @Override
-    public Optional<Application> getById(Integer id) {
+    public Application getById(Integer id) {
         return TransactionManager.executeInTransaction(() -> {
-            return Optional.ofNullable(applicationDAO.findById(id));
+            return applicationDao.findById(id);
         });
     }
 
     @Override
     public List<Application> getByPropertyId(Integer id) {
         return TransactionManager.executeInTransaction(() -> {
-            Property property = propertyDAO.findById(id);
-            return applicationDAO.findByProperty(property);
+            return applicationDao.findByPropertyId(id);
         });
     }
 
     @Override
     public List<Application> getAll() {
         return TransactionManager.executeInTransaction(() -> {
-            return applicationDAO.findAll();
+            return applicationDao.findAll();
         });
     }
 
@@ -54,16 +47,14 @@ public class ApplicationServiceImpl implements ApplicationService {
     public void updateById(Integer id, Application application) {
         TransactionManager.executeInTransaction(() -> {
             application.setId(id);
-            applicationDAO.update(application);
-            return Optional.empty();
+            applicationDao.update(application);
         });
     }
 
     @Override
     public void deleteById(Integer id) {
         TransactionManager.executeInTransaction(() -> {
-            applicationDAO.deleteById(id);
-            return Optional.empty();
+            applicationDao.deleteById(id);
         });
     }
 }

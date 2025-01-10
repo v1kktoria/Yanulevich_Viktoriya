@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface PropertyService {
 
-    Optional<Property> create(Property property);
+    Property create(Property property);
 
-    Optional<Property> getById(Integer id);
+    Property getById(Integer id);
 
     List<Property> getByUserId(Integer id);
 

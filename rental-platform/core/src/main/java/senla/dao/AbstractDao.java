@@ -12,7 +12,7 @@ import senla.util.JpaUtil;
 import java.io.Serializable;
 import java.util.List;
 
-public abstract class AbstractDAO<T extends Identifiable<ID>, ID extends Serializable> implements ParentDAO<T, ID> {
+public abstract class AbstractDao<T extends Identifiable<ID>, ID extends Serializable> implements ParentDao<T, ID> {
     protected abstract Class<T> getEntityClass();
 
     @Override
@@ -57,7 +57,6 @@ public abstract class AbstractDAO<T extends Identifiable<ID>, ID extends Seriali
         try {
             EntityManager entityManager = JpaUtil.getEntityManager();
             entityManager.merge(entity);
-            entityManager.flush();
         } catch (PersistenceException e) {
             throw new DatabaseException(DatabaseExceptionEnum.UPDATE_FAILED);
         }

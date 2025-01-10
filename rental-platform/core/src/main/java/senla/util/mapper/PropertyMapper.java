@@ -31,8 +31,7 @@ public class PropertyMapper {
                 .price(price)
                 .rooms(rooms)
                 .description(description)
-                .owner(userService.getById(ownerId)
-                        .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.SEARCH_FAILED)))
+                .owner(userService.getById(ownerId))
                 .createdAt(LocalDateTime.now())
                 .build();
     }

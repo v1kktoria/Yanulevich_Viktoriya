@@ -33,8 +33,7 @@ public class AddressController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Address address = AddressMapper.fromRequest(request, propertyService);
-        addressService.create(address)
-                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.CREATION_FAILED));
+        addressService.create(address);
         response.sendRedirect(request.getContextPath() + "/addresses");
     }
 
@@ -44,11 +43,8 @@ public class AddressController extends HttpServlet {
 
         if (idParam != null && !idParam.isEmpty()) {
             Integer addressId = Integer.parseInt(idParam);
-            addressService.getById(addressId)
-                    .ifPresentOrElse(
-                            address -> request.setAttribute("address", address),
-                            () -> { throw new ServiceException(ServiceExceptionEnum.SEARCH_FAILED); }
-                    );
+            Address address = addressService.getById(addressId);
+            request.setAttribute("address", address);
         }
         List<Address> addresses = addressService.getAll();
         request.setAttribute("addresses", addresses);

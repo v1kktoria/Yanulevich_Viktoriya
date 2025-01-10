@@ -1,6 +1,6 @@
 package senla.service.impl;
 
-import senla.dao.impl.PropertyParameterDAOImpl;
+import senla.dao.PropertyParameterDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
 import senla.model.Parameter;
@@ -11,47 +11,44 @@ import senla.service.PropertyParameterService;
 import senla.util.TransactionManager;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class PropertyParameterServiceImpl implements PropertyParameterService {
 
     @Autowired
-    private PropertyParameterDAOImpl propertyParameterDAO;
+    private PropertyParameterDao propertyParameterDao;
 
     @Override
     public void create(PropertyParameter propertyParameter) {
         TransactionManager.executeInTransaction(() -> {
-            propertyParameterDAO.save(propertyParameter);
-            return Optional.empty();
+            propertyParameterDao.save(propertyParameter);
         });
     }
 
     @Override
-    public Optional<PropertyParameter> getByPropertyAndParameter(Property property, Parameter parameter) {
+    public PropertyParameter getByPropertyAndParameter(Property property, Parameter parameter) {
         return TransactionManager.executeInTransaction(() -> {
-            return Optional.ofNullable(propertyParameterDAO.findById(PropertyParameterId.builder()
+            return propertyParameterDao.findById(PropertyParameterId.builder()
                     .property_id(property.getId())
                     .parameter_id(parameter.getId()).build()
-            ));
+            );
         });
     }
 
     @Override
     public List<PropertyParameter> getAll() {
         return TransactionManager.executeInTransaction(() -> {
-            return propertyParameterDAO.findAll();
+            return propertyParameterDao.findAll();
         });
     }
 
     @Override
     public void deleteByPropertyAndParameter(Property property, Parameter parameter) {
         TransactionManager.executeInTransaction(() -> {
-            propertyParameterDAO.deleteById(PropertyParameterId.builder()
+            propertyParameterDao.deleteById(PropertyParameterId.builder()
                     .property_id(property.getId())
                     .parameter_id(parameter.getId()).build()
             );
-            return Optional.empty();
         });
     }
 }

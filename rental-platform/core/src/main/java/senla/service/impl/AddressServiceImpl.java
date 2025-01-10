@@ -1,54 +1,47 @@
 package senla.service.impl;
 
-import senla.dao.impl.AddressDAOImpl;
-import senla.dao.impl.PropertyDAOImpl;
+import senla.dao.AddressDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
 import senla.model.Address;
-import senla.model.Property;
 import senla.service.AddressService;
 import senla.util.TransactionManager;
 import senla.util.validator.AddressValidator;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class AddressServiceImpl implements AddressService {
 
     @Autowired
-    private AddressDAOImpl addressDAO;
-
-    @Autowired
-    private PropertyDAOImpl propertyDAO;
+    private AddressDao addressDao;
 
     @Override
-    public Optional<Address> create(Address address) {
+    public Address create(Address address) {
         return TransactionManager.executeInTransaction(() -> {
             AddressValidator.validate(address);
-            return Optional.ofNullable(addressDAO.save(address));
+            return addressDao.save(address);
         });
     }
 
     @Override
-    public Optional<Address> getById(Integer id) {
+    public Address getById(Integer id) {
         return TransactionManager.executeInTransaction(() -> {
-            return Optional.ofNullable(addressDAO.findById(id));
+            return addressDao.findById(id);
         });
     }
 
     @Override
     public List<Address> getByPropertyId(Integer id) {
         return TransactionManager.executeInTransaction(() -> {
-            Property property = propertyDAO.findById(id);
-            return addressDAO.findByProperty(property);
+            return addressDao.findByPropertyId(id);
         });
     }
 
     @Override
     public List<Address> getAll() {
         return TransactionManager.executeInTransaction(() -> {
-            return addressDAO.findAll();
+            return addressDao.findAll();
         });
     }
 
@@ -57,16 +50,14 @@ public class AddressServiceImpl implements AddressService {
         TransactionManager.executeInTransaction(() -> {
             address.setId(id);
             AddressValidator.validate(address);
-            addressDAO.update(address);
-            return Optional.empty();
+            addressDao.update(address);
         });
     }
 
     @Override
     public void deleteById(Integer id) {
         TransactionManager.executeInTransaction(() -> {
-            addressDAO.deleteById(id);
-            return Optional.empty();
+            addressDao.deleteById(id);
         });
     }
 }

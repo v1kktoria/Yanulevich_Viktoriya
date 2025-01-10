@@ -5,7 +5,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
-import senla.dao.AbstractDAO;
+import senla.dao.AbstractDao;
+import senla.dao.UserDao;
 import senla.dicontainer.annotation.Component;
 import senla.model.User;
 import senla.model.User_;
@@ -14,13 +15,14 @@ import senla.util.JpaUtil;
 import java.util.List;
 
 @Component
-public class UserDAOImpl extends AbstractDAO<User, Integer> {
+public class UserDaoImpl extends AbstractDao<User, Integer> implements UserDao {
 
     @Override
     protected Class<User> getEntityClass() {
         return User.class;
     }
 
+    @Override
     public boolean existsByUsername(String username) {
         EntityManager entityManager = JpaUtil.getEntityManager();
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -32,6 +34,7 @@ public class UserDAOImpl extends AbstractDAO<User, Integer> {
         return count > 0;
     }
 
+    @Override
     public List<User> findAllWithEssentialDetails() {
         EntityManager entityManager = JpaUtil.getEntityManager();
         EntityGraph<?> entityGraph = entityManager.getEntityGraph(User_.GRAPH_USER_ROLES_PROPERTIES_APPLICATIONS);

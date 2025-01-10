@@ -33,8 +33,7 @@ public class PropertyController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Property property = PropertyMapper.fromRequest(request, userService);
-        propertyService.create(property)
-                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.CREATION_FAILED));
+        propertyService.create(property);
         response.sendRedirect(request.getContextPath() + "/properties");
     }
 
@@ -44,11 +43,8 @@ public class PropertyController extends HttpServlet {
 
         if (idParam != null && !idParam.isEmpty()) {
             Integer propertyId = Integer.parseInt(idParam);
-            propertyService.getById(propertyId)
-                    .ifPresentOrElse(
-                            property -> request.setAttribute("property", property),
-                            () -> { throw new ServiceException(ServiceExceptionEnum.SEARCH_FAILED); }
-                    );
+            Property property = propertyService.getById(propertyId);
+            request.setAttribute("property", property);
         }
         List<Property> properties = propertyService.getAll();
         request.setAttribute("properties", properties);

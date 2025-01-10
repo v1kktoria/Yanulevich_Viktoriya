@@ -1,14 +1,16 @@
 package senla.model;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import senla.model.constant.ReportType;
@@ -16,13 +18,15 @@ import senla.model.constant.Status;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@jakarta.persistence.Entity
+@Entity
 @Table(name = "reports")
-public class Report extends Entity{
+public class Report extends BaseEntity {
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -49,7 +53,7 @@ public class Report extends Entity{
     @Column(name = "deleted")
     private boolean deleted;
 
-    public void loadLazyFields(){
+    public void loadLazyFields() {
         user.getUsername();
     }
 }

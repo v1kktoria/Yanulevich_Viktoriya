@@ -11,7 +11,7 @@ public interface PropertyParameterService {
 
     void create(PropertyParameter propertyParameter);
 
-    Optional<PropertyParameter> getByPropertyAndParameter(Property property, Parameter parameter);
+    PropertyParameter getByPropertyAndParameter(Property property, Parameter parameter);
 
     List<PropertyParameter> getAll();
 

@@ -1,23 +1,27 @@
 package senla.model;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@jakarta.persistence.Entity
+@Entity
 @Table(name = "profiles")
-public class Profile extends Entity{
+public class Profile extends BaseEntity {
+
     @Column(name = "first_name")
     private String firstname;
 

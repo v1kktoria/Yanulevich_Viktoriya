@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface ApplicationService {
 
-    Optional<Application> create(Application application);
+    Application create(Application application);
 
-    Optional<Application> getById(Integer id);
+    Application getById(Integer id);
 
     List<Application> getByPropertyId(Integer id);
 

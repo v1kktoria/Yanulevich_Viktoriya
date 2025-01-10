@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface ImageService {
 
-    Optional<Image> create(Image image);
+    Image create(Image image);
 
-    Optional<Image> getById(Integer id);
+    Image getById(Integer id);
 
     List<Image> getAll();
 

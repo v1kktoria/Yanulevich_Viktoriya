@@ -1,23 +1,27 @@
 package senla.model;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.sql.Timestamp;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@jakarta.persistence.Entity
+@Entity
 @Table(name = "reviews")
-public class Review extends Entity{
+public class Review extends BaseEntity {
+
     @ManyToOne
     @JoinColumn(name = "property_id")
     private Property property;
@@ -38,7 +42,7 @@ public class Review extends Entity{
     @Column(name = "deleted")
     private boolean deleted;
 
-    public void loadLazyFields(){
+    public void loadLazyFields() {
         user.getUsername();
     }
 }

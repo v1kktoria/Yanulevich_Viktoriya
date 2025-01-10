@@ -1,6 +1,6 @@
 package senla.service.impl;
 
-import senla.dao.impl.ReportDAOImpl;
+import senla.dao.ReportDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
 import senla.model.Report;
@@ -8,32 +8,31 @@ import senla.service.ReportService;
 import senla.util.TransactionManager;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class ReportServiceImpl implements ReportService {
 
     @Autowired
-    private ReportDAOImpl reportDAO;
+    private ReportDao reportDao;
 
     @Override
-    public Optional<Report> create(Report report) {
+    public Report create(Report report) {
         return TransactionManager.executeInTransaction(() -> {
-            return Optional.ofNullable(reportDAO.save(report));
+            return reportDao.save(report);
         });
     }
 
     @Override
-    public Optional<Report> getById(Integer id) {
+    public Report getById(Integer id) {
         return TransactionManager.executeInTransaction(() -> {
-            return Optional.ofNullable(reportDAO.findById(id));
+            return reportDao.findById(id);
         });
     }
 
     @Override
     public List<Report> getAll() {
         return TransactionManager.executeInTransaction(() -> {
-            List<Report> reports = reportDAO.findAll();
+            List<Report> reports = reportDao.findAll();
             reports.forEach(Report::loadLazyFields);
             return reports;
         });
@@ -43,16 +42,14 @@ public class ReportServiceImpl implements ReportService {
     public void updateById(Integer id, Report report) {
         TransactionManager.executeInTransaction(() -> {
             report.setId(id);
-            reportDAO.update(report);
-            return Optional.empty();
+            reportDao.update(report);
         });
     }
 
     @Override
     public void deleteById(Integer id) {
         TransactionManager.executeInTransaction(() -> {
-            reportDAO.deleteById(id);
-            return Optional.empty();
+            reportDao.deleteById(id);
         });
     }
 }

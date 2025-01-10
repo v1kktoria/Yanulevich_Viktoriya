@@ -37,8 +37,7 @@ public class ReviewController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Review review = ReviewMapper.fromRequest(request, propertyService, userService);
-        reviewService.create(review)
-                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.CREATION_FAILED));
+        reviewService.create(review);
         response.sendRedirect(request.getContextPath() + "/reviews");
     }
 
@@ -48,11 +47,8 @@ public class ReviewController extends HttpServlet {
 
         if (idParam != null && !idParam.isEmpty()) {
             Integer reviewId = Integer.parseInt(idParam);
-            reviewService.getById(reviewId)
-                    .ifPresentOrElse(
-                            review -> request.setAttribute("review", review),
-                            () -> { throw new ServiceException(ServiceExceptionEnum.SEARCH_FAILED); }
-                    );
+            Review review = reviewService.getById(reviewId);
+            request.setAttribute("review", review);
         }
         List<Review> reviews = reviewService.getAll();
         request.setAttribute("reviews", reviews);

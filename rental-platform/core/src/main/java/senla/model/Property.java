@@ -2,6 +2,7 @@ package senla.model;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
@@ -13,8 +14,9 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import senla.model.constant.PropertyType;
@@ -23,11 +25,12 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@jakarta.persistence.Entity
+@Entity
 @NamedEntityGraph(
         name = "property-owner-address-images",
         attributeNodes = {
@@ -37,7 +40,8 @@ import java.util.Set;
         }
 )
 @Table(name = "properties")
-public class Property extends Entity{
+public class Property extends BaseEntity {
+
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
@@ -86,8 +90,10 @@ public class Property extends Entity{
     @OneToMany(mappedBy = "property", cascade = CascadeType.REMOVE)
     private Set<Review> reviews = new HashSet<>();
 
-    public void loadLazyFields(){
+    public void loadLazyFields() {
         owner.getUsername();
-        address.getCountry();
+        if (address != null) {
+            address.getCountry();
+        }
     }
 }

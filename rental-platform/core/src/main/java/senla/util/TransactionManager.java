@@ -26,4 +26,22 @@ public class TransactionManager {
             JpaUtil.closeEntityManager();
         }
     }
+
+    public void executeInTransaction(Runnable action) {
+        EntityManager entityManager = JpaUtil.getEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+
+        try {
+            transaction.begin();
+            action.run();
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
+            throw e;
+        } finally {
+            JpaUtil.closeEntityManager();
+        }
+    }
 }

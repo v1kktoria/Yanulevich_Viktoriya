@@ -15,8 +15,7 @@ public class AddressMapper {
         String street = request.getParameter("street");
         String houseNumber = request.getParameter("houseNumber");
         return Address.builder()
-                .property(propertyService.getById(id)
-                        .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.SEARCH_FAILED)))
+                .property(propertyService.getById(id))
                 .country(country)
                 .city(city)
                 .street(street)

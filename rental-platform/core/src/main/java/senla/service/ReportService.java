@@ -8,9 +8,9 @@ import java.util.Optional;
 
 public interface ReportService {
 
-    Optional<Report> create(Report report);
+    Report create(Report report);
 
-    Optional<Report> getById(Integer id);
+    Report getById(Integer id);
 
     List<Report> getAll();
 

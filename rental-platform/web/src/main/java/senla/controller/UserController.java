@@ -29,8 +29,7 @@ public class UserController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         User user = UserMapper.fromRequest(request);
-        userService.create(user)
-                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.CREATION_FAILED));
+        userService.create(user);
         response.sendRedirect(request.getContextPath() + "/users");
     }
 
@@ -40,11 +39,8 @@ public class UserController extends HttpServlet {
 
         if (idParam != null && !idParam.isEmpty()) {
             Integer userId = Integer.parseInt(idParam);
-            userService.getById(userId)
-                    .ifPresentOrElse(
-                            user -> request.setAttribute("user", user),
-                            () -> { throw new ServiceException(ServiceExceptionEnum.SEARCH_FAILED); }
-                    );
+            User user = userService.getById(userId);
+            request.setAttribute("user", user);
         }
         List<User> users = userService.getAll();
         request.setAttribute("users", users);

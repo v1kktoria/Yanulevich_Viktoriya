@@ -1,6 +1,6 @@
 package senla.service.impl;
 
-import senla.dao.impl.ImageDAOImpl;
+import senla.dao.ImageDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
 import senla.model.Image;
@@ -9,33 +9,32 @@ import senla.util.TransactionManager;
 import senla.util.validator.ImageValidator;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class ImageServiceImpl implements ImageService {
 
     @Autowired
-    private ImageDAOImpl imageDAO;
+    private ImageDao imageDao;
 
     @Override
-    public Optional<Image> create(Image image) {
+    public Image create(Image image) {
         return TransactionManager.executeInTransaction(() -> {
             ImageValidator.validate(image);
-            return Optional.ofNullable(imageDAO.save(image));
+            return imageDao.save(image);
         });
     }
 
     @Override
-    public Optional<Image> getById(Integer id) {
+    public Image getById(Integer id) {
         return TransactionManager.executeInTransaction(() -> {
-            return Optional.ofNullable(imageDAO.findById(id));
+            return imageDao.findById(id);
         });
     }
 
     @Override
     public List<Image> getAll() {
         return TransactionManager.executeInTransaction(() -> {
-            return imageDAO.findAll();
+            return imageDao.findAll();
         });
     }
 
@@ -44,16 +43,14 @@ public class ImageServiceImpl implements ImageService {
         TransactionManager.executeInTransaction(() -> {
             image.setId(id);
             ImageValidator.validate(image);
-            imageDAO.update(image);
-            return Optional.empty();
+            imageDao.update(image);
         });
     }
 
     @Override
     public void deleteById(Integer id) {
         TransactionManager.executeInTransaction(() -> {
-            imageDAO.deleteById(id);
-            return Optional.empty();
+            imageDao.deleteById(id);
         });
     }
 }

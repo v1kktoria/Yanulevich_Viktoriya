@@ -1,6 +1,6 @@
 package senla.service.impl;
 
-import senla.dao.impl.ReviewDAOImpl;
+import senla.dao.ReviewDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
 import senla.model.Review;
@@ -9,33 +9,32 @@ import senla.util.TransactionManager;
 import senla.util.validator.ReviewValidator;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class ReviewServiceImpl implements ReviewService {
 
     @Autowired
-    private ReviewDAOImpl reviewDAO;
+    private ReviewDao reviewDao;
 
     @Override
-    public Optional<Review> create(Review review) {
+    public Review create(Review review) {
         return TransactionManager.executeInTransaction(() -> {
             ReviewValidator.validate(review);
-            return Optional.ofNullable(reviewDAO.save(review));
+            return reviewDao.save(review);
         });
     }
 
     @Override
-    public Optional<Review> getById(Integer id) {
+    public Review getById(Integer id) {
         return TransactionManager.executeInTransaction(() -> {
-            return Optional.ofNullable(reviewDAO.findById(id));
+            return reviewDao.findById(id);
         });
     }
 
     @Override
     public List<Review> getAll() {
         return TransactionManager.executeInTransaction(() -> {
-            List<Review> reviews = reviewDAO.findAll();
+            List<Review> reviews = reviewDao.findAll();
             reviews.forEach(Review::loadLazyFields);
             return reviews;
         });
@@ -46,16 +45,14 @@ public class ReviewServiceImpl implements ReviewService {
         TransactionManager.executeInTransaction(() -> {
             review.setId(id);
             ReviewValidator.validate(review);
-            reviewDAO.update(review);
-            return Optional.empty();
+            reviewDao.update(review);
         });
     }
 
     @Override
     public void deleteById(Integer id) {
         TransactionManager.executeInTransaction(() -> {
-            reviewDAO.deleteById(id);
-            return Optional.empty();
+            reviewDao.deleteById(id);
         });
     }
 }

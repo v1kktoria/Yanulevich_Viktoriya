@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface FavoriteService {
 
-    Optional<Favorite> create(Favorite favorite);
+    Favorite create(Favorite favorite);
 
-    Optional<Favorite> getById(Integer id);
+    Favorite getById(Integer id);
 
     List<Favorite> getByUserId(Integer id);
 
