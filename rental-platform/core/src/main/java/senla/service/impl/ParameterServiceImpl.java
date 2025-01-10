@@ -3,6 +3,8 @@ package senla.service.impl;
 import senla.dao.ParameterDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Parameter;
 import senla.service.ParameterService;
 import senla.util.TransactionManager;
@@ -27,7 +29,8 @@ public class ParameterServiceImpl implements ParameterService {
     @Override
     public Parameter getById(Integer id) {
         return TransactionManager.executeInTransaction(() -> {
-            return parameterDao.findById(id);
+            return parameterDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
         });
     }
 
@@ -50,7 +53,9 @@ public class ParameterServiceImpl implements ParameterService {
     @Override
     public void deleteById(Integer id) {
         TransactionManager.executeInTransaction(() -> {
-            parameterDao.deleteById(id);
+            Parameter parameter = parameterDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+            parameterDao.delete(parameter);
         });
     }
 }

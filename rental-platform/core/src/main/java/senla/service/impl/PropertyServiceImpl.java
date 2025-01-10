@@ -3,6 +3,8 @@ package senla.service.impl;
 import senla.dao.PropertyDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Property;
 import senla.service.PropertyService;
 import senla.util.TransactionManager;
@@ -27,7 +29,8 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public Property getById(Integer id) {
         return TransactionManager.executeInTransaction(() -> {
-            return propertyDao.findById(id);
+            return propertyDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
         });
     }
 
@@ -59,7 +62,9 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public void deleteById(Integer id) {
         TransactionManager.executeInTransaction(() -> {
-            propertyDao.deleteById(id);
+            Property property = propertyDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+            propertyDao.delete(property);
         });
     }
 

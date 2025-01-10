@@ -3,6 +3,8 @@ package senla.service.impl;
 import senla.dao.ProfileDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Profile;
 import senla.service.ProfileService;
 import senla.util.TransactionManager;
@@ -29,7 +31,8 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Profile getById(Integer id) {
         return TransactionManager.executeInTransaction(() -> {
-            return profileDao.findById(id);
+            return profileDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
         });
     }
 
@@ -52,7 +55,9 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public void deleteById(Integer id) {
         TransactionManager.executeInTransaction(() -> {
-            profileDao.deleteById(id);
+            Profile profile = profileDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+            profileDao.delete(profile);
         });
     }
 }

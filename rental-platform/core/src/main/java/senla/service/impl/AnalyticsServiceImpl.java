@@ -3,6 +3,8 @@ package senla.service.impl;
 import senla.dao.AnalyticsDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Analytics;
 import senla.service.AnalyticsService;
 import senla.util.TransactionManager;
@@ -27,7 +29,8 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     @Override
     public Analytics getById(Integer id) {
         return TransactionManager.executeInTransaction(() -> {
-            return analyticsDao.findById(id);
+            return analyticsDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
         });
     }
 
@@ -57,7 +60,9 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     @Override
     public void deleteById(Integer id) {
         TransactionManager.executeInTransaction(() -> {
-            analyticsDao.deleteById(id);
+            Analytics analytics = analyticsDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+            analyticsDao.delete(analytics);
         });
     }
 }

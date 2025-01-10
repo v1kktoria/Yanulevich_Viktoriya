@@ -3,6 +3,8 @@ package senla.service.impl;
 import senla.dao.FavoriteDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Favorite;
 import senla.service.FavoriteService;
 import senla.util.TransactionManager;
@@ -25,7 +27,8 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Override
     public Favorite getById(Integer id) {
         return TransactionManager.executeInTransaction(() -> {
-            return favoriteDao.findById(id);
+            return favoriteDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
         });
     }
 
@@ -54,7 +57,9 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Override
     public void deleteById(Integer id) {
         TransactionManager.executeInTransaction(() -> {
-            favoriteDao.deleteById(id);
+            Favorite favorite = favoriteDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+            favoriteDao.delete(favorite);
         });
     }
 }

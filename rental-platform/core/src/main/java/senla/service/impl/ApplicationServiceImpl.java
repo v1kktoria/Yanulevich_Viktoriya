@@ -3,6 +3,8 @@ package senla.service.impl;
 import senla.dao.ApplicationDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Application;
 import senla.service.ApplicationService;
 import senla.util.TransactionManager;
@@ -25,7 +27,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Application getById(Integer id) {
         return TransactionManager.executeInTransaction(() -> {
-            return applicationDao.findById(id);
+            return applicationDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
         });
     }
 
@@ -54,7 +57,9 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public void deleteById(Integer id) {
         TransactionManager.executeInTransaction(() -> {
-            applicationDao.deleteById(id);
+            Application application = applicationDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+            applicationDao.delete(application);
         });
     }
 }

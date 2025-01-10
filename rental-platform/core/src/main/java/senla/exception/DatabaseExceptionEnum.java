@@ -4,7 +4,6 @@ import java.text.MessageFormat;
 
 public enum DatabaseExceptionEnum {
 
-    ENTITY_NOT_FOUND("Объект с ID {0} не найден", 404),
     SAVE_FAILED("Не удалось сохранить объект", 500),
     UPDATE_FAILED("Не удалось обновить объект", 500),
     DELETE_FAILED("Не удалось удалить объект с ID {0}", 500),

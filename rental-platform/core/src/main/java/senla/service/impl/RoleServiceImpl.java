@@ -3,6 +3,8 @@ package senla.service.impl;
 import senla.dao.RoleDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Role;
 import senla.service.RoleService;
 import senla.util.TransactionManager;
@@ -27,7 +29,8 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Role getById(Integer id) {
         return TransactionManager.executeInTransaction(() -> {
-            return roleDao.findById(id);
+            return roleDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
         });
     }
 
@@ -50,7 +53,9 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public void deleteById(Integer id) {
         TransactionManager.executeInTransaction(() -> {
-            roleDao.deleteById(id);
+            Role role = roleDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+            roleDao.delete(role);
         });
     }
 }

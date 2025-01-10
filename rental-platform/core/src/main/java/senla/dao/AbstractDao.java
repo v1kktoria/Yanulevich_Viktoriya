@@ -11,6 +11,7 @@ import senla.util.JpaUtil;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class AbstractDao<T extends Identifiable<ID>, ID extends Serializable> implements ParentDao<T, ID> {
     protected abstract Class<T> getEntityClass();
@@ -27,14 +28,11 @@ public abstract class AbstractDao<T extends Identifiable<ID>, ID extends Seriali
     }
 
     @Override
-    public T findById(ID id) {
+    public Optional<T> findById(ID id) {
         try {
             EntityManager entityManager = JpaUtil.getEntityManager();
             T entity = entityManager.find(getEntityClass(), id);
-            if (entity == null) {
-                throw new DatabaseException(DatabaseExceptionEnum.ENTITY_NOT_FOUND, id);
-            }
-            return entity;
+            return Optional.ofNullable(entity);
         } catch (PersistenceException e) {
             throw new DatabaseException(DatabaseExceptionEnum.DATABASE_ERROR);
         }
@@ -63,16 +61,12 @@ public abstract class AbstractDao<T extends Identifiable<ID>, ID extends Seriali
     }
 
     @Override
-    public void deleteById(ID id) {
+    public void delete(T entity) {
         try {
             EntityManager entityManager = JpaUtil.getEntityManager();
-            T entity = entityManager.find(getEntityClass(), id);
-            if (entity == null) {
-                throw new DatabaseException(DatabaseExceptionEnum.ENTITY_NOT_FOUND, id);
-            }
             entityManager.remove(entity);
         } catch (PersistenceException e) {
-            throw new DatabaseException(DatabaseExceptionEnum.DELETE_FAILED, id);
+            throw new DatabaseException(DatabaseExceptionEnum.DELETE_FAILED, entity.getId());
         }
     }
 }

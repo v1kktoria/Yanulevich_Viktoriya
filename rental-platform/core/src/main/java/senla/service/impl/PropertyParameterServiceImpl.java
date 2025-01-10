@@ -3,6 +3,8 @@ package senla.service.impl;
 import senla.dao.PropertyParameterDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Parameter;
 import senla.model.Property;
 import senla.model.PropertyParameter;
@@ -28,10 +30,11 @@ public class PropertyParameterServiceImpl implements PropertyParameterService {
     @Override
     public PropertyParameter getByPropertyAndParameter(Property property, Parameter parameter) {
         return TransactionManager.executeInTransaction(() -> {
-            return propertyParameterDao.findById(PropertyParameterId.builder()
+            PropertyParameterId id = PropertyParameterId.builder()
                     .property_id(property.getId())
-                    .parameter_id(parameter.getId()).build()
-            );
+                    .parameter_id(parameter.getId()).build();
+            return propertyParameterDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
         });
     }
 
@@ -45,10 +48,14 @@ public class PropertyParameterServiceImpl implements PropertyParameterService {
     @Override
     public void deleteByPropertyAndParameter(Property property, Parameter parameter) {
         TransactionManager.executeInTransaction(() -> {
-            propertyParameterDao.deleteById(PropertyParameterId.builder()
+            PropertyParameterId id = PropertyParameterId.builder()
                     .property_id(property.getId())
-                    .parameter_id(parameter.getId()).build()
-            );
+                    .parameter_id(parameter.getId()).build();
+
+            PropertyParameter propertyParameter = propertyParameterDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+
+            propertyParameterDao.delete(propertyParameter);
         });
     }
 }

@@ -32,7 +32,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getById(Integer id) {
         return TransactionManager.executeInTransaction(() -> {
-            return userDao.findById(id);
+            return userDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
         });
     }
 
@@ -48,7 +49,10 @@ public class UserServiceImpl implements UserService {
         TransactionManager.executeInTransaction(() -> {
             user.setId(id);
             UserValidator.validate(user);
-            if (!user.getUsername().equals(userDao.findById(id).getUsername()) && userDao.existsByUsername(user.getUsername())) {
+            User existingUser = userDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+
+            if (!user.getUsername().equals(existingUser.getUsername()) && userDao.existsByUsername(user.getUsername())) {
                 throw new ServiceException(ServiceExceptionEnum.USER_ALREADY_EXISTS, user.getUsername());
             }
             userDao.update(user);
@@ -58,7 +62,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteById(Integer id) {
         TransactionManager.executeInTransaction(() -> {
-            userDao.deleteById(id);
+            User user = userDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+            userDao.delete(user);
         });
     }
 

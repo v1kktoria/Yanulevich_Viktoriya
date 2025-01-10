@@ -3,6 +3,8 @@ package senla.service.impl;
 import senla.dao.AddressDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Address;
 import senla.service.AddressService;
 import senla.util.TransactionManager;
@@ -27,7 +29,8 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public Address getById(Integer id) {
         return TransactionManager.executeInTransaction(() -> {
-            return addressDao.findById(id);
+            return addressDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
         });
     }
 
@@ -57,7 +60,9 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public void deleteById(Integer id) {
         TransactionManager.executeInTransaction(() -> {
-            addressDao.deleteById(id);
+            Address address = addressDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+            addressDao.delete(address);
         });
     }
 }

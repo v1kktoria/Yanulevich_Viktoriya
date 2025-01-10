@@ -3,6 +3,8 @@ package senla.service.impl;
 import senla.dao.ReviewDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Review;
 import senla.service.ReviewService;
 import senla.util.TransactionManager;
@@ -27,7 +29,8 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public Review getById(Integer id) {
         return TransactionManager.executeInTransaction(() -> {
-            return reviewDao.findById(id);
+            return reviewDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
         });
     }
 
@@ -52,7 +55,9 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public void deleteById(Integer id) {
         TransactionManager.executeInTransaction(() -> {
-            reviewDao.deleteById(id);
+            Review review = reviewDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+            reviewDao.delete(review);
         });
     }
 }

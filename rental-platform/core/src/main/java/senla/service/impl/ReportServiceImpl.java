@@ -3,6 +3,8 @@ package senla.service.impl;
 import senla.dao.ReportDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Report;
 import senla.service.ReportService;
 import senla.util.TransactionManager;
@@ -25,7 +27,8 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public Report getById(Integer id) {
         return TransactionManager.executeInTransaction(() -> {
-            return reportDao.findById(id);
+            return reportDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
         });
     }
 
@@ -49,7 +52,9 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public void deleteById(Integer id) {
         TransactionManager.executeInTransaction(() -> {
-            reportDao.deleteById(id);
+            Report report = reportDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+            reportDao.delete(report);
         });
     }
 }

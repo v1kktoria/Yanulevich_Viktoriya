@@ -27,13 +27,13 @@ public class TransactionManager {
         }
     }
 
-    public void executeInTransaction(Runnable action) {
+    public void executeInTransaction(NoArgAction action) {
         EntityManager entityManager = JpaUtil.getEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
 
         try {
             transaction.begin();
-            action.run();
+            action.execute();
             transaction.commit();
         } catch (Exception e) {
             if (transaction.isActive()) {

@@ -3,6 +3,8 @@ package senla.service.impl;
 import senla.dao.ImageDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Image;
 import senla.service.ImageService;
 import senla.util.TransactionManager;
@@ -27,7 +29,8 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public Image getById(Integer id) {
         return TransactionManager.executeInTransaction(() -> {
-            return imageDao.findById(id);
+            return imageDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
         });
     }
 
@@ -50,7 +53,9 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public void deleteById(Integer id) {
         TransactionManager.executeInTransaction(() -> {
-            imageDao.deleteById(id);
+            Image image = imageDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+            imageDao.delete(image);
         });
     }
 }
