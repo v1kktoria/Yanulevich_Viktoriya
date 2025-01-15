@@ -1,8 +1,8 @@
 package senla.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import senla.dao.PropertyDao;
-import senla.dicontainer.annotation.Autowired;
-import senla.dicontainer.annotation.Component;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Property;
@@ -12,11 +12,15 @@ import senla.util.validator.PropertyValidator;
 
 import java.util.List;
 
-@Component
+@Service
 public class PropertyServiceImpl implements PropertyService {
 
+    private final PropertyDao propertyDao;
+
     @Autowired
-    private PropertyDao propertyDao;
+    public PropertyServiceImpl(PropertyDao propertyDao) {
+        this.propertyDao = propertyDao;
+    }
 
     @Override
     public Property create(Property property) {

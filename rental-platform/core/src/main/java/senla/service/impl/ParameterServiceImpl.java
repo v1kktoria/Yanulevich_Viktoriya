@@ -1,8 +1,8 @@
 package senla.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import senla.dao.ParameterDao;
-import senla.dicontainer.annotation.Autowired;
-import senla.dicontainer.annotation.Component;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Parameter;
@@ -12,11 +12,15 @@ import senla.util.validator.ParameterValidator;
 
 import java.util.List;
 
-@Component
+@Service
 public class ParameterServiceImpl implements ParameterService {
 
+    private final ParameterDao parameterDao;
+
     @Autowired
-    private ParameterDao parameterDao;
+    public ParameterServiceImpl(ParameterDao parameterDao) {
+        this.parameterDao = parameterDao;
+    }
 
     @Override
     public Parameter create(Parameter parameter) {

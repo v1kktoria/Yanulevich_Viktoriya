@@ -7,14 +7,12 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import senla.dao.AbstractDao;
 import senla.dao.UserDao;
-import senla.dicontainer.annotation.Component;
 import senla.model.User;
 import senla.model.User_;
 import senla.util.JpaUtil;
 
 import java.util.List;
 
-@Component
 public class UserDaoImpl extends AbstractDao<User, Integer> implements UserDao {
 
     @Override

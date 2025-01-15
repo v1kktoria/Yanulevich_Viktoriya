@@ -6,14 +6,11 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import senla.dao.AbstractDao;
 import senla.dao.FavoriteDao;
-import senla.dicontainer.annotation.Component;
 import senla.util.JpaUtil;
 import senla.model.Favorite;
-import senla.model.User;
 
 import java.util.List;
 
-@Component
 public class FavoriteDaoImpl extends AbstractDao<Favorite, Integer> implements FavoriteDao {
 
     @Override

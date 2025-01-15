@@ -6,14 +6,11 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import senla.dao.AbstractDao;
 import senla.dao.AnalyticsDao;
-import senla.dicontainer.annotation.Component;
 import senla.util.JpaUtil;
 import senla.model.Analytics;
-import senla.model.Property;
 
 import java.util.List;
 
-@Component
 public class AnalyticsDaoImpl extends AbstractDao<Analytics, Integer> implements AnalyticsDao {
 
     @Override

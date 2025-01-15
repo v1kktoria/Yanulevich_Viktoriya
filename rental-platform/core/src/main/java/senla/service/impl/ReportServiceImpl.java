@@ -1,8 +1,8 @@
 package senla.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import senla.dao.ReportDao;
-import senla.dicontainer.annotation.Autowired;
-import senla.dicontainer.annotation.Component;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Report;
@@ -11,11 +11,15 @@ import senla.util.TransactionManager;
 
 import java.util.List;
 
-@Component
+@Service
 public class ReportServiceImpl implements ReportService {
 
+    private final ReportDao reportDao;
+
     @Autowired
-    private ReportDao reportDao;
+    public ReportServiceImpl(ReportDao reportDao) {
+        this.reportDao = reportDao;
+    }
 
     @Override
     public Report create(Report report) {

@@ -1,8 +1,8 @@
 package senla.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import senla.dao.FavoriteDao;
-import senla.dicontainer.annotation.Autowired;
-import senla.dicontainer.annotation.Component;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Favorite;
@@ -11,11 +11,15 @@ import senla.util.TransactionManager;
 
 import java.util.List;
 
-@Component
+@Service
 public class FavoriteServiceImpl implements FavoriteService {
 
+    private final FavoriteDao favoriteDao;
+
     @Autowired
-    private FavoriteDao favoriteDao;
+    public FavoriteServiceImpl(FavoriteDao favoriteDao) {
+        this.favoriteDao = favoriteDao;
+    }
 
     @Override
     public Favorite create(Favorite favorite) {

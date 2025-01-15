@@ -1,8 +1,8 @@
 package senla.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import senla.dao.AddressDao;
-import senla.dicontainer.annotation.Autowired;
-import senla.dicontainer.annotation.Component;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Address;
@@ -12,11 +12,15 @@ import senla.util.validator.AddressValidator;
 
 import java.util.List;
 
-@Component
+@Service
 public class AddressServiceImpl implements AddressService {
 
+    private final AddressDao addressDao;
+
     @Autowired
-    private AddressDao addressDao;
+    public AddressServiceImpl(AddressDao addressDao) {
+        this.addressDao = addressDao;
+    }
 
     @Override
     public Address create(Address address) {
