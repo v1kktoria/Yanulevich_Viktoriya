@@ -7,15 +7,17 @@ import java.util.Optional;
 
 public interface PropertyService {
 
-    Optional<Property> create(Property property);
+    Property create(Property property);
 
-    Optional<Property> getById(Integer id);
+    Property getById(Integer id);
 
-    Optional<Property> getByUserId(Integer id);
+    List<Property> getByUserId(Integer id);
 
     List<Property> getAll();
 
     void updateById(Integer id, Property property);
 
     void deleteById(Integer id);
+
+    List<Property> getAllWithEssentialDetails();
 }

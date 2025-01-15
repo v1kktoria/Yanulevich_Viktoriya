@@ -1,54 +1,65 @@
 package senla.service.impl;
 
-import senla.dao.impl.ApplicationDAOImpl;
-import senla.dao.impl.PropertyDAOImpl;
+import senla.dao.ApplicationDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
-import senla.model.Analytics;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Application;
-import senla.model.Property;
 import senla.service.ApplicationService;
+import senla.util.TransactionManager;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class ApplicationServiceImpl implements ApplicationService {
 
     @Autowired
-    private ApplicationDAOImpl applicationDAO;
-
-    @Autowired
-    private PropertyDAOImpl propertyDAO;
+    private ApplicationDao applicationDao;
 
     @Override
-    public Optional<Application> create(Application application) {
-        return Optional.ofNullable(applicationDAO.create(application));
+    public Application create(Application application) {
+        return TransactionManager.executeInTransaction(() -> {
+            return applicationDao.save(application);
+        });
     }
 
     @Override
-    public Optional<Application> getById(Integer id) {
-        return Optional.ofNullable(applicationDAO.getByParam(id));
+    public Application getById(Integer id) {
+        return TransactionManager.executeInTransaction(() -> {
+            return applicationDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+        });
     }
 
     @Override
-    public Optional<Application> getByPropertyId(Integer id) {
-        Property property = propertyDAO.getByParam(id);
-        return Optional.ofNullable(applicationDAO.getByParam(property));
+    public List<Application> getByPropertyId(Integer id) {
+        return TransactionManager.executeInTransaction(() -> {
+            return applicationDao.findByPropertyId(id);
+        });
     }
 
     @Override
     public List<Application> getAll() {
-        return applicationDAO.getAll();
+        return TransactionManager.executeInTransaction(() -> {
+            return applicationDao.findAll();
+        });
     }
 
     @Override
     public void updateById(Integer id, Application application) {
-        applicationDAO.updateById(id, application);
+        TransactionManager.executeInTransaction(() -> {
+            application.setId(id);
+            applicationDao.update(application);
+        });
     }
 
     @Override
     public void deleteById(Integer id) {
-        applicationDAO.deleteById(id);
+        TransactionManager.executeInTransaction(() -> {
+            Application application = applicationDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+            applicationDao.delete(application);
+        });
     }
 }

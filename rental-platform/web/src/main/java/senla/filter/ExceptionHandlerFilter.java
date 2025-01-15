@@ -6,7 +6,7 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletResponse;
-import senla.exception.EntityNotFoundException;
+import senla.exception.DatabaseException;
 import senla.exception.ServiceException;
 
 import java.io.IOException;
@@ -21,8 +21,8 @@ public class ExceptionHandlerFilter implements Filter {
 
         try {
             chain.doFilter(request, response);
-        } catch (EntityNotFoundException e) {
-            handleException(httpResponse, HttpServletResponse.SC_NOT_FOUND, e.getMessage());
+        } catch (DatabaseException e) {
+            handleException(httpResponse, e.getStatusCode(), e.getMessage());
         } catch (ServiceException e) {
             handleException(httpResponse, e.getStatusCode(), e.getMessage());
         } catch (NumberFormatException e) {

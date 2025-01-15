@@ -8,9 +8,9 @@ import java.util.Optional;
 
 public interface RoleService {
 
-    Optional<Role> create(Role role);
+    Role create(Role role);
 
-    Optional<Role> getById(Integer id);
+    Role getById(Integer id);
 
     List<Role> getAll();
 

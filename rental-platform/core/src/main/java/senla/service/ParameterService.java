@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface ParameterService {
 
-    Optional<Parameter> create(Parameter parameter);
+    Parameter create(Parameter parameter);
 
-    Optional<Parameter> getById(Integer id);
+    Parameter getById(Integer id);
 
     List<Parameter> getAll();
 

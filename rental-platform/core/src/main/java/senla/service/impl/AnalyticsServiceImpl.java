@@ -1,58 +1,68 @@
 package senla.service.impl;
 
-import senla.dao.impl.AnalyticsDAOImpl;
-import senla.dao.impl.PropertyDAOImpl;
+import senla.dao.AnalyticsDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Analytics;
-import senla.model.Property;
 import senla.service.AnalyticsService;
+import senla.util.TransactionManager;
 import senla.util.validator.AnalyticsValidator;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class AnalyticsServiceImpl implements AnalyticsService {
 
     @Autowired
-    private AnalyticsDAOImpl analyticsDAO;
-
-    @Autowired
-    private PropertyDAOImpl propertyDAO;
+    private AnalyticsDao analyticsDao;
 
     @Override
-    public Optional<Analytics> create(Analytics analytics) {
-        AnalyticsValidator.validate(analytics);
-        return Optional.ofNullable(analyticsDAO.create(analytics));
+    public Analytics create(Analytics analytics) {
+        return TransactionManager.executeInTransaction(() -> {
+            AnalyticsValidator.validate(analytics);
+            return analyticsDao.save(analytics);
+        });
     }
 
     @Override
-    public Optional<Analytics> getById(Integer id) {
-        return Optional.ofNullable(analyticsDAO.getByParam(id));
+    public Analytics getById(Integer id) {
+        return TransactionManager.executeInTransaction(() -> {
+            return analyticsDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+        });
     }
 
     @Override
-    public Optional<Analytics> getByPropertyId(Integer id) {
-        Property property = propertyDAO.getByParam(id);
-        return Optional.ofNullable(analyticsDAO.getByParam(property));
+    public List<Analytics> getByPropertyId(Integer id) {
+        return TransactionManager.executeInTransaction(() -> {
+            return analyticsDao.findByPropertyId(id);
+        });
     }
 
     @Override
     public List<Analytics> getAll() {
-        return analyticsDAO.getAll();
+        return TransactionManager.executeInTransaction(() -> {
+            return analyticsDao.findAll();
+        });
     }
 
     @Override
     public void updateById(Integer id, Analytics analytics) {
-        AnalyticsValidator.validate(analytics);
-        analyticsDAO.updateById(id, analytics);
+        TransactionManager.executeInTransaction(() -> {
+            analytics.setId(id);
+            AnalyticsValidator.validate(analytics);
+            analyticsDao.update(analytics);
+        });
     }
 
     @Override
     public void deleteById(Integer id) {
-        analyticsDAO.deleteById(id);
+        TransactionManager.executeInTransaction(() -> {
+            Analytics analytics = analyticsDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+            analyticsDao.delete(analytics);
+        });
     }
 }

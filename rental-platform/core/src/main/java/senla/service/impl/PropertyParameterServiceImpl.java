@@ -1,40 +1,61 @@
 package senla.service.impl;
 
-import senla.dao.PropertyParameterDAO;
+import senla.dao.PropertyParameterDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Parameter;
 import senla.model.Property;
 import senla.model.PropertyParameter;
+import senla.model.id.PropertyParameterId;
 import senla.service.PropertyParameterService;
+import senla.util.TransactionManager;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 public class PropertyParameterServiceImpl implements PropertyParameterService {
 
     @Autowired
-    private PropertyParameterDAO propertyParameterDAO;
+    private PropertyParameterDao propertyParameterDao;
 
     @Override
     public void create(PropertyParameter propertyParameter) {
-        propertyParameterDAO.create(propertyParameter);
+        TransactionManager.executeInTransaction(() -> {
+            propertyParameterDao.save(propertyParameter);
+        });
     }
 
     @Override
-    public Optional<PropertyParameter> getByPropertyAndParameter(Property property, Parameter parameter) {
-        return Optional.ofNullable(propertyParameterDAO.getByPropertyAndParameter(property, parameter));
+    public PropertyParameter getByPropertyAndParameter(Property property, Parameter parameter) {
+        return TransactionManager.executeInTransaction(() -> {
+            PropertyParameterId id = PropertyParameterId.builder()
+                    .property_id(property.getId())
+                    .parameter_id(parameter.getId()).build();
+            return propertyParameterDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+        });
     }
 
     @Override
     public List<PropertyParameter> getAll() {
-        return propertyParameterDAO.getAll();
+        return TransactionManager.executeInTransaction(() -> {
+            return propertyParameterDao.findAll();
+        });
     }
 
     @Override
     public void deleteByPropertyAndParameter(Property property, Parameter parameter) {
-        propertyParameterDAO.deleteByPropertyAndParameter(property, parameter);
+        TransactionManager.executeInTransaction(() -> {
+            PropertyParameterId id = PropertyParameterId.builder()
+                    .property_id(property.getId())
+                    .parameter_id(parameter.getId()).build();
+
+            PropertyParameter propertyParameter = propertyParameterDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+
+            propertyParameterDao.delete(propertyParameter);
+        });
     }
 }

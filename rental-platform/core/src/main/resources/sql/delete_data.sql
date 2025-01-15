@@ -15,9 +15,6 @@ UPDATE Reports
 SET deleted = TRUE WHERE content_id = 2 AND type = 'ADVERTISEMENT';
 
 -- Примеры strong-delete
-DELETE FROM Favorites
-WHERE user_id = 1 AND property_id = 1;
-
 DELETE FROM Analytics
 WHERE property_id = 2 AND views < 100;
 

@@ -1,50 +1,63 @@
 package senla.service.impl;
 
-import senla.dao.impl.ProfileDAOImpl;
+import senla.dao.ProfileDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Profile;
 import senla.service.ProfileService;
+import senla.util.TransactionManager;
 import senla.util.validator.ProfileValidator;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 public class ProfileServiceImpl implements ProfileService {
 
     @Autowired
-    private ProfileDAOImpl profileDAO;
+    private ProfileDao profileDao;
 
     @Override
-    public Optional<Profile> create(Profile profile) {
-        ProfileValidator.validate(profile);
-        profile.setRegistrationDate(LocalDateTime.now());
-        return Optional.ofNullable(profileDAO.create(profile));
+    public Profile create(Profile profile) {
+        return TransactionManager.executeInTransaction(() -> {
+            ProfileValidator.validate(profile);
+            profile.setRegistrationDate(LocalDateTime.now());
+            return profileDao.save(profile);
+        });
     }
 
     @Override
-    public Optional<Profile> getById(Integer id) {
-        return Optional.ofNullable(profileDAO.getByParam(id));
+    public Profile getById(Integer id) {
+        return TransactionManager.executeInTransaction(() -> {
+            return profileDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+        });
     }
 
     @Override
     public List<Profile> getAll() {
-        return profileDAO.getAll();
+        return TransactionManager.executeInTransaction(() -> {
+            return profileDao.findAll();
+        });
     }
 
     @Override
     public void updateById(Integer id, Profile profile) {
-        ProfileValidator.validate(profile);
-        profileDAO.updateById(id, profile);
+        TransactionManager.executeInTransaction(() -> {
+            profile.setId(id);
+            ProfileValidator.validate(profile);
+            profileDao.update(profile);
+        });
     }
 
     @Override
     public void deleteById(Integer id) {
-        profileDAO.deleteById(id);
+        TransactionManager.executeInTransaction(() -> {
+            Profile profile = profileDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+            profileDao.delete(profile);
+        });
     }
 }

@@ -1,43 +1,60 @@
 package senla.service.impl;
 
-import senla.dao.impl.ReportDAOImpl;
+import senla.dao.ReportDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Report;
 import senla.service.ReportService;
+import senla.util.TransactionManager;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 public class ReportServiceImpl implements ReportService {
 
     @Autowired
-    private ReportDAOImpl reportDAO;
+    private ReportDao reportDao;
 
     @Override
-    public Optional<Report> create(Report report) {
-        return Optional.ofNullable(reportDAO.create(report));
+    public Report create(Report report) {
+        return TransactionManager.executeInTransaction(() -> {
+            return reportDao.save(report);
+        });
     }
 
     @Override
-    public Optional<Report> getById(Integer id) {
-        return Optional.ofNullable(reportDAO.getByParam(id));
+    public Report getById(Integer id) {
+        return TransactionManager.executeInTransaction(() -> {
+            return reportDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+        });
     }
 
     @Override
     public List<Report> getAll() {
-        return reportDAO.getAll();
+        return TransactionManager.executeInTransaction(() -> {
+            List<Report> reports = reportDao.findAll();
+            reports.forEach(Report::loadLazyFields);
+            return reports;
+        });
     }
 
     @Override
     public void updateById(Integer id, Report report) {
-        reportDAO.updateById(id, report);
+        TransactionManager.executeInTransaction(() -> {
+            report.setId(id);
+            reportDao.update(report);
+        });
     }
 
     @Override
     public void deleteById(Integer id) {
-        reportDAO.deleteById(id);
+        TransactionManager.executeInTransaction(() -> {
+            Report report = reportDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+            reportDao.delete(report);
+        });
     }
 }

@@ -1,53 +1,65 @@
 package senla.service.impl;
 
-import senla.dao.impl.FavoriteDAOImpl;
-import senla.dao.impl.UserDAOImpl;
+import senla.dao.FavoriteDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
+import senla.exception.ServiceException;
+import senla.exception.ServiceExceptionEnum;
 import senla.model.Favorite;
-import senla.model.User;
 import senla.service.FavoriteService;
+import senla.util.TransactionManager;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class FavoriteServiceImpl implements FavoriteService {
 
     @Autowired
-    private FavoriteDAOImpl favoriteDAO;
-
-    @Autowired
-    private UserDAOImpl userDAO;
+    private FavoriteDao favoriteDao;
 
     @Override
-    public Optional<Favorite> create(Favorite favorite) {
-        return Optional.ofNullable(favoriteDAO.create(favorite));
+    public Favorite create(Favorite favorite) {
+        return TransactionManager.executeInTransaction(() -> {
+            return favoriteDao.save(favorite);
+        });
     }
 
     @Override
-    public Optional<Favorite> getById(Integer id) {
-        return Optional.ofNullable(favoriteDAO.getByParam(id));
+    public Favorite getById(Integer id) {
+        return TransactionManager.executeInTransaction(() -> {
+            return favoriteDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+        });
     }
 
     @Override
-    public Optional<Favorite> getByUserId(Integer id) {
-        User user = userDAO.getByParam(id);
-        return Optional.ofNullable(favoriteDAO.getByParam(user));
+    public List<Favorite> getByUserId(Integer id) {
+        return TransactionManager.executeInTransaction(() -> {
+            return favoriteDao.findByUserId(id);
+        });
     }
 
     @Override
     public List<Favorite> getAll() {
-        return favoriteDAO.getAll();
+        return TransactionManager.executeInTransaction(() -> {
+            return favoriteDao.findAll();
+        });
     }
 
     @Override
     public void updateById(Integer id, Favorite favorite) {
-        favoriteDAO.updateById(id, favorite);
+        TransactionManager.executeInTransaction(() -> {
+            favorite.setId(id);
+            favoriteDao.update(favorite);
+        });
     }
 
     @Override
     public void deleteById(Integer id) {
-        favoriteDAO.deleteById(id);
+        TransactionManager.executeInTransaction(() -> {
+            Favorite favorite = favoriteDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+            favoriteDao.delete(favorite);
+        });
     }
 }

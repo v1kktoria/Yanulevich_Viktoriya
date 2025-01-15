@@ -1,18 +1,38 @@
 package senla.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
+import senla.model.id.PropertyParameterId;
 
 @Getter
 @Setter
-@EqualsAndHashCode
-@ToString
 @Builder
-public class PropertyParameter {
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "properties_parameters")
+public class PropertyParameter implements Identifiable<PropertyParameterId> {
+
+    @EmbeddedId
+    private PropertyParameterId id;
+
+    @ManyToOne
+    @JoinColumn(name = "property_id")
     private Property property;
+
+    @ManyToOne
+    @JoinColumn(name = "parameter_id")
     private Parameter parameter;
+
+    @Column(name = "value")
     private String value;
 }

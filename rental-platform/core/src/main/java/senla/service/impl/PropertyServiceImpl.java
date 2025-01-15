@@ -1,61 +1,77 @@
 package senla.service.impl;
 
-import senla.dao.impl.PropertyDAOImpl;
-import senla.dao.impl.UserDAOImpl;
+import senla.dao.PropertyDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Property;
-import senla.model.User;
 import senla.service.PropertyService;
+import senla.util.TransactionManager;
 import senla.util.validator.PropertyValidator;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 public class PropertyServiceImpl implements PropertyService {
 
     @Autowired
-    private PropertyDAOImpl propertyDAO;
-
-    @Autowired
-    private UserDAOImpl userDAO;
+    private PropertyDao propertyDao;
 
     @Override
-    public Optional<Property> create(Property property) {
-        PropertyValidator.validate(property);
-        return Optional.ofNullable(propertyDAO.create(property));
+    public Property create(Property property) {
+        return TransactionManager.executeInTransaction(() -> {
+            PropertyValidator.validate(property);
+            return propertyDao.save(property);
+        });
     }
 
     @Override
-    public Optional<Property> getById(Integer id) {
-        return Optional.ofNullable(propertyDAO.getByParam(id));
+    public Property getById(Integer id) {
+        return TransactionManager.executeInTransaction(() -> {
+            return propertyDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+        });
     }
 
     @Override
-    public Optional<Property> getByUserId(Integer id) {
-        User user = userDAO.getByParam(id);
-        return Optional.ofNullable(propertyDAO.getByParam(user));
+    public List<Property> getByUserId(Integer id) {
+        return TransactionManager.executeInTransaction(() -> {
+            return propertyDao.findByUserId(id);
+        });
     }
 
     @Override
     public List<Property> getAll() {
-        return propertyDAO.getAll();
+        return TransactionManager.executeInTransaction(() -> {
+            List<Property> properties = propertyDao.findAll();
+            properties.forEach(Property::loadLazyFields);
+            return properties;
+        });
     }
 
     @Override
     public void updateById(Integer id, Property property) {
-        PropertyValidator.validate(property);
-        propertyDAO.updateById(id, property);
+        TransactionManager.executeInTransaction(() -> {
+            property.setId(id);
+            PropertyValidator.validate(property);
+            propertyDao.update(property);
+        });
     }
 
     @Override
     public void deleteById(Integer id) {
-        propertyDAO.deleteById(id);
+        TransactionManager.executeInTransaction(() -> {
+            Property property = propertyDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+            propertyDao.delete(property);
+        });
     }
 
+    @Override
+    public List<Property> getAllWithEssentialDetails() {
+        return TransactionManager.executeInTransaction(() -> {
+            return propertyDao.findAllWithEssentialDetails();
+        });
+    }
 }

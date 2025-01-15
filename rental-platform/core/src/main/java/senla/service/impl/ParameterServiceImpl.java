@@ -1,47 +1,61 @@
 package senla.service.impl;
 
-import senla.dao.impl.ParameterDAOImpl;
+import senla.dao.ParameterDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Parameter;
 import senla.service.ParameterService;
+import senla.util.TransactionManager;
 import senla.util.validator.ParameterValidator;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class ParameterServiceImpl implements ParameterService {
 
     @Autowired
-    private ParameterDAOImpl parameterDAO;
+    private ParameterDao parameterDao;
 
     @Override
-    public Optional<Parameter> create(Parameter parameter) {
-        ParameterValidator.validate(parameter);
-        return Optional.ofNullable(parameterDAO.create(parameter));
+    public Parameter create(Parameter parameter) {
+        return TransactionManager.executeInTransaction(() -> {
+            ParameterValidator.validate(parameter);
+            return parameterDao.save(parameter);
+        });
     }
 
     @Override
-    public Optional<Parameter> getById(Integer id) {
-        return Optional.ofNullable(parameterDAO.getByParam(id));
+    public Parameter getById(Integer id) {
+        return TransactionManager.executeInTransaction(() -> {
+            return parameterDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+        });
     }
 
     @Override
     public List<Parameter> getAll() {
-        return parameterDAO.getAll();
+        return TransactionManager.executeInTransaction(() -> {
+            return parameterDao.findAll();
+        });
     }
 
     @Override
     public void updateById(Integer id, Parameter parameter) {
-        ParameterValidator.validate(parameter);
-        parameterDAO.updateById(id, parameter);
+        TransactionManager.executeInTransaction(() -> {
+            parameter.setId(id);
+            ParameterValidator.validate(parameter);
+            parameterDao.update(parameter);
+        });
     }
 
     @Override
     public void deleteById(Integer id) {
-        parameterDAO.deleteById(id);
+        TransactionManager.executeInTransaction(() -> {
+            Parameter parameter = parameterDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+            parameterDao.delete(parameter);
+        });
     }
 }

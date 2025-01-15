@@ -1,48 +1,61 @@
 package senla.service.impl;
 
-import senla.dao.impl.ImageDAOImpl;
+import senla.dao.ImageDao;
 import senla.dicontainer.annotation.Autowired;
 import senla.dicontainer.annotation.Component;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
-import senla.model.Favorite;
 import senla.model.Image;
 import senla.service.ImageService;
+import senla.util.TransactionManager;
 import senla.util.validator.ImageValidator;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class ImageServiceImpl implements ImageService {
 
     @Autowired
-    private ImageDAOImpl imageDAO;
+    private ImageDao imageDao;
 
     @Override
-    public Optional<Image> create(Image image) {
-        ImageValidator.validate(image);
-        return Optional.ofNullable(imageDAO.create(image));
+    public Image create(Image image) {
+        return TransactionManager.executeInTransaction(() -> {
+            ImageValidator.validate(image);
+            return imageDao.save(image);
+        });
     }
 
     @Override
-    public Optional<Image> getById(Integer id) {
-        return Optional.ofNullable(imageDAO.getByParam(id));
+    public Image getById(Integer id) {
+        return TransactionManager.executeInTransaction(() -> {
+            return imageDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+        });
     }
 
     @Override
     public List<Image> getAll() {
-        return imageDAO.getAll();
+        return TransactionManager.executeInTransaction(() -> {
+            return imageDao.findAll();
+        });
     }
 
     @Override
     public void updateById(Integer id, Image image) {
-        ImageValidator.validate(image);
-        imageDAO.updateById(id, image);
+        TransactionManager.executeInTransaction(() -> {
+            image.setId(id);
+            ImageValidator.validate(image);
+            imageDao.update(image);
+        });
     }
 
     @Override
     public void deleteById(Integer id) {
-        imageDAO.deleteById(id);
+        TransactionManager.executeInTransaction(() -> {
+            Image image = imageDao.findById(id)
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+            imageDao.delete(image);
+        });
     }
 }
