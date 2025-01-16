@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import senla.model.Address;
 import senla.service.AddressService;
 import senla.service.PropertyService;
@@ -25,7 +24,7 @@ public class AddressController extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        ApplicationContext context = new ClassPathXmlApplicationContext("ApplicationContext.xml");
+        ApplicationContext context = (ApplicationContext) getServletContext().getAttribute("applicationContext");
         addressService = context.getBean(AddressService.class);
         propertyService = context.getBean(PropertyService.class);
     }

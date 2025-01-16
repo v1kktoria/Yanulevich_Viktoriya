@@ -1,6 +1,6 @@
 package senla.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import senla.dao.AnalyticsDao;
 import senla.exception.ServiceException;
@@ -13,14 +13,10 @@ import senla.util.validator.AnalyticsValidator;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AnalyticsServiceImpl implements AnalyticsService {
 
     private final AnalyticsDao analyticsDao;
-
-    @Autowired
-    public AnalyticsServiceImpl(AnalyticsDao analyticsDao) {
-        this.analyticsDao = analyticsDao;
-    }
 
     @Override
     public Analytics create(Analytics analytics) {

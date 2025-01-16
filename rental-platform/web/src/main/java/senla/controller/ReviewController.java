@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import senla.model.Review;
 import senla.service.PropertyService;
 import senla.service.ReviewService;
@@ -28,7 +27,7 @@ public class ReviewController extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        ApplicationContext context = new ClassPathXmlApplicationContext("ApplicationContext.xml");
+        ApplicationContext context = (ApplicationContext) getServletContext().getAttribute("applicationContext");
         reviewService = context.getBean(ReviewService.class);
         propertyService = context.getBean(PropertyService.class);
         userService = context.getBean(UserService.class);

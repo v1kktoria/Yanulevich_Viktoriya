@@ -1,6 +1,6 @@
 package senla.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import senla.dao.FavoriteDao;
 import senla.exception.ServiceException;
@@ -12,14 +12,10 @@ import senla.util.TransactionManager;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class FavoriteServiceImpl implements FavoriteService {
 
     private final FavoriteDao favoriteDao;
-
-    @Autowired
-    public FavoriteServiceImpl(FavoriteDao favoriteDao) {
-        this.favoriteDao = favoriteDao;
-    }
 
     @Override
     public Favorite create(Favorite favorite) {

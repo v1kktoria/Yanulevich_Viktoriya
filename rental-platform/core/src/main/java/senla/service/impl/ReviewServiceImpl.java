@@ -1,6 +1,6 @@
 package senla.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import senla.dao.ReviewDao;
 import senla.exception.ServiceException;
@@ -13,14 +13,10 @@ import senla.util.validator.ReviewValidator;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewDao reviewDao;
-
-    @Autowired
-    public ReviewServiceImpl(ReviewDao reviewDao) {
-        this.reviewDao = reviewDao;
-    }
 
     @Override
     public Review create(Review review) {

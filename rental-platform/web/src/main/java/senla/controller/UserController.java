@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import senla.model.User;
 import senla.service.UserService;
 import senla.util.mapper.UserMapper;
@@ -22,7 +21,7 @@ public class UserController extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        ApplicationContext context = new ClassPathXmlApplicationContext("ApplicationContext.xml");
+        ApplicationContext context = (ApplicationContext) getServletContext().getAttribute("applicationContext");
         userService = context.getBean(UserService.class);
     }
 

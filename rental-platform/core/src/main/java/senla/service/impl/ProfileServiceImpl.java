@@ -1,6 +1,6 @@
 package senla.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import senla.dao.ProfileDao;
 import senla.exception.ServiceException;
@@ -14,14 +14,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProfileServiceImpl implements ProfileService {
 
     private final ProfileDao profileDao;
-
-    @Autowired
-    public ProfileServiceImpl(ProfileDao profileDao) {
-        this.profileDao = profileDao;
-    }
 
     @Override
     public Profile create(Profile profile) {

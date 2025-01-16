@@ -1,6 +1,6 @@
 package senla.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import senla.dao.ApplicationDao;
 import senla.exception.ServiceException;
@@ -12,14 +12,10 @@ import senla.util.TransactionManager;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ApplicationServiceImpl implements ApplicationService {
 
     private final ApplicationDao applicationDao;
-
-    @Autowired
-    public ApplicationServiceImpl(ApplicationDao applicationDao) {
-        this.applicationDao = applicationDao;
-    }
 
     @Override
     public Application create(Application application) {

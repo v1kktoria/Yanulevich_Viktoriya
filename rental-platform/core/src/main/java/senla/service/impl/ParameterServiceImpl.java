@@ -1,6 +1,6 @@
 package senla.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import senla.dao.ParameterDao;
 import senla.exception.ServiceException;
@@ -13,14 +13,10 @@ import senla.util.validator.ParameterValidator;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ParameterServiceImpl implements ParameterService {
 
     private final ParameterDao parameterDao;
-
-    @Autowired
-    public ParameterServiceImpl(ParameterDao parameterDao) {
-        this.parameterDao = parameterDao;
-    }
 
     @Override
     public Parameter create(Parameter parameter) {
