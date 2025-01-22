@@ -1,67 +1,54 @@
 package senla.controller;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.context.ApplicationContext;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import senla.model.Property;
 import senla.service.PropertyService;
-import senla.service.UserService;
-import senla.util.mapper.PropertyMapper;
 
-import java.io.IOException;
-import java.util.List;
+@Controller
+@RequestMapping("/properties")
+@RequiredArgsConstructor
+public class PropertyController {
 
-@WebServlet("/properties/*")
-public class PropertyController extends HttpServlet {
+    private final PropertyService propertyService;
 
-    private PropertyService propertyService;
-
-    private UserService userService;
-
-    @Override
-    public void init() throws ServletException {
-        super.init();
-        ApplicationContext context = (ApplicationContext) getServletContext().getAttribute("applicationContext");
-        propertyService = context.getBean(PropertyService.class);
-        userService = context.getBean(UserService.class);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Property property = PropertyMapper.fromRequest(request, userService);
+    @PostMapping
+    public String createProperty(@ModelAttribute @Valid Property property) {
         propertyService.create(property);
-        response.sendRedirect(request.getContextPath() + "/properties");
+        return "redirect:/properties";
     }
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String idParam = request.getParameter("id");
-
-        if (idParam != null && !idParam.isEmpty()) {
-            Integer propertyId = Integer.parseInt(idParam);
-            Property property = propertyService.getById(propertyId);
-            request.setAttribute("property", property);
-        }
-        List<Property> properties = propertyService.getAll();
-        request.setAttribute("properties", properties);
-        request.getRequestDispatcher("/WEB-INF/jsp/properties.jsp").forward(request, response);
+    @GetMapping
+    public String getAllProperties(Model model) {
+        model.addAttribute("properties", propertyService.getAll());
+        return "properties";
     }
 
-    @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws  IOException {
-        Integer id = Integer.parseInt(request.getParameter("id"));
-        Property property = PropertyMapper.fromRequest(request, userService);
+    @GetMapping("/property")
+    public String getProperty(@RequestParam("id") Integer id, Model model) {
+        model.addAttribute("property", propertyService.getById(id));
+        return "properties";
+    }
+
+    @PutMapping("/{id}")
+    public String updateProperty(@PathVariable("id") Integer id, @ModelAttribute @Valid Property property) {
         propertyService.updateById(id, property);
-        response.sendRedirect(request.getContextPath() + "/properties");
+        return "redirect:/properties";
     }
 
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Integer id = Integer.parseInt(request.getParameter("id"));
+    @DeleteMapping("/{id}")
+    public String deleteProperty(@PathVariable("id") Integer id) {
         propertyService.deleteById(id);
-        response.sendRedirect(request.getContextPath() + "/properties");
+        return "redirect:/properties";
     }
 }

@@ -8,7 +8,6 @@ import senla.exception.ServiceExceptionEnum;
 import senla.model.Image;
 import senla.service.ImageService;
 import senla.util.TransactionManager;
-import senla.util.validator.ImageValidator;
 
 import java.util.List;
 
@@ -21,7 +20,6 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public Image create(Image image) {
         return TransactionManager.executeInTransaction(() -> {
-            ImageValidator.validate(image);
             return imageDao.save(image);
         });
     }
@@ -45,7 +43,6 @@ public class ImageServiceImpl implements ImageService {
     public void updateById(Integer id, Image image) {
         TransactionManager.executeInTransaction(() -> {
             image.setId(id);
-            ImageValidator.validate(image);
             imageDao.update(image);
         });
     }

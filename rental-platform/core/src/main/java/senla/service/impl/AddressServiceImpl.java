@@ -8,7 +8,6 @@ import senla.exception.ServiceExceptionEnum;
 import senla.model.Address;
 import senla.service.AddressService;
 import senla.util.TransactionManager;
-import senla.util.validator.AddressValidator;
 
 import java.util.List;
 
@@ -21,7 +20,6 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public Address create(Address address) {
         return TransactionManager.executeInTransaction(() -> {
-            AddressValidator.validate(address);
             return addressDao.save(address);
         });
     }
@@ -52,7 +50,6 @@ public class AddressServiceImpl implements AddressService {
     public void updateById(Integer id, Address address) {
         TransactionManager.executeInTransaction(() -> {
             address.setId(id);
-            AddressValidator.validate(address);
             addressDao.update(address);
         });
     }

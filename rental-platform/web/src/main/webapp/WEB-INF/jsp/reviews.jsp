@@ -48,7 +48,7 @@
         <td>${review.comment}</td>
         <td><fmt:formatDate value="${review.createdAt}" pattern="dd.MM.yyyy HH:mm"/></td>
         <td>
-          <form action="${pageContext.request.contextPath}/reviews" method="POST" style="display:inline;">
+          <form action="${pageContext.request.contextPath}/reviews/${review.id}" method="POST" style="display:inline;">
             <input type="hidden" name="_method" value="PUT">
             <input type="hidden" name="id" value="${review.id}">
             <input type="hidden" name="property_id" value="${review.property.id}">
@@ -57,7 +57,7 @@
             <input type="number" name="rating" min="1" max="5" value="${review.rating}" required><br><br>
             <button type="submit">Обновить</button>
           </form>
-          <form action="${pageContext.request.contextPath}/reviews" method="POST" style="display:inline;">
+          <form action="${pageContext.request.contextPath}/reviews/${review.id}" method="POST" style="display:inline;">
             <input type="hidden" name="_method" value="DELETE">
             <input type="hidden" name="id" value="${review.id}">
             <button type="submit">Удалить</button>
@@ -70,7 +70,7 @@
 </c:if>
 
 <h3>Поиск отзыва по ID</h3>
-<form action="${pageContext.request.contextPath}/reviews" method="GET">
+<form action="${pageContext.request.contextPath}/reviews/review" method="GET">
   <label for="search-id">ID отзыва:</label>
   <input type="text" id="search-id" name="id" required>
   <button type="submit">Искать</button>

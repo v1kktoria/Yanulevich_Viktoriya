@@ -31,6 +31,9 @@
         <jakarta.xml.bind-api.version>3.0.0</jakarta.xml.bind-api.version>
         <jaxb-runtime.version>3.0.0</jaxb-runtime.version>
         <spring.version>6.2.1</spring.version>
+        <jakarta.validation.api.version>3.0.2</jakarta.validation.api.version>
+        <hibernate.validator.version>7.0.4.Final</hibernate.validator.version>
+
     </properties>
 
     <dependencyManagement>
@@ -92,9 +95,29 @@
                 <version>${jakarta.persistence-api.version}</version>
             </dependency>
             <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${jakarta.validation.api.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-jcache</artifactId>
                 <version>${hibernate.jcache.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate.validator.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.ehcache</groupId>

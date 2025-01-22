@@ -1,72 +1,54 @@
 package senla.controller;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.context.ApplicationContext;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import senla.model.Review;
-import senla.service.PropertyService;
 import senla.service.ReviewService;
-import senla.service.UserService;
-import senla.util.mapper.ReviewMapper;
 
-import java.io.IOException;
-import java.util.List;
+@Controller
+@RequestMapping("/reviews")
+@RequiredArgsConstructor
+public class ReviewController {
 
-@WebServlet("/reviews/*")
-public class ReviewController extends HttpServlet {
+    private final ReviewService reviewService;
 
-    private ReviewService reviewService;
-
-    private PropertyService propertyService;
-
-    private UserService userService;
-
-    @Override
-    public void init() throws ServletException {
-        super.init();
-        ApplicationContext context = (ApplicationContext) getServletContext().getAttribute("applicationContext");
-        reviewService = context.getBean(ReviewService.class);
-        propertyService = context.getBean(PropertyService.class);
-        userService = context.getBean(UserService.class);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Review review = ReviewMapper.fromRequest(request, propertyService, userService);
+    @PostMapping
+    public String createReview(@ModelAttribute @Valid Review review) {
         reviewService.create(review);
-        response.sendRedirect(request.getContextPath() + "/reviews");
+        return "redirect:/reviews";
     }
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String idParam = request.getParameter("id");
-
-        if (idParam != null && !idParam.isEmpty()) {
-            Integer reviewId = Integer.parseInt(idParam);
-            Review review = reviewService.getById(reviewId);
-            request.setAttribute("review", review);
-        }
-        List<Review> reviews = reviewService.getAll();
-        request.setAttribute("reviews", reviews);
-        request.getRequestDispatcher("/WEB-INF/jsp/reviews.jsp").forward(request, response);
+    @GetMapping
+    public String getAllReviews(Model model) {
+        model.addAttribute("reviews", reviewService.getAll());
+        return "reviews";
     }
 
-    @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Integer id = Integer.parseInt(request.getParameter("id"));
-        Review review = ReviewMapper.fromRequest(request, propertyService, userService);
+    @GetMapping("/review")
+    public String getReview(@RequestParam("id") Integer id, Model model) {
+        model.addAttribute("review", reviewService.getById(id));
+        return "reviews";
+    }
+
+    @PutMapping("/{id}")
+    public String updateReview(@PathVariable("id") Integer id, @ModelAttribute @Valid Review review) {
         reviewService.updateById(id, review);
-        response.sendRedirect(request.getContextPath() + "/reviews");
+        return "redirect:/reviews";
     }
 
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Integer id = Integer.parseInt(request.getParameter("id"));
+    @DeleteMapping("/{id}")
+    public String deleteReview(@PathVariable("id") Integer id) {
         reviewService.deleteById(id);
-        response.sendRedirect(request.getContextPath() + "/reviews");
+        return "redirect:/reviews";
     }
 }
-

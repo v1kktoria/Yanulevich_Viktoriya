@@ -8,7 +8,6 @@ import senla.exception.ServiceExceptionEnum;
 import senla.model.User;
 import senla.service.UserService;
 import senla.util.TransactionManager;
-import senla.util.validator.UserValidator;
 
 import java.util.List;
 
@@ -21,7 +20,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User create(User user) {
         return TransactionManager.executeInTransaction(() -> {
-            UserValidator.validate(user);
             if (userDao.existsByUsername(user.getUsername())) {
                 throw new ServiceException(ServiceExceptionEnum.USER_ALREADY_EXISTS, user.getUsername());
             }
@@ -48,7 +46,6 @@ public class UserServiceImpl implements UserService {
     public void updateById(Integer id, User user) {
         TransactionManager.executeInTransaction(() -> {
             user.setId(id);
-            UserValidator.validate(user);
             User existingUser = userDao.findById(id)
                     .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
 

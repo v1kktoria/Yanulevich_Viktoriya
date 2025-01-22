@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,5 +26,6 @@ public class Image extends BaseEntity {
     private Property property;
 
     @Column(name = "filepath")
+    @NotBlank(message = "Путь к файлу не может быть пустым")
     private String filepath;
 }

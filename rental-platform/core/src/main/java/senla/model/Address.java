@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,15 +26,19 @@ public class Address extends BaseEntity {
     private Property property;
 
     @Column(name = "country")
+    @NotBlank(message = "Страна не может быть пустой")
     private String country;
 
     @Column(name = "city")
+    @NotBlank(message = "Город не может быть пустым")
     private String city;
 
     @Column(name = "street")
+    @NotBlank(message = "Улица не может быть пустой")
     private String street;
 
     @Column(name = "house_number")
+    @NotBlank(message = "Номер дома не может быть пустым")
     private String houseNumber;
 
 }

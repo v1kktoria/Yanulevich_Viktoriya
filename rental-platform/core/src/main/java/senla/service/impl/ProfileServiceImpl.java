@@ -8,7 +8,6 @@ import senla.exception.ServiceExceptionEnum;
 import senla.model.Profile;
 import senla.service.ProfileService;
 import senla.util.TransactionManager;
-import senla.util.validator.ProfileValidator;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,7 +21,6 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public Profile create(Profile profile) {
         return TransactionManager.executeInTransaction(() -> {
-            ProfileValidator.validate(profile);
             profile.setRegistrationDate(LocalDateTime.now());
             return profileDao.save(profile);
         });
@@ -47,7 +45,6 @@ public class ProfileServiceImpl implements ProfileService {
     public void updateById(Integer id, Profile profile) {
         TransactionManager.executeInTransaction(() -> {
             profile.setId(id);
-            ProfileValidator.validate(profile);
             profileDao.update(profile);
         });
     }

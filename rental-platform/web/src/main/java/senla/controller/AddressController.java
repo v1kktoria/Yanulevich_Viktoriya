@@ -1,67 +1,54 @@
 package senla.controller;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.context.ApplicationContext;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import senla.model.Address;
 import senla.service.AddressService;
-import senla.service.PropertyService;
-import senla.util.mapper.AddressMapper;
 
-import java.io.IOException;
-import java.util.List;
+@Controller
+@RequestMapping("/addresses")
+@RequiredArgsConstructor
+public class AddressController {
 
-@WebServlet("/addresses/*")
-public class AddressController extends HttpServlet {
+    private final AddressService addressService;
 
-    private AddressService addressService;
-
-    private PropertyService propertyService;
-
-    @Override
-    public void init() throws ServletException {
-        super.init();
-        ApplicationContext context = (ApplicationContext) getServletContext().getAttribute("applicationContext");
-        addressService = context.getBean(AddressService.class);
-        propertyService = context.getBean(PropertyService.class);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Address address = AddressMapper.fromRequest(request, propertyService);
+    @PostMapping
+    public String createAddress(@ModelAttribute @Valid Address address) {
         addressService.create(address);
-        response.sendRedirect(request.getContextPath() + "/addresses");
+        return "redirect:/addresses";
     }
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String idParam = request.getParameter("id");
-
-        if (idParam != null && !idParam.isEmpty()) {
-            Integer addressId = Integer.parseInt(idParam);
-            Address address = addressService.getById(addressId);
-            request.setAttribute("address", address);
-        }
-        List<Address> addresses = addressService.getAll();
-        request.setAttribute("addresses", addresses);
-        request.getRequestDispatcher("/WEB-INF/jsp/addresses.jsp").forward(request, response);
+    @GetMapping
+    public String getAllAddresses(Model model) {
+        model.addAttribute("addresses", addressService.getAll());
+        return "addresses";
     }
 
-    @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Integer id = Integer.parseInt(request.getParameter("id"));
-        Address address = AddressMapper.fromRequest(request, propertyService);
+    @GetMapping("/address")
+    public String getAddress(@RequestParam("id") Integer id, Model model) {
+        model.addAttribute("address", addressService.getById(id));
+        return "addresses";
+    }
+
+    @PutMapping("/{id}")
+    public String updateAddress(@PathVariable("id") Integer id, @ModelAttribute @Valid Address address) {
         addressService.updateById(id, address);
-        response.sendRedirect(request.getContextPath() + "/addresses");
+        return "redirect:/addresses";
     }
 
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Integer id = Integer.parseInt(request.getParameter("id"));
+    @DeleteMapping("/{id}")
+    public String deleteAddress(@PathVariable("id") Integer id) {
         addressService.deleteById(id);
-        response.sendRedirect(request.getContextPath() + "/addresses");
+        return "redirect:/addresses";
     }
 }

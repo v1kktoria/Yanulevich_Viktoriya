@@ -45,7 +45,7 @@
         <td>${application.createdAt}</td>
         <td>${application.tenant.id}</td>
         <td>
-          <form action="${pageContext.request.contextPath}/applications" method="POST" style="display:inline;">
+          <form action="${pageContext.request.contextPath}/applications/${application.id}" method="POST" style="display:inline;">
             <input type="hidden" name="_method" value="PUT">
             <input type="hidden" name="id" value="${application.id}">
             <input type="hidden" name="property_id" value="${application.property.id}">
@@ -53,7 +53,7 @@
             <input type="text" name="message" value="${application.message}" required>
             <button type="submit">Обновить</button>
           </form>
-          <form action="${pageContext.request.contextPath}/applications" method="POST" style="display:inline;">
+          <form action="${pageContext.request.contextPath}/applications/${application.id}" method="POST" style="display:inline;">
             <input type="hidden" name="_method" value="DELETE">
             <input type="hidden" name="id" value="${application.id}">
             <button type="submit">Удалить</button>
@@ -66,7 +66,7 @@
 </c:if>
 
 <h3>Поиск заявки по ID</h3>
-<form action="${pageContext.request.contextPath}/applications" method="GET">
+<form action="${pageContext.request.contextPath}/applications/application" method="GET">
   <label for="search-id">ID заявки:</label>
   <input type="text" id="search-id" name="id" required>
   <button type="submit">Искать</button>

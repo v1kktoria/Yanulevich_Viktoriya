@@ -8,7 +8,6 @@ import senla.exception.ServiceExceptionEnum;
 import senla.model.Property;
 import senla.service.PropertyService;
 import senla.util.TransactionManager;
-import senla.util.validator.PropertyValidator;
 
 import java.util.List;
 
@@ -21,7 +20,6 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public Property create(Property property) {
         return TransactionManager.executeInTransaction(() -> {
-            PropertyValidator.validate(property);
             return propertyDao.save(property);
         });
     }
@@ -54,7 +52,6 @@ public class PropertyServiceImpl implements PropertyService {
     public void updateById(Integer id, Property property) {
         TransactionManager.executeInTransaction(() -> {
             property.setId(id);
-            PropertyValidator.validate(property);
             propertyDao.update(property);
         });
     }

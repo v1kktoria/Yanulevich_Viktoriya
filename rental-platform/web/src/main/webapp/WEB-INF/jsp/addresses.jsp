@@ -49,7 +49,7 @@
         <td>${address.street}</td>
         <td>${address.houseNumber}</td>
         <td>
-          <form action="${pageContext.request.contextPath}/addresses" method="POST" style="display:inline;">
+          <form action="${pageContext.request.contextPath}/addresses/${address.id}" method="POST" style="display:inline;">
             <input type="hidden" name="_method" value="PUT">
             <input type="hidden" name="id" value="${address.id}">
             <input type="hidden" name="property_id" value="${address.property.id}">
@@ -59,7 +59,7 @@
             <input type="text" name="houseNumber" value="${address.houseNumber}" required><br><br>
             <button type="submit">Обновить</button>
           </form>
-          <form action="${pageContext.request.contextPath}/addresses" method="POST" style="display:inline;">
+          <form action="${pageContext.request.contextPath}/addresses/${address.id}" method="POST" style="display:inline;">
             <input type="hidden" name="_method" value="DELETE">
             <input type="hidden" name="id" value="${address.id}">
             <button type="submit">Удалить</button>
@@ -72,7 +72,7 @@
 </c:if>
 
 <h3>Поиск адреса по ID</h3>
-<form action="${pageContext.request.contextPath}/addresses" method="GET">
+<form action="${pageContext.request.contextPath}/addresses/address" method="GET">
   <label for="search-id">ID адреса:</label>
   <input type="text" id="search-id" name="id" required>
   <button type="submit">Искать</button>

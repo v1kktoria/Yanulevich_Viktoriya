@@ -1,64 +1,56 @@
 package senla.controller;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.context.ApplicationContext;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import senla.model.User;
 import senla.service.UserService;
-import senla.util.mapper.UserMapper;
 
-import java.io.IOException;
-import java.util.List;
-
-@WebServlet("/users/*")
+@Controller
+@RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController extends HttpServlet {
 
-    private UserService userService;
+    private final UserService userService;
 
-    @Override
-    public void init() throws ServletException {
-        super.init();
-        ApplicationContext context = (ApplicationContext) getServletContext().getAttribute("applicationContext");
-        userService = context.getBean(UserService.class);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        User user = UserMapper.fromRequest(request);
+    @PostMapping
+    public String createUser(@ModelAttribute @Valid User user) {
         userService.create(user);
-        response.sendRedirect(request.getContextPath() + "/users");
+        return "redirect:/users";
     }
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String idParam = request.getParameter("id");
-
-        if (idParam != null && !idParam.isEmpty()) {
-            Integer userId = Integer.parseInt(idParam);
-            User user = userService.getById(userId);
-            request.setAttribute("user", user);
-        }
-        List<User> users = userService.getAll();
-        request.setAttribute("users", users);
-        request.getRequestDispatcher("/WEB-INF/jsp/users.jsp").forward(request, response);
+    @GetMapping
+    public String getAllUsers(Model model) {
+        model.addAttribute("users", userService.getAll());
+        return "users";
     }
 
-    @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Integer id = Integer.parseInt(request.getParameter("id"));
-        User user = UserMapper.fromRequest(request);
+    @GetMapping("/user")
+    public String getUser(@RequestParam("id") Integer id, Model model) {
+        model.addAttribute("user", userService.getById(id));
+        return "users";
+    }
+
+    @PutMapping("/{id}")
+    public String updateUser(@PathVariable("id") Integer id, @ModelAttribute @Valid User user) {
         userService.updateById(id, user);
-        response.sendRedirect(request.getContextPath() + "/users");
+        return "redirect:/users";
     }
 
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Integer id = Integer.parseInt(request.getParameter("id"));
+    @DeleteMapping("/{id}")
+    public String deleteUser(@PathVariable("id") Integer id) {
         userService.deleteById(id);
-        response.sendRedirect(request.getContextPath() + "/users");
+        return "redirect:/users";
     }
 }
 

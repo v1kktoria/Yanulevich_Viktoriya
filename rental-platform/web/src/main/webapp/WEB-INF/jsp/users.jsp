@@ -37,17 +37,15 @@
         <td>${user.username}</td>
         <td>${user.password}</td>
         <td>
-          <form action="${pageContext.request.contextPath}/users" method="POST" style="display:inline;">
+          <form action="${pageContext.request.contextPath}/users/${user.id}" method="POST" style="display:inline;">
             <input type="hidden" name="_method" value="PUT">
-            <input type="hidden" name="id" value="${user.id}">
             <input type="text" name="username" value="${user.username}" required>
             <input type="password" name="password" value="${user.password}" required>
             <button type="submit">Обновить</button>
           </form>
-          <form action="${pageContext.request.contextPath}/users" method="POST" style="display:inline;">
+          <form action="${pageContext.request.contextPath}/users/${user.id}" method="POST" style="display:inline;">
             <input type="hidden" name="_method" value="DELETE">
-            <input type="hidden" name="id" value="${user.id}">
-            <button type="submit" formaction="${pageContext.request.contextPath}/users" formmethod="delete">Удалить</button>
+            <button type="submit">Удалить</button>
           </form>
         </td>
       </tr>
@@ -57,7 +55,7 @@
 </c:if>
 
 <h3>Поиск пользователя по ID</h3>
-<form action="${pageContext.request.contextPath}/users" method="GET">
+<form action="${pageContext.request.contextPath}/users/user" method="GET">
   <label for="search-id">ID пользователя:</label>
   <input type="text" id="search-id" name="id" required>
   <button type="submit">Искать</button>
