@@ -1,8 +1,8 @@
 package senla.service.impl;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import senla.dao.RoleDao;
-import senla.dicontainer.annotation.Autowired;
-import senla.dicontainer.annotation.Component;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Role;
@@ -12,11 +12,11 @@ import senla.util.validator.RoleValidator;
 
 import java.util.List;
 
-@Component
+@Service
+@RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
 
-    @Autowired
-    private RoleDao roleDao;
+    private final RoleDao roleDao;
 
     @Override
     public Role create(Role role) {

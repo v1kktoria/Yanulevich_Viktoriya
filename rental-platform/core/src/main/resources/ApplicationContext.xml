@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="senla"/>
+
+    <bean id="addressDao" class="senla.dao.impl.AddressDaoImpl"/>
+
+    <bean id="analyticsDao" class="senla.dao.impl.AnalyticsDaoImpl"/>
+
+    <bean id="applicationDao" class="senla.dao.impl.ApplicationDaoImpl"/>
+
+    <bean id="favoriteDao" class="senla.dao.impl.FavoriteDaoImpl"/>
+
+    <bean id="imageDao" class="senla.dao.impl.ImageDaoImpl"/>
+
+    <bean id="parameterDao" class="senla.dao.impl.ParameterDaoImpl"/>
+
+    <bean id="profileDao" class="senla.dao.impl.ProfileDaoImpl"/>
+
+    <bean id="propertyDao" class="senla.dao.impl.PropertyDaoImpl"/>
+
+    <bean id="propertyParameterDao" class="senla.dao.impl.PropertyParameterDaoImpl"/>
+
+    <bean id="reportDao" class="senla.dao.impl.ReportDaoImpl"/>
+
+    <bean id="reviewDao" class="senla.dao.impl.ReviewDaoImpl"/>
+
+    <bean id="roleDao" class="senla.dao.impl.RoleDaoImpl"/>
+
+    <bean id="userDao" class="senla.dao.impl.UserDaoImpl"/>
+
+</beans>

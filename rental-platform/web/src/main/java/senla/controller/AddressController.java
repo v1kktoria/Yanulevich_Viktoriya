@@ -5,9 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import senla.dicontainer.DIContainer;
-import senla.exception.ServiceException;
-import senla.exception.ServiceExceptionEnum;
+import org.springframework.context.ApplicationContext;
 import senla.model.Address;
 import senla.service.AddressService;
 import senla.service.PropertyService;
@@ -26,8 +24,9 @@ public class AddressController extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        addressService = DIContainer.getBean(AddressService.class);
-        propertyService = DIContainer.getBean(PropertyService.class);
+        ApplicationContext context = (ApplicationContext) getServletContext().getAttribute("applicationContext");
+        addressService = context.getBean(AddressService.class);
+        propertyService = context.getBean(PropertyService.class);
     }
 
     @Override

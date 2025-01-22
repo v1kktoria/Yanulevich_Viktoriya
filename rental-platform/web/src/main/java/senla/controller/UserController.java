@@ -5,9 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import senla.dicontainer.DIContainer;
-import senla.exception.ServiceException;
-import senla.exception.ServiceExceptionEnum;
+import org.springframework.context.ApplicationContext;
 import senla.model.User;
 import senla.service.UserService;
 import senla.util.mapper.UserMapper;
@@ -23,7 +21,8 @@ public class UserController extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        userService = DIContainer.getBean(UserService.class);
+        ApplicationContext context = (ApplicationContext) getServletContext().getAttribute("applicationContext");
+        userService = context.getBean(UserService.class);
     }
 
     @Override

@@ -1,8 +1,8 @@
 package senla.service.impl;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import senla.dao.ReportDao;
-import senla.dicontainer.annotation.Autowired;
-import senla.dicontainer.annotation.Component;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Report;
@@ -11,11 +11,11 @@ import senla.util.TransactionManager;
 
 import java.util.List;
 
-@Component
+@Service
+@RequiredArgsConstructor
 public class ReportServiceImpl implements ReportService {
 
-    @Autowired
-    private ReportDao reportDao;
+    private final ReportDao reportDao;
 
     @Override
     public Report create(Report report) {

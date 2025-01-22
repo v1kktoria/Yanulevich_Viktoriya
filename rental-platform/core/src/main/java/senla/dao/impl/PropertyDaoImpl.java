@@ -7,15 +7,12 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import senla.dao.AbstractDao;
 import senla.dao.PropertyDao;
-import senla.dicontainer.annotation.Component;
 import senla.model.Property_;
-import senla.model.User;
 import senla.util.JpaUtil;
 import senla.model.Property;
 
 import java.util.List;
 
-@Component
 public class PropertyDaoImpl extends AbstractDao<Property, Integer> implements PropertyDao {
 
     @Override

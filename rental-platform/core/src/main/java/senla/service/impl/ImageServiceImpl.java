@@ -1,8 +1,8 @@
 package senla.service.impl;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import senla.dao.ImageDao;
-import senla.dicontainer.annotation.Autowired;
-import senla.dicontainer.annotation.Component;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Image;
@@ -12,11 +12,11 @@ import senla.util.validator.ImageValidator;
 
 import java.util.List;
 
-@Component
+@Service
+@RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
 
-    @Autowired
-    private ImageDao imageDao;
+    private final ImageDao imageDao;
 
     @Override
     public Image create(Image image) {

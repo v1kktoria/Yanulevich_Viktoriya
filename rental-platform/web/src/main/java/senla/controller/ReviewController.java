@@ -5,9 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import senla.dicontainer.DIContainer;
-import senla.exception.ServiceException;
-import senla.exception.ServiceExceptionEnum;
+import org.springframework.context.ApplicationContext;
 import senla.model.Review;
 import senla.service.PropertyService;
 import senla.service.ReviewService;
@@ -29,9 +27,10 @@ public class ReviewController extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        reviewService = DIContainer.getBean(ReviewService.class);
-        propertyService = DIContainer.getBean(PropertyService.class);
-        userService = DIContainer.getBean(UserService.class);
+        ApplicationContext context = (ApplicationContext) getServletContext().getAttribute("applicationContext");
+        reviewService = context.getBean(ReviewService.class);
+        propertyService = context.getBean(PropertyService.class);
+        userService = context.getBean(UserService.class);
     }
 
     @Override

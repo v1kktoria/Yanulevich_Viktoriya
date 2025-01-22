@@ -6,15 +6,12 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import senla.dao.AbstractDao;
 import senla.dao.ApplicationDao;
-import senla.dicontainer.annotation.Component;
 import senla.model.Application;
-import senla.model.Property;
 import senla.util.JpaUtil;
 
 import java.util.List;
 
 
-@Component
 public class ApplicationDaoImpl extends AbstractDao<Application, Integer> implements ApplicationDao {
 
     @Override

@@ -10,7 +10,6 @@
     <name>rental-platform</name>
     <modules>
         <module>web</module>
-        <module>di</module>
         <module>core</module>
     </modules>
     <packaging>pom</packaging>
@@ -31,6 +30,7 @@
         <ehcache.version>3.10.8</ehcache.version>
         <jakarta.xml.bind-api.version>3.0.0</jakarta.xml.bind-api.version>
         <jaxb-runtime.version>3.0.0</jaxb-runtime.version>
+        <spring.version>6.2.1</spring.version>
     </properties>
 
     <dependencyManagement>
@@ -38,11 +38,6 @@
             <dependency>
                 <groupId>senla</groupId>
                 <artifactId>core</artifactId>
-                <version>1.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>senla</groupId>
-                <artifactId>di</artifactId>
                 <version>1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
@@ -126,6 +121,11 @@
                 <groupId>org.glassfish.jaxb</groupId>
                 <artifactId>jaxb-runtime</artifactId>
                 <version>${jaxb-runtime.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

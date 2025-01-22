@@ -6,13 +6,11 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import senla.dao.AbstractDao;
 import senla.dao.AddressDao;
-import senla.dicontainer.annotation.Component;
 import senla.model.Address;
 import senla.util.JpaUtil;
 
 import java.util.List;
 
-@Component
 public class AddressDaoImpl extends AbstractDao<Address, Integer> implements AddressDao {
 
     @Override

@@ -1,8 +1,8 @@
 package senla.service.impl;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import senla.dao.ProfileDao;
-import senla.dicontainer.annotation.Autowired;
-import senla.dicontainer.annotation.Component;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Profile;
@@ -13,11 +13,11 @@ import senla.util.validator.ProfileValidator;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Component
+@Service
+@RequiredArgsConstructor
 public class ProfileServiceImpl implements ProfileService {
 
-    @Autowired
-    private ProfileDao profileDao;
+    private final ProfileDao profileDao;
 
     @Override
     public Profile create(Profile profile) {

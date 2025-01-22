@@ -1,8 +1,8 @@
 package senla.service.impl;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import senla.dao.ReviewDao;
-import senla.dicontainer.annotation.Autowired;
-import senla.dicontainer.annotation.Component;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Review;
@@ -12,11 +12,11 @@ import senla.util.validator.ReviewValidator;
 
 import java.util.List;
 
-@Component
+@Service
+@RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
 
-    @Autowired
-    private ReviewDao reviewDao;
+    private final ReviewDao reviewDao;
 
     @Override
     public Review create(Review review) {

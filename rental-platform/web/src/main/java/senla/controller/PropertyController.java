@@ -5,9 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import senla.dicontainer.DIContainer;
-import senla.exception.ServiceException;
-import senla.exception.ServiceExceptionEnum;
+import org.springframework.context.ApplicationContext;
 import senla.model.Property;
 import senla.service.PropertyService;
 import senla.service.UserService;
@@ -26,8 +24,9 @@ public class PropertyController extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        propertyService = DIContainer.getBean(PropertyService.class);
-        userService = DIContainer.getBean(UserService.class);
+        ApplicationContext context = (ApplicationContext) getServletContext().getAttribute("applicationContext");
+        propertyService = context.getBean(PropertyService.class);
+        userService = context.getBean(UserService.class);
     }
 
     @Override
