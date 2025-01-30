@@ -1,23 +1,22 @@
 package senla.service;
 
-import senla.model.Property;
+import senla.dto.PropertyDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface PropertyService {
 
-    Property create(Property property);
+    PropertyDto create(PropertyDto propertyDto);
 
-    Property getById(Integer id);
+    PropertyDto getById(Integer id);
 
-    List<Property> getByUserId(Integer id);
+    List<PropertyDto> getByUserId(Integer id);
 
-    List<Property> getAll();
+    List<PropertyDto> getAll();
 
-    void updateById(Integer id, Property property);
+    void updateById(Integer id, PropertyDto propertyDto);
 
     void deleteById(Integer id);
 
-    List<Property> getAllWithEssentialDetails();
+    List<PropertyDto> getAllWithEssentialDetails();
 }

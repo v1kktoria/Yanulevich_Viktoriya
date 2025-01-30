@@ -1,19 +1,18 @@
 package senla.service;
 
-import senla.model.Profile;
+import senla.dto.ProfileDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ProfileService {
 
-    Profile create(Profile profile);
+    ProfileDto create(ProfileDto profileDto);
 
-    Profile getById(Integer id);
+    ProfileDto getById(Integer id);
 
-    List<Profile> getAll();
+    List<ProfileDto> getAll();
 
-    void updateById(Integer id, Profile profile);
+    void updateById(Integer id, ProfileDto profileDto);
 
     void deleteById(Integer id);
 }

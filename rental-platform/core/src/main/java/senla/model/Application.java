@@ -6,7 +6,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,7 +35,6 @@ public class Application extends BaseEntity {
     private User tenant;
 
     @Column(name = "message")
-    @Size(max = 500, message = "Сообщение не может быть длиннее 500 символов")
     private String message;
 
     @Column(name = "status")

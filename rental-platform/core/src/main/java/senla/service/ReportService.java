@@ -1,20 +1,19 @@
 package senla.service;
 
 
-import senla.model.Report;
+import senla.dto.ReportDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ReportService {
 
-    Report create(Report report);
+    ReportDto create(ReportDto reportDto);
 
-    Report getById(Integer id);
+    ReportDto getById(Integer id);
 
-    List<Report> getAll();
+    List<ReportDto> getAll();
 
-    void updateById(Integer id, Report report);
+    void updateById(Integer id, ReportDto reportDto);
 
     void deleteById(Integer id);
 }

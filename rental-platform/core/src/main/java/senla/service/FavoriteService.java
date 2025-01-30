@@ -1,21 +1,20 @@
 package senla.service;
 
-import senla.model.Favorite;
+import senla.dto.FavoriteDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface FavoriteService {
 
-    Favorite create(Favorite favorite);
+    FavoriteDto create(FavoriteDto favoriteDto);
 
-    Favorite getById(Integer id);
+    FavoriteDto getById(Integer id);
 
-    List<Favorite> getByUserId(Integer id);
+    List<FavoriteDto> getByUserId(Integer id);
 
-    List<Favorite> getAll();
+    List<FavoriteDto> getAll();
 
-    void updateById(Integer id, Favorite favorite);
+    void updateById(Integer id, FavoriteDto favoriteDto);
 
     void deleteById(Integer id);
 }

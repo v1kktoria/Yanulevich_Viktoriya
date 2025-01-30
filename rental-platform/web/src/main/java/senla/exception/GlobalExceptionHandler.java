@@ -1,44 +1,52 @@
 package senla.exception;
 
-import org.springframework.ui.Model;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-@ControllerAdvice
+@RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public String handleGenericException(Exception ex, Model model) {
-        prepareErrorPage(model, 500, "Произошла ошибка: " + ex.getMessage());
-        return "error";
+    public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
+        log.error("Произошла ошибка: {}", ex.getMessage(), ex);
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Произошла ошибка: " + ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public String handleValidationExceptions(MethodArgumentNotValidException ex, Model model) {
+    public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         String errorMessage = ex.getBindingResult().getFieldErrors().stream()
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                .collect(Collectors.joining("<br>"));
-        prepareErrorPage(model, 400, "Ошибка валидации:<br>" + errorMessage);
-        return "error";
+                .collect(Collectors.joining(", "));
+
+        log.warn("Ошибки валидации: {}", errorMessage);
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, "Ошибки валидации: " + errorMessage);
     }
 
     @ExceptionHandler(ServiceException.class)
-    public String handleServiceException(ServiceException ex, Model model) {
-        prepareErrorPage(model, ex.getStatusCode(), ex.getMessage());
-        return "error";
+    public ResponseEntity<Map<String, Object>> handleServiceException(ServiceException ex) {
+        log.warn("Ошибка сервиса: {}", ex.getMessage(), ex);
+        return buildErrorResponse(HttpStatus.valueOf(ex.getStatusCode()), ex.getMessage());
     }
 
     @ExceptionHandler(DatabaseException.class)
-    public String handleDatabaseException(DatabaseException ex, Model model) {
-        prepareErrorPage(model, ex.getStatusCode(), ex.getMessage());
-        return "error";
+    public ResponseEntity<Map<String, Object>> handleDatabaseException(DatabaseException ex) {
+        log.error("Ошибка базы данных: {}", ex.getMessage(), ex);
+        return buildErrorResponse(HttpStatus.valueOf(ex.getStatusCode()), ex.getMessage());
     }
 
-    private void prepareErrorPage(Model model, int statusCode, String message) {
-        model.addAttribute("statusCode", statusCode);
-        model.addAttribute("message", message);
+    private ResponseEntity<Map<String, Object>> buildErrorResponse(HttpStatus status, String message) {
+        Map<String, Object> errorDetails = new HashMap<>();
+        errorDetails.put("statusCode", status.value());
+        errorDetails.put("message", message);
+        return ResponseEntity.status(status).body(errorDetails);
     }
 }

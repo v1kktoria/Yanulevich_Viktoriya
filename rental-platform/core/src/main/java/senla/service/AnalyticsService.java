@@ -1,20 +1,20 @@
 package senla.service;
 
-import senla.model.Analytics;
+import senla.dto.AnalyticsDto;
 
 import java.util.List;
 
 public interface AnalyticsService {
 
-    Analytics create(Analytics analytics);
+    AnalyticsDto create(AnalyticsDto analyticsDto);
 
-    Analytics getById(Integer id);
+    AnalyticsDto getById(Integer id);
 
-    List<Analytics> getByPropertyId(Integer id);
+    List<AnalyticsDto> getByPropertyId(Integer id);
 
-    List<Analytics> getAll();
+    List<AnalyticsDto> getAll();
 
-    void updateById(Integer id, Analytics analytics);
+    void updateById(Integer id, AnalyticsDto analyticsDto);
 
     void deleteById(Integer id);
 }

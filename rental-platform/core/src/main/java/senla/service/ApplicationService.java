@@ -1,21 +1,20 @@
 package senla.service;
 
-import senla.model.Application;
+import senla.dto.ApplicationDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ApplicationService {
 
-    Application create(Application application);
+    ApplicationDto create(ApplicationDto applicationDto);
 
-    Application getById(Integer id);
+    ApplicationDto getById(Integer id);
 
-    List<Application> getByPropertyId(Integer id);
+    List<ApplicationDto> getByPropertyId(Integer id);
 
-    List<Application> getAll();
+    List<ApplicationDto> getAll();
 
-    void updateById(Integer id, Application application);
+    void updateById(Integer id, ApplicationDto applicationDto);
 
     void deleteById(Integer id);
 }

@@ -1,19 +1,18 @@
 package senla.service;
 
-import senla.model.Image;
+import senla.dto.ImageDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ImageService {
 
-    Image create(Image image);
+    ImageDto create(ImageDto imageDto);
 
-    Image getById(Integer id);
+    ImageDto getById(Integer id);
 
-    List<Image> getAll();
+    List<ImageDto> getAll();
 
-    void updateById(Integer id, Image image);
+    void updateById(Integer id, ImageDto imageDto);
 
     void deleteById(Integer id);
 }

@@ -1,20 +1,19 @@
 package senla.service;
 
 
-import senla.model.Role;
+import senla.dto.RoleDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface RoleService {
 
-    Role create(Role role);
+    RoleDto create(RoleDto roleDto);
 
-    Role getById(Integer id);
+    RoleDto getById(Integer id);
 
-    List<Role> getAll();
+    List<RoleDto> getAll();
 
-    void updateById(Integer id, Role role);
+    void updateById(Integer id, RoleDto roleDto);
 
     void deleteById(Integer id);
 }

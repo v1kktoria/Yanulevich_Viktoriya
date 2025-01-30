@@ -1,0 +1,29 @@
+logging:
+  level:
+    root: INFO
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/rental_platform
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate.cache.use_second_level_cache: true
+      hibernate.cache.region.factory_class: jcache
+      hibernate.javax.cache.provider: org.ehcache.jsr107.EhcacheCachingProvider
+      hibernate.cache.use_query_cache: true
+      hibernate.cache.provider_configuration_file_resource_path: classpath:ehcache.xml
+
+spring.cache:
+  type: jcache
+  jcache:
+    provider: org.ehcache.jsr107.EhcacheCachingProvider
+    config: classpath:ehcache.xml
+
+server:
+  port: 8080
