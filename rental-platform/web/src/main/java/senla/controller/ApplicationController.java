@@ -1,72 +1,55 @@
 package senla.controller;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.context.ApplicationContext;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import senla.model.Application;
 import senla.service.ApplicationService;
-import senla.service.PropertyService;
-import senla.service.UserService;
-import senla.util.mapper.ApplicationMapper;
 
-import java.io.IOException;
-import java.util.List;
+@Controller
+@RequestMapping("/applications")
+@RequiredArgsConstructor
+public class ApplicationController {
 
-@WebServlet("/applications/*")
-public class ApplicationController extends HttpServlet {
+    private final ApplicationService applicationService;
 
-    private ApplicationService applicationService;
-
-    private PropertyService propertyService;
-
-    private UserService userService;
-
-    @Override
-    public void init() throws ServletException {
-        super.init();
-        ApplicationContext context = (ApplicationContext) getServletContext().getAttribute("applicationContext");
-        applicationService = context.getBean(ApplicationService.class);
-        propertyService = context.getBean(PropertyService.class);
-        userService = context.getBean(UserService.class);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Application application = ApplicationMapper.fromRequest(request, propertyService, userService);
+    @PostMapping
+    public String createApplication(@ModelAttribute @Valid Application application) {
         applicationService.create(application);
-        response.sendRedirect(request.getContextPath() + "/applications");
+        return "redirect:/applications";
     }
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String idParam = request.getParameter("id");
-
-        if (idParam != null && !idParam.isEmpty()) {
-            Integer applicationId = Integer.parseInt(idParam);
-            Application application = applicationService.getById(applicationId);
-            request.setAttribute("application", application);
-        }
-        List<Application> applications = applicationService.getAll();
-        request.setAttribute("applications", applications);
-        request.getRequestDispatcher("/WEB-INF/jsp/applications.jsp").forward(request, response);
+    @GetMapping
+    public String getAllApplications(Model model) {
+        model.addAttribute("applications", applicationService.getAll());
+        return "applications";
     }
 
-    @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Integer id = Integer.parseInt(request.getParameter("id"));
-        Application application = ApplicationMapper.fromRequest(request, propertyService, userService);
+    @GetMapping("/application")
+    public String getApplication(@RequestParam("id") Integer id, Model model) {
+        model.addAttribute("application", applicationService.getById(id));
+        return "applications";
+    }
+
+    @PutMapping("/{id}")
+    public String updateApplication(@PathVariable("id") Integer id, @ModelAttribute @Valid Application application) {
         applicationService.updateById(id, application);
-        response.sendRedirect(request.getContextPath() + "/applications");
+        return "redirect:/applications";
     }
 
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Integer id = Integer.parseInt(request.getParameter("id"));
+    @DeleteMapping("/{id}")
+    public String deleteApplication(@PathVariable("id") Integer id) {
         applicationService.deleteById(id);
-        response.sendRedirect(request.getContextPath() + "/applications");
+        return "redirect:/applications";
     }
 }
 

@@ -8,7 +8,6 @@ import senla.exception.ServiceExceptionEnum;
 import senla.model.Role;
 import senla.service.RoleService;
 import senla.util.TransactionManager;
-import senla.util.validator.RoleValidator;
 
 import java.util.List;
 
@@ -21,7 +20,6 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Role create(Role role) {
         return TransactionManager.executeInTransaction(() -> {
-            RoleValidator.validate(role);
             return roleDao.save(role);
         });
     }
@@ -45,7 +43,6 @@ public class RoleServiceImpl implements RoleService {
     public void updateById(Integer id, Role role) {
         TransactionManager.executeInTransaction(() -> {
             role.setId(id);
-            RoleValidator.validate(role);
             roleDao.update(role);
         });
     }

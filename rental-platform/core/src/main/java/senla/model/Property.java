@@ -12,6 +12,8 @@ import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,15 +53,19 @@ public class Property extends BaseEntity {
     @JdbcType(PostgreSQLEnumJdbcType.class)
     private PropertyType type;
 
+    @Min(value = 0, message = "Площадь не может быть меньше нуля")
     @Column(name = "area")
     private double area;
 
+    @Min(value = 0, message = "Цена не может быть меньше нуля")
     @Column(name = "price")
     private double price;
 
+    @Min(value = 0, message = "Количество комнат не может быть меньше нуля")
     @Column(name = "rooms")
     private int rooms;
 
+    @Size(max = 500, message = "Описание не должно превышать 500 символов")
     @Column(name = "description")
     private String description;
 

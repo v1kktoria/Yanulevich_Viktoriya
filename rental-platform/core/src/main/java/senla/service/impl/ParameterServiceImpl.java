@@ -8,7 +8,6 @@ import senla.exception.ServiceExceptionEnum;
 import senla.model.Parameter;
 import senla.service.ParameterService;
 import senla.util.TransactionManager;
-import senla.util.validator.ParameterValidator;
 
 import java.util.List;
 
@@ -21,7 +20,6 @@ public class ParameterServiceImpl implements ParameterService {
     @Override
     public Parameter create(Parameter parameter) {
         return TransactionManager.executeInTransaction(() -> {
-            ParameterValidator.validate(parameter);
             return parameterDao.save(parameter);
         });
     }
@@ -45,7 +43,6 @@ public class ParameterServiceImpl implements ParameterService {
     public void updateById(Integer id, Parameter parameter) {
         TransactionManager.executeInTransaction(() -> {
             parameter.setId(id);
-            ParameterValidator.validate(parameter);
             parameterDao.update(parameter);
         });
     }

@@ -57,7 +57,7 @@
         <td>${property.rooms}</td>
         <td>${property.description}</td>
         <td>
-          <form action="${pageContext.request.contextPath}/properties" method="POST" style="display:inline;">
+          <form action="${pageContext.request.contextPath}/properties/${property.id}" method="POST" style="display:inline;">
             <input type="hidden" name="_method" value="PUT">
             <input type="hidden" name="id" value="${property.id}">
             <input type="hidden" name="ownerId" value="${property.owner.id}">
@@ -72,7 +72,7 @@
             <textarea name="description">${property.description}</textarea><br><br>
             <button type="submit">Обновить</button>
           </form>
-          <form action="${pageContext.request.contextPath}/properties" method="POST" style="display:inline;">
+          <form action="${pageContext.request.contextPath}/properties/${property.id}" method="POST" style="display:inline;">
             <input type="hidden" name="_method" value="DELETE">
             <input type="hidden" name="id" value="${property.id}">
             <button type="submit">Удалить</button>
@@ -85,7 +85,7 @@
 </c:if>
 
 <h3>Поиск недвижимости по ID</h3>
-<form action="${pageContext.request.contextPath}/properties" method="GET">
+<form action="${pageContext.request.contextPath}/properties/property" method="GET">
   <label for="search-id">ID недвижимости:</label>
   <input type="text" id="search-id" name="id" required>
   <button type="submit">Искать</button>

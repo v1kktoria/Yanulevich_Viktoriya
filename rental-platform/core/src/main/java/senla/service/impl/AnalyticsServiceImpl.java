@@ -8,7 +8,6 @@ import senla.exception.ServiceExceptionEnum;
 import senla.model.Analytics;
 import senla.service.AnalyticsService;
 import senla.util.TransactionManager;
-import senla.util.validator.AnalyticsValidator;
 
 import java.util.List;
 
@@ -21,7 +20,6 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     @Override
     public Analytics create(Analytics analytics) {
         return TransactionManager.executeInTransaction(() -> {
-            AnalyticsValidator.validate(analytics);
             return analyticsDao.save(analytics);
         });
     }
@@ -52,7 +50,6 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     public void updateById(Integer id, Analytics analytics) {
         TransactionManager.executeInTransaction(() -> {
             analytics.setId(id);
-            AnalyticsValidator.validate(analytics);
             analyticsDao.update(analytics);
         });
     }

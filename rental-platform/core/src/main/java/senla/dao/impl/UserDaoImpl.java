@@ -5,6 +5,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+import org.springframework.stereotype.Repository;
 import senla.dao.AbstractDao;
 import senla.dao.UserDao;
 import senla.model.User;
@@ -13,6 +14,7 @@ import senla.util.JpaUtil;
 
 import java.util.List;
 
+@Repository
 public class UserDaoImpl extends AbstractDao<User, Integer> implements UserDao {
 
     @Override

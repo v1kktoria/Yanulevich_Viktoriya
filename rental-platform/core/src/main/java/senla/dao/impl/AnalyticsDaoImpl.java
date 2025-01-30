@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+import org.springframework.stereotype.Repository;
 import senla.dao.AbstractDao;
 import senla.dao.AnalyticsDao;
 import senla.util.JpaUtil;
@@ -11,6 +12,7 @@ import senla.model.Analytics;
 
 import java.util.List;
 
+@Repository
 public class AnalyticsDaoImpl extends AbstractDao<Analytics, Integer> implements AnalyticsDao {
 
     @Override

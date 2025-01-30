@@ -8,7 +8,6 @@ import senla.exception.ServiceExceptionEnum;
 import senla.model.Review;
 import senla.service.ReviewService;
 import senla.util.TransactionManager;
-import senla.util.validator.ReviewValidator;
 
 import java.util.List;
 
@@ -21,7 +20,6 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public Review create(Review review) {
         return TransactionManager.executeInTransaction(() -> {
-            ReviewValidator.validate(review);
             return reviewDao.save(review);
         });
     }
@@ -47,7 +45,6 @@ public class ReviewServiceImpl implements ReviewService {
     public void updateById(Integer id, Review review) {
         TransactionManager.executeInTransaction(() -> {
             review.setId(id);
-            ReviewValidator.validate(review);
             reviewDao.update(review);
         });
     }

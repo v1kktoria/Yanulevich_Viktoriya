@@ -4,6 +4,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 import senla.dao.AbstractDao;
 import senla.dao.AddressDao;
 import senla.model.Address;
@@ -11,6 +13,7 @@ import senla.util.JpaUtil;
 
 import java.util.List;
 
+@Repository
 public class AddressDaoImpl extends AbstractDao<Address, Integer> implements AddressDao {
 
     @Override
