@@ -5,13 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.senla.aop.MeasureExecutionTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import senla.dao.AddressDao;
-import senla.dao.PropertyDao;
 import senla.dto.AddressDto;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Address;
 import senla.model.Property;
+import senla.repository.AddressRepository;
+import senla.repository.PropertyRepository;
 import senla.service.AddressService;
 import senla.util.mappers.AddressMapper;
 
@@ -20,31 +20,31 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 @Slf4j
 @MeasureExecutionTime
 public class AddressServiceImpl implements AddressService {
 
-    private final AddressDao addressDao;
+    private final AddressRepository addressRepository;
 
-    private final PropertyDao propertyDao;
+    private final PropertyRepository propertyRepository;
 
     private final AddressMapper addressMapper;
 
+    @Transactional
     @Override
     public AddressDto create(AddressDto addressDto) {
-        Property property = propertyDao.findById(addressDto.getPropertyId())
+        Property property = propertyRepository.findById(addressDto.getPropertyId())
                 .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, addressDto.getPropertyId()));
 
         Address address = addressMapper.toEntity(addressDto, property);
-        AddressDto createdAddress = addressMapper.toDto(addressDao.save(address));
+        AddressDto createdAddress = addressMapper.toDto(addressRepository.save(address));
         log.info("Адрес успешно создан с ID: {}", createdAddress.getId());
         return createdAddress;
     }
 
     @Override
     public AddressDto getById(Integer id) {
-        AddressDto address = addressMapper.toDto(addressDao.findById(id)
+        AddressDto address = addressMapper.toDto(addressRepository.findById(id)
                 .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id)));
         log.info("Адрес успешно получен: {}", address);
         return address;
@@ -52,7 +52,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public List<AddressDto> getByPropertyId(Integer id) {
-        List<Address> addresses = addressDao.findByPropertyId(id);
+        List<Address> addresses = addressRepository.findAllByPropertyId(id);
         List<AddressDto> addressDtos = addresses.stream()
                 .map(addressMapper::toDto)
                 .collect(Collectors.toList());
@@ -62,7 +62,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public List<AddressDto> getAll() {
-        List<Address> addresses = addressDao.findAll();
+        List<Address> addresses = addressRepository.findAll();
         List<AddressDto> addressDtos = addresses.stream()
                 .map(addressMapper::toDto)
                 .collect(Collectors.toList());
@@ -70,22 +70,24 @@ public class AddressServiceImpl implements AddressService {
         return addressDtos;
     }
 
+    @Transactional
     @Override
     public void updateById(Integer id, AddressDto addressDto) {
-        Address address = addressDao.findById(id)
+        Address address = addressRepository.findById(id)
                 .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
 
         addressDto.setId(id);
         addressMapper.updateEntity(addressDto, address);
-        addressDao.update(address);
+        addressRepository.save(address);
         log.info("Адрес с ID: {} успешно обновлен", id);
     }
 
+    @Transactional
     @Override
     public void deleteById(Integer id) {
-        Address address = addressDao.findById(id)
+        Address address = addressRepository.findById(id)
                 .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
-        addressDao.delete(address);
+        addressRepository.delete(address);
         log.info("Адрес с ID: {} успешно удален", id);
     }
 }

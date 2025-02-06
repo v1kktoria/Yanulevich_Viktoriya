@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.senla.aop.MeasureExecutionTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import senla.dao.PropertyParameterDao;
 import senla.dto.ParameterDto;
 import senla.dto.PropertyDto;
 import senla.dto.PropertyParameterDto;
@@ -13,6 +12,7 @@ import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.PropertyParameter;
 import senla.model.id.PropertyParameterId;
+import senla.repository.PropertyParameterRepository;
 import senla.service.PropertyParameterService;
 import senla.util.mappers.PropertyParameterMapper;
 
@@ -21,19 +21,19 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 @Slf4j
 @MeasureExecutionTime
 public class PropertyParameterServiceImpl implements PropertyParameterService {
 
-    private final PropertyParameterDao propertyParameterDao;
+    private final PropertyParameterRepository propertyParameterRepository;
 
     private final PropertyParameterMapper propertyParameterMapper;
 
+    @Transactional
     @Override
     public void create(PropertyParameterDto propertyParameterDto) {
         PropertyParameter propertyParameter = propertyParameterMapper.toEntity(propertyParameterDto);
-        propertyParameterDao.save(propertyParameter);
+        propertyParameterRepository.save(propertyParameter);
         log.info("PropertyParameter с ID: {} успешно создан", propertyParameter.getId());
     }
 
@@ -44,7 +44,7 @@ public class PropertyParameterServiceImpl implements PropertyParameterService {
                 .property_id(propertyDto.getId())
                 .parameter_id(parameterDto.getId()).build();
 
-        PropertyParameter propertyParameter = propertyParameterDao.findById(id)
+        PropertyParameter propertyParameter = propertyParameterRepository.findById(id)
                 .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
 
         PropertyParameterDto propertyParameterDto = propertyParameterMapper.toDto(propertyParameter);
@@ -54,7 +54,7 @@ public class PropertyParameterServiceImpl implements PropertyParameterService {
 
     @Override
     public List<PropertyParameterDto> getAll() {
-        List<PropertyParameter> propertyParameters = propertyParameterDao.findAll();
+        List<PropertyParameter> propertyParameters = propertyParameterRepository.findAll();
         List<PropertyParameterDto> propertyParameterDtos = propertyParameters.stream()
                 .map(propertyParameterMapper::toDto)
                 .collect(Collectors.toList());
@@ -62,6 +62,7 @@ public class PropertyParameterServiceImpl implements PropertyParameterService {
         return propertyParameterDtos;
     }
 
+    @Transactional
     @Override
     public void deleteByPropertyAndParameter(PropertyDto propertyDto, ParameterDto parameterDto) {
 
@@ -69,10 +70,10 @@ public class PropertyParameterServiceImpl implements PropertyParameterService {
                 .property_id(propertyDto.getId())
                 .parameter_id(parameterDto.getId()).build();
 
-        PropertyParameter propertyParameter = propertyParameterDao.findById(id)
+        PropertyParameter propertyParameter = propertyParameterRepository.findById(id)
                 .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
 
-        propertyParameterDao.delete(propertyParameter);
+        propertyParameterRepository.delete(propertyParameter);
         log.info("PropertyParameter с ID: {} успешно удален", id);
     }
 }

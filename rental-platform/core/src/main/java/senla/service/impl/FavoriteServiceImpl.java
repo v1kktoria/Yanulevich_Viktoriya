@@ -5,11 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.senla.aop.MeasureExecutionTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import senla.dao.FavoriteDao;
 import senla.dto.FavoriteDto;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Favorite;
+import senla.repository.FavoriteRepository;
 import senla.service.FavoriteService;
 import senla.util.mappers.FavoriteMapper;
 
@@ -18,26 +18,26 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 @Slf4j
 @MeasureExecutionTime
 public class FavoriteServiceImpl implements FavoriteService {
 
-    private final FavoriteDao favoriteDao;
+    private final FavoriteRepository favoriteRepository;
 
     private final FavoriteMapper favoriteMapper;
 
+    @Transactional
     @Override
     public FavoriteDto create(FavoriteDto favoriteDto) {
         Favorite favorite = favoriteMapper.toEntity(favoriteDto);
-        FavoriteDto createdFavorite = favoriteMapper.toDto(favoriteDao.save(favorite));
+        FavoriteDto createdFavorite = favoriteMapper.toDto(favoriteRepository.save(favorite));
         log.info("Избранное успешно добавлено с ID: {}", createdFavorite.getId());
         return createdFavorite;
     }
 
     @Override
     public FavoriteDto getById(Integer id) {
-        FavoriteDto favorite = favoriteMapper.toDto(favoriteDao.findById(id)
+        FavoriteDto favorite = favoriteMapper.toDto(favoriteRepository.findById(id)
                 .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id)));
         log.info("Избранное успешно получено: {}", favorite);
         return favorite;
@@ -45,7 +45,7 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Override
     public List<FavoriteDto> getByUserId(Integer id) {
-        List<Favorite> favorites = favoriteDao.findByUserId(id);
+        List<Favorite> favorites = favoriteRepository.findAllByUserId(id);
         List<FavoriteDto> favoriteDtos = favorites.stream()
                 .map(favoriteMapper::toDto)
                 .collect(Collectors.toList());
@@ -55,7 +55,7 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Override
     public List<FavoriteDto> getAll() {
-        List<Favorite> favorites = favoriteDao.findAll();
+        List<Favorite> favorites = favoriteRepository.findAll();
         List<FavoriteDto> favoriteDtos = favorites.stream()
                 .map(favoriteMapper::toDto)
                 .collect(Collectors.toList());
@@ -63,22 +63,24 @@ public class FavoriteServiceImpl implements FavoriteService {
         return favoriteDtos;
     }
 
+    @Transactional
     @Override
     public void updateById(Integer id, FavoriteDto favoriteDto) {
-        Favorite favorite = favoriteDao.findById(id)
+        Favorite favorite = favoriteRepository.findById(id)
                 .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
 
         favoriteDto.setId(id);
         favoriteMapper.updateEntity(favoriteDto, favorite);
-        favoriteDao.update(favorite);
+        favoriteRepository.save(favorite);
         log.info("Избранное с ID: {} успешно обновлено", id);
     }
 
+    @Transactional
     @Override
     public void deleteById(Integer id) {
-        Favorite favorite = favoriteDao.findById(id)
+        Favorite favorite = favoriteRepository.findById(id)
                 .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
-        favoriteDao.delete(favorite);
+        favoriteRepository.delete(favorite);
         log.info("Избранное с ID: {} успешно удалено", id);
     }
 }
