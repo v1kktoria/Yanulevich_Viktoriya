@@ -5,13 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.senla.aop.MeasureExecutionTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import senla.dao.AnalyticsDao;
-import senla.dao.PropertyDao;
 import senla.dto.AnalyticsDto;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Analytics;
 import senla.model.Property;
+import senla.repository.AnalyticsRepository;
+import senla.repository.PropertyRepository;
 import senla.service.AnalyticsService;
 import senla.util.mappers.AnalyticsMapper;
 
@@ -20,31 +20,31 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 @Slf4j
 @MeasureExecutionTime
 public class AnalyticsServiceImpl implements AnalyticsService {
 
-    private final AnalyticsDao analyticsDao;
+    private final AnalyticsRepository analyticsRepository;
 
-    private final PropertyDao propertyDao;
+    private final PropertyRepository propertyRepository;
 
     private final AnalyticsMapper analyticsMapper;
 
+    @Transactional
     @Override
     public AnalyticsDto create(AnalyticsDto analyticsDto) {
-        Property property = propertyDao.findById(analyticsDto.getPropertyId())
+        Property property = propertyRepository.findById(analyticsDto.getPropertyId())
                 .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, analyticsDto.getPropertyId()));
 
         Analytics analytics = analyticsMapper.toEntity(analyticsDto, property);
-        AnalyticsDto createdAnalytics = analyticsMapper.toDto(analyticsDao.save(analytics));
+        AnalyticsDto createdAnalytics = analyticsMapper.toDto(analyticsRepository.save(analytics));
         log.info("Аналитика успешно создана с ID: {}", createdAnalytics.getId());
         return createdAnalytics;
     }
 
     @Override
     public AnalyticsDto getById(Integer id) {
-        AnalyticsDto analytics = analyticsMapper.toDto(analyticsDao.findById(id)
+        AnalyticsDto analytics = analyticsMapper.toDto(analyticsRepository.findById(id)
                 .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id)));
         log.info("Аналитика успешно получена: {}", analytics);
         return analytics;
@@ -52,7 +52,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
     @Override
     public List<AnalyticsDto> getByPropertyId(Integer id) {
-        List<Analytics> analytics = analyticsDao.findByPropertyId(id);
+        List<Analytics> analytics = analyticsRepository.findAllByPropertyId(id);
         List<AnalyticsDto> analyticsDtos = analytics.stream()
                 .map(analyticsMapper::toDto)
                 .collect(Collectors.toList());
@@ -62,7 +62,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
     @Override
     public List<AnalyticsDto> getAll() {
-        List<Analytics> analytics = analyticsDao.findAll();
+        List<Analytics> analytics = analyticsRepository.findAll();
         List<AnalyticsDto> analyticsDtos = analytics.stream()
                 .map(analyticsMapper::toDto)
                 .collect(Collectors.toList());
@@ -70,22 +70,24 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         return analyticsDtos;
     }
 
+    @Transactional
     @Override
     public void updateById(Integer id, AnalyticsDto analyticsDto) {
-        Analytics analytics = analyticsDao.findById(id)
+        Analytics analytics = analyticsRepository.findById(id)
                 .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
 
         analyticsDto.setId(id);
         analyticsMapper.updateEntity(analyticsDto, analytics);
-        analyticsDao.update(analytics);
+        analyticsRepository.save(analytics);
         log.info("Аналитика с ID: {} успешно обновлена", id);
     }
 
+    @Transactional
     @Override
     public void deleteById(Integer id) {
-        Analytics analytics = analyticsDao.findById(id)
+        Analytics analytics = analyticsRepository.findById(id)
                 .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
-        analyticsDao.delete(analytics);
+        analyticsRepository.delete(analytics);
         log.info("Аналитика с ID: {} успешно удалена", id);
     }
 }

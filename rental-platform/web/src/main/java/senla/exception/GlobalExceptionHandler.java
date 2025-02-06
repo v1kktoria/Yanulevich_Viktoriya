@@ -37,12 +37,6 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.valueOf(ex.getStatusCode()), ex.getMessage());
     }
 
-    @ExceptionHandler(DatabaseException.class)
-    public ResponseEntity<Map<String, Object>> handleDatabaseException(DatabaseException ex) {
-        log.error("Ошибка базы данных: {}", ex.getMessage(), ex);
-        return buildErrorResponse(HttpStatus.valueOf(ex.getStatusCode()), ex.getMessage());
-    }
-
     private ResponseEntity<Map<String, Object>> buildErrorResponse(HttpStatus status, String message) {
         Map<String, Object> errorDetails = new HashMap<>();
         errorDetails.put("statusCode", status.value());
