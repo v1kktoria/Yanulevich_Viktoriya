@@ -6,7 +6,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -40,7 +39,6 @@ public class Report extends BaseEntity {
     @Column(name = "content_id")
     private int contentId;
 
-    @Size(max = 500, message = "Комментарий не может превышать 500 символов")
     @Column(name = "message")
     private String message;
 

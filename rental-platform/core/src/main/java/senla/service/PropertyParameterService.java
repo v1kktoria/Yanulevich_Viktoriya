@@ -1,19 +1,18 @@
 package senla.service;
 
-import senla.model.Parameter;
-import senla.model.Property;
-import senla.model.PropertyParameter;
+import senla.dto.ParameterDto;
+import senla.dto.PropertyDto;
+import senla.dto.PropertyParameterDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface PropertyParameterService {
 
-    void create(PropertyParameter propertyParameter);
+    void create(PropertyParameterDto propertyParameterDto);
 
-    PropertyParameter getByPropertyAndParameter(Property property, Parameter parameter);
+    PropertyParameterDto getByPropertyAndParameter(PropertyDto property, ParameterDto parameter);
 
-    List<PropertyParameter> getAll();
+    List<PropertyParameterDto> getAll();
 
-    void deleteByPropertyAndParameter(Property property, Parameter parameter);
+    void deleteByPropertyAndParameter(PropertyDto property, ParameterDto parameter);
 }

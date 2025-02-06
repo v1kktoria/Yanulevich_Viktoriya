@@ -7,8 +7,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,11 +25,9 @@ import java.util.Set;
 @Table(name = "roles")
 public class Role extends BaseEntity {
 
-    @NotBlank(message = "Название роли не может быть пустым")
     @Column(name = "role_name")
     private String roleName;
 
-    @Size(max = 255, message = "Описание роли не должно превышать 255 символов")
     @Column(name = "description")
     private String description;
 

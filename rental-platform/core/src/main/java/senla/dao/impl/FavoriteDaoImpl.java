@@ -1,19 +1,22 @@
 package senla.dao.impl;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 import senla.dao.AbstractDao;
 import senla.dao.FavoriteDao;
-import senla.util.JpaUtil;
 import senla.model.Favorite;
 
 import java.util.List;
 
 @Repository
 public class FavoriteDaoImpl extends AbstractDao<Favorite, Integer> implements FavoriteDao {
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     protected Class<Favorite> getEntityClass() {
@@ -22,7 +25,6 @@ public class FavoriteDaoImpl extends AbstractDao<Favorite, Integer> implements F
 
     @Override
     public List<Favorite> findByUserId(Integer id) {
-        EntityManager entityManager = JpaUtil.getEntityManager();
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Favorite> criteriaQuery = criteriaBuilder.createQuery(Favorite.class);
         Root<Favorite> root = criteriaQuery.from(Favorite.class);

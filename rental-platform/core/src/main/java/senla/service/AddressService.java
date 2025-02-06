@@ -1,20 +1,20 @@
 package senla.service;
 
-import senla.model.Address;
+import senla.dto.AddressDto;
 
 import java.util.List;
 
 public interface AddressService {
 
-    Address create(Address address);
+    AddressDto create(AddressDto addressDto);
 
-    Address getById(Integer id);
+    AddressDto getById(Integer id);
 
-    List<Address> getByPropertyId(Integer id);
+    List<AddressDto> getByPropertyId(Integer id);
 
-    List<Address> getAll();
+    List<AddressDto> getAll();
 
-    void updateById(Integer id, Address address);
+    void updateById(Integer id, AddressDto addressDto);
 
     void deleteById(Integer id);
 }

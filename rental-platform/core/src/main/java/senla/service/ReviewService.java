@@ -1,20 +1,19 @@
 package senla.service;
 
 
-import senla.model.Review;
+import senla.dto.ReviewDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ReviewService {
 
-    Review create(Review review);
+    ReviewDto create(ReviewDto reviewDto);
 
-    Review getById(Integer id);
+    ReviewDto getById(Integer id);
 
-    List<Review> getAll();
+    List<ReviewDto> getAll();
 
-    void updateById(Integer id, Review review);
+    void updateById(Integer id, ReviewDto reviewDto);
 
     void deleteById(Integer id);
 }

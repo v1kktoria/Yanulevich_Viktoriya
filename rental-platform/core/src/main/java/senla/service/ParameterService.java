@@ -1,19 +1,18 @@
 package senla.service;
 
-import senla.model.Parameter;
+import senla.dto.ParameterDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ParameterService {
 
-    Parameter create(Parameter parameter);
+    ParameterDto create(ParameterDto parameterDto);
 
-    Parameter getById(Integer id);
+    ParameterDto getById(Integer id);
 
-    List<Parameter> getAll();
+    List<ParameterDto> getAll();
 
-    void updateById(Integer id, Parameter parameter);
+    void updateById(Integer id, ParameterDto parameterDto);
 
     void deleteById(Integer id);
 }
