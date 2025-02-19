@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.senla.aop.MeasureExecutionTime;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ public class AddressController {
     private final AddressService addressService;
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<AddressDto> createAddress(@RequestBody @Valid AddressDto addressDto) {
         log.info("Создание нового адреса с данными: {}", addressDto);
         AddressDto address = addressService.create(addressDto);
@@ -36,6 +38,7 @@ public class AddressController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<AddressDto>> getAllAddresses() {
         log.info("Запрос на получение всех адресов");
         List<AddressDto> addresses = addressService.getAll();

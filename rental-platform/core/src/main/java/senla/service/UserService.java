@@ -2,12 +2,13 @@ package senla.service;
 
 
 import senla.dto.UserDto;
+import senla.model.User;
 
 import java.util.List;
 
 public interface UserService {
 
-    UserDto create(UserDto userDto);
+    User create(UserDto userDto);
 
     UserDto getById(Integer id);
 
@@ -16,6 +17,4 @@ public interface UserService {
     void updateById(Integer id, UserDto userDto);
 
     void deleteById(Integer id);
-
-    List<UserDto> getAllWithEssentialDetails();
 }

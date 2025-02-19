@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.senla.aop.MeasureExecutionTime;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,6 +51,7 @@ public class PropertyController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or (authentication.principal.id == #propertyDto.ownerId)")
     public ResponseEntity<String> updateProperty(@PathVariable("id") Integer id, @RequestBody @Valid PropertyDto propertyDto) {
         log.info("Обновление недвижимости с ID: {} с новыми данными: {}", id, propertyDto);
         propertyService.updateById(id, propertyDto);
@@ -57,6 +59,7 @@ public class PropertyController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or (authentication.principal.id == @propertyServiceImpl.getById(#id).ownerId)")
     public ResponseEntity<String> deleteProperty(@PathVariable("id") Integer id) {
         log.info("Удаление недвижимости с ID: {}", id);
         propertyService.deleteById(id);
