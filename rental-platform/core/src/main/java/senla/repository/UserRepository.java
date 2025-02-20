@@ -5,11 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import senla.model.User;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
 
-    @EntityGraph(value = "user-roles-properties-applications", type = EntityGraph.EntityGraphType.FETCH)
-    @Query("SELECT u FROM User u")
-    List<User> findAllWithEssentialDetails();
+    @EntityGraph(value = "user-roles", type = EntityGraph.EntityGraphType.FETCH)
+    @Query("SELECT u FROM User u WHERE u.username = :username")
+    Optional<User> findByUsernameWithRoles(String username);
 }

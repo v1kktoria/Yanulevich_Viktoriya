@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.senla.aop.MeasureExecutionTime;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ public class ApplicationController {
     private final ApplicationService applicationService;
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ApplicationDto> createApplication(@RequestBody @Valid ApplicationDto applicationDto) {
         log.info("Создание новой заявки с данными: {}", applicationDto);
         ApplicationDto application = applicationService.create(applicationDto);
@@ -36,6 +38,7 @@ public class ApplicationController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ApplicationDto>> getAllApplications() {
         log.info("Запрос на получение всех заявок");
         List<ApplicationDto> applications = applicationService.getAll();
@@ -43,6 +46,7 @@ public class ApplicationController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or (authentication.principal.id == @applicationServiceImpl.getById(#id).tenantId)")
     public ResponseEntity<ApplicationDto> getApplication(@PathVariable("id") Integer id) {
         log.info("Запрос на получение заявки с ID: {}", id);
         ApplicationDto application = applicationService.getById(id);
@@ -50,6 +54,7 @@ public class ApplicationController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or (authentication.principal.id == #applicationDto.tenantId)")
     public ResponseEntity<String> updateApplication(@PathVariable("id") Integer id, @RequestBody @Valid ApplicationDto applicationDto) {
         log.info("Обновление заявки с ID: {} с новыми данными: {}", id, applicationDto);
         applicationService.updateById(id, applicationDto);
@@ -57,6 +62,7 @@ public class ApplicationController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or (authentication.principal.id == @applicationServiceImpl.getById(#id).tenantId)")
     public ResponseEntity<String> deleteApplication(@PathVariable("id") Integer id) {
         log.info("Удаление заявки с ID: {}", id);
         applicationService.deleteById(id);

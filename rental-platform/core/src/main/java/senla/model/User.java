@@ -14,9 +14,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -25,15 +30,13 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @NamedEntityGraph(
-        name = "user-roles-properties-applications",
+        name = "user-roles",
         attributeNodes = {
-                @NamedAttributeNode(User_.ROLES),
-                @NamedAttributeNode(User_.PROPERTIES),
-                @NamedAttributeNode(User_.APPLICATIONS)
+                @NamedAttributeNode(User_.ROLES)
         }
 )
 @Table(name = "users")
-public class User extends BaseEntity {
+public class User extends BaseEntity implements UserDetails {
 
     @Column(name = "username", unique = true)
     private String username;
@@ -50,7 +53,7 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "owner", cascade = CascadeType.REMOVE)
     private Set<Property> properties = new HashSet<>();
 
-    @ManyToMany(mappedBy = "users", cascade = CascadeType.REMOVE)
+    @ManyToMany(mappedBy = "users")
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "tenant")
@@ -64,4 +67,11 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private Set<Review> reviews = new HashSet<>();
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getRoleName()))
+                .collect(Collectors.toSet());
+    }
 }

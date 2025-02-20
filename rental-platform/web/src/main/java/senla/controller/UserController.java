@@ -6,10 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.senla.aop.MeasureExecutionTime;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,14 +28,8 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserDto userDto) {
-        log.info("Создание нового пользователя: {}", userDto);
-        UserDto user = userService.create(userDto);
-        return ResponseEntity.status(201).body(user);
-    }
-
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserDto>> getAllUsers() {
         log.info("Запрос на получение всех пользователей");
         List<UserDto> users = userService.getAll();
@@ -43,6 +37,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or (#id == authentication.principal.id)")
     public ResponseEntity<UserDto> getUser(@PathVariable("id") Integer id) {
         log.info("Запрос на получение пользователя с ID: {}", id);
         UserDto user = userService.getById(id);
@@ -50,6 +45,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or (#id == authentication.principal.id)")
     public ResponseEntity<String> updateUser(@PathVariable("id") Integer id, @RequestBody @Valid UserDto userDto) {
         log.info("Обновление пользователя с ID: {} с новыми данными: {}", id, userDto);
         userService.updateById(id, userDto);
@@ -57,6 +53,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or (#id == authentication.principal.id)")
     public ResponseEntity<String> deleteUser(@PathVariable("id") Integer id) {
         log.info("Удаление пользователя с ID: {}", id);
         userService.deleteById(id);

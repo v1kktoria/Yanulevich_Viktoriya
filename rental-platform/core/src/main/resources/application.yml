@@ -1,6 +1,9 @@
 logging:
   level:
     root: INFO
+    org:
+      springframework:
+        security: DEBUG
 
 spring:
   datasource:
@@ -27,3 +30,7 @@ spring.cache:
 
 server:
   port: 8080
+
+app:
+  jwt-secret: daf66e01593f61a15b857cf433aae03a005812b31234e149036bcc8dee755dbb
+  jwt-expiration: 21600000

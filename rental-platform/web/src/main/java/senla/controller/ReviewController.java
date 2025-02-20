@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.senla.aop.MeasureExecutionTime;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ReviewDto> createReview(@RequestBody @Valid ReviewDto reviewDto) {
         log.info("Создание нового отзыва: {}", reviewDto);
         ReviewDto review = reviewService.create(reviewDto);
@@ -36,6 +38,7 @@ public class ReviewController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ReviewDto>> getAllReviews() {
         log.info("Запрос на получение всех отзывов");
         List<ReviewDto> reviews = reviewService.getAll();
@@ -50,6 +53,7 @@ public class ReviewController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or authentication.principal.id == #reviewDto.userId")
     public ResponseEntity<String> updateReview(@PathVariable("id") Integer id, @RequestBody @Valid ReviewDto reviewDto) {
         log.info("Обновление отзыва с ID: {} с новыми данными: {}", id, reviewDto);
         reviewService.updateById(id, reviewDto);
@@ -57,6 +61,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or authentication.principal.id == @reviewServiceImpl.getById(#id).userId")
     public ResponseEntity<String> deleteReview(@PathVariable("id") Integer id) {
         log.info("Удаление отзыва с ID: {}", id);
         reviewService.deleteById(id);

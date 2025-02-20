@@ -4,17 +4,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.senla.aop.MeasureExecutionTime;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import senla.dto.UserDto;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
+import senla.model.Role;
 import senla.model.User;
+import senla.repository.RoleRepository;
 import senla.repository.UserRepository;
 import senla.service.UserService;
 import senla.util.mappers.UserMapper;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,10 +31,22 @@ public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
 
+    private final PasswordEncoder passwordEncoder;
+
+    private final RoleRepository roleRepository;
+
     @Transactional
     @Override
-    public UserDto create(UserDto userDto) {
+    public User create(UserDto userDto) {
         User user = userMapper.toEntity(userDto);
+        user.setPassword((passwordEncoder.encode(userDto.getPassword())));
+
+        Role userRole = roleRepository.findByRoleName("USER")
+                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND_WITH_NAME, "USER"));
+
+        user.setRoles(Set.of(userRole));
+        userRole.getUsers().add(user);
+
         User savedUser;
 
         try {
@@ -40,7 +56,7 @@ public class UserServiceImpl implements UserService {
         }
 
         log.info("Пользователь с ID: {} успешно создан", savedUser.getId());
-        return userMapper.toDto(savedUser);
+        return savedUser;
     }
 
     @Override
@@ -87,12 +103,4 @@ public class UserServiceImpl implements UserService {
         log.info("Пользователь с ID: {} успешно удален", id);
     }
 
-    @Override
-    public List<UserDto> getAllWithEssentialDetails() {
-        List<User> users = userRepository.findAllWithEssentialDetails();
-        log.info("Найдено {} пользователей с основными деталями", users.size());
-        return users.stream()
-                .map(userMapper::toDto)
-                .collect(Collectors.toList());
-    }
 }
