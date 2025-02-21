@@ -33,6 +33,7 @@
         <hibernate.validator.version>7.0.4.Final</hibernate.validator.version>
         <modelmapper.version>3.1.0</modelmapper.version>
         <jjwt.version>0.12.3</jjwt.version>
+        <spring.cloud.version>4.1.0</spring.cloud.version>
     </properties>
 
     <dependencyManagement>
@@ -102,6 +103,16 @@
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-jackson</artifactId>
                 <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-config</artifactId>
+                <version>${spring.cloud.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-bootstrap</artifactId>
+                <version>${spring.cloud.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
