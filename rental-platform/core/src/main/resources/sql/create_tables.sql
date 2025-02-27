@@ -1,8 +1,3 @@
--- ENUM
-CREATE TYPE property_type AS ENUM ('APARTMENT', 'HOUSE', 'OFFICE');
-CREATE TYPE status AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
-CREATE TYPE report_type AS ENUM ('REVIEW', 'ADVERTISEMENT');
-
 -- Последовательности
 CREATE SEQUENCE users_id_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE profiles_id_seq START WITH 1 INCREMENT BY 1;
@@ -59,7 +54,7 @@ CREATE TABLE Users_Roles (
 CREATE TABLE Properties (
                             id INT PRIMARY KEY DEFAULT nextval('properties_id_seq'),
                             owner_id INT NOT NULL,
-                            type property_type NOT NULL,
+                            type VARCHAR(20) NOT NULL,
                             area DECIMAL(10, 2) NOT NULL,
                             price DECIMAL(10, 2) NOT NULL,
                             rooms INT NOT NULL,
@@ -96,7 +91,7 @@ CREATE TABLE Parameters (
 CREATE TABLE Properties_Parameters (
                                        property_id INT NOT NULL,
                                        parameter_id INT NOT NULL,
-                                       value VARCHAR(255) NOT NULL,
+                                       property_value VARCHAR(255) NOT NULL,
                                        PRIMARY KEY (property_id, parameter_id),
                                        FOREIGN KEY (property_id) REFERENCES Properties(id) ON DELETE CASCADE,
                                        FOREIGN KEY (parameter_id) REFERENCES Parameters(id) ON DELETE CASCADE
@@ -107,7 +102,7 @@ CREATE TABLE Applications (
                               property_id INT NOT NULL,
                               tenant_id INT NOT NULL,
                               message TEXT,
-                              status status NOT NULL,
+                              status VARCHAR(20) NOT NULL,
                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                               deleted BOOLEAN DEFAULT FALSE,
                               FOREIGN KEY (property_id) REFERENCES Properties(id) ON DELETE CASCADE,
@@ -163,10 +158,10 @@ CREATE TABLE Favorites_Properties (
 CREATE TABLE Reports (
                          id INT PRIMARY KEY DEFAULT nextval('reports_id_seq'),
                          user_id INT NOT NULL,
-                         type report_type NOT NULL,
+                         type VARCHAR(20) NOT NULL,
                          content_id INT NOT NULL,
                          message TEXT,
-                         status status NOT NULL,
+                         status VARCHAR(20) NOT NULL,
                          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                          deleted BOOLEAN DEFAULT FALSE,
                          FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE

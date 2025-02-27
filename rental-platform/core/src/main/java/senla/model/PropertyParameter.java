@@ -33,6 +33,6 @@ public class PropertyParameter implements Identifiable<PropertyParameterId> {
     @JoinColumn(name = "parameter_id")
     private Parameter parameter;
 
-    @Column(name = "value")
-    private String value;
+    @Column(name = "property_value")
+    private String property_value;
 }

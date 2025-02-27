@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - changeSet:
+      id: 010-create-properties-parameters
+      author: your_name
+      changes:
+        - createTable:
+            tableName: properties_parameters
+            columns:
+              - column:
+                  name: property_id
+                  type: INT
+                  constraints:
+                    nullable: false
+                    referencedTableName: properties
+                    referencedColumnNames: id
+                    foreignKeyName: fk_properties_parameters_property
+              - column:
+                  name: parameter_id
+                  type: INT
+                  constraints:
+                    nullable: false
+                    referencedTableName: parameters
+                    referencedColumnNames: id
+                    foreignKeyName: fk_properties_parameters_parameter
+              - column:
+                  name: property_value
+                  type: VARCHAR(255)
+              - primaryKey:
+                  columnNames: property_id, parameter_id
+                  constraintName: pk_properties_parameters
