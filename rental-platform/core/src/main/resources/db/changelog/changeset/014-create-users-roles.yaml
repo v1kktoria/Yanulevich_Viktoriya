@@ -20,3 +20,37 @@ databaseChangeLog:
                     nullable: false
                     foreignKeyName: fk_users_roles_user
                     references: users(id)
+              - primaryKey:
+                  columnNames: role_id, user_id
+                  constraintName: pk_users_roles
+  - changeSet:
+      id: 014-insert-user-roles
+      author: Viktoriya
+      changes:
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  value: "1"
+              - column:
+                  name: role_id
+                  value: "1"
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  value: "1"
+              - column:
+                  name: role_id
+                  value: "2"
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  value: "2"
+              - column:
+                  name: role_id
+                  value: "1"

@@ -26,6 +26,12 @@ databaseChangeLog:
                     foreignKeyName: fk_applications_tenant
                     references: users(id)
               - column:
+                  name: owner_id
+                  type: INT
+                  constraints:
+                    foreignKeyName: fk_applications_owner
+                    references: users(id)
+              - column:
                   name: message
                   type: TEXT
               - column:

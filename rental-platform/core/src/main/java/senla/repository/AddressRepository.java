@@ -8,4 +8,6 @@ import java.util.List;
 public interface AddressRepository extends JpaRepository<Address, Integer> {
 
     List<Address> findAllByPropertyId(Integer id);
+
+    boolean existsByPropertyId(Integer id);
 }

@@ -10,7 +10,7 @@ public interface ImageService {
 
     ImageDto getById(Integer id);
 
-    List<ImageDto> getAll();
+    List<ImageDto> getImagesForProperty(Integer id);
 
     void updateById(Integer id, ImageDto imageDto);
 

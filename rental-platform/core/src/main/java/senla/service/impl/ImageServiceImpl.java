@@ -51,8 +51,8 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public List<ImageDto> getAll() {
-        List<Image> images = imageRepository.findAll();
+    public List<ImageDto> getImagesForProperty(Integer id) {
+        List<Image> images = imageRepository.findByPropertyId(id);
         List<ImageDto> imageDtos = images.stream()
                 .map(imageMapper::toDto)
                 .collect(Collectors.toList());

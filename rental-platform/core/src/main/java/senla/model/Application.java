@@ -33,6 +33,10 @@ public class Application extends BaseEntity {
     @JoinColumn(name = "tenant_id")
     private User tenant;
 
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private User owner;
+
     @Column(name = "message")
     private String message;
 
@@ -42,7 +46,4 @@ public class Application extends BaseEntity {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-
-    @Column(name = "deleted")
-    private boolean deleted;
 }

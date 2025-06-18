@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  app:
+    image: rental-platform:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
+      APP_JWT_SECRET: daf66e01593f61a15b857cf433aae03a005812b31234e149036bcc8dee755dbb
+      APP_JWT_EXPIRATION: 21600000
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/rental_platform
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_LIQUIBASE_ENABLED: "false"
+      SPRING_CLOUD_COMPATIBILITY_VERIFIER_ENABLED: false
+      SPRING_MAIL_HOST: smtp.mailtrap.io
+      SPRING_MAIL_PORT: 2525
+      SPRING_MAIL_USERNAME: bakofqkd9f3bg
+      SPRING_MAIL_PASSWORD: baymojd3wa8ey
+    depends_on:
+      - db
+    networks:
+      - rental_network
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: rental_platform
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    networks:
+      - rental_network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+networks:
+  rental_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

@@ -38,11 +38,4 @@ public class Review extends BaseEntity {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-
-    @Column(name = "deleted")
-    private boolean deleted;
-
-    public void loadLazyFields() {
-        user.getUsername();
-    }
 }

@@ -5,21 +5,23 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import senla.dto.FavoriteDto;
+import senla.dto.PropertyDto;
 import senla.exception.ServiceException;
 import senla.model.Favorite;
+import senla.model.Property;
 import senla.repository.FavoriteRepository;
+import senla.repository.PropertyRepository;
+import senla.repository.UserRepository;
 import senla.service.impl.FavoriteServiceImpl;
-import senla.util.mappers.FavoriteMapper;
+import senla.util.mappers.PropertyMapper;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class FavoriteServiceImplTest {
 
@@ -27,92 +29,107 @@ public class FavoriteServiceImplTest {
     private FavoriteRepository favoriteRepository;
 
     @Mock
-    private FavoriteMapper favoriteMapper;
+    private UserRepository userRepository;
+
+    @Mock
+    private PropertyRepository propertyRepository;
+
+    @Mock
+    private PropertyMapper propertyMapper;
 
     @InjectMocks
     private FavoriteServiceImpl favoriteService;
 
-    private FavoriteDto favoriteDto;
+    private Integer userId = 1;
 
+    private Integer propertyId = 100;
+
+    private Property property;
     private Favorite favorite;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        favoriteDto = new FavoriteDto();
-        favoriteDto.setId(1);
+        property = new Property();
+        property.setId(propertyId);
 
         favorite = new Favorite();
-        favorite.setId(1);
+        favorite.setUser(userRepository.getReferenceById(userId));
+        favorite.setProperty(new ArrayList<>());
     }
 
     @Test
-    void testCreate() {
-        when(favoriteMapper.toEntity(favoriteDto)).thenReturn(favorite);
-        when(favoriteRepository.save(favorite)).thenReturn(favorite);
-        when(favoriteMapper.toDto(favorite)).thenReturn(favoriteDto);
+    void testAddPropertyToFavorites() {
+        when(favoriteRepository.findByUserId(userId)).thenReturn(Optional.of(favorite));
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(property));
 
-        FavoriteDto createdFavorite = favoriteService.create(favoriteDto);
+        favoriteService.addPropertyToFavorites(userId, propertyId);
 
-        assertNotNull(createdFavorite);
-        assertEquals(1, createdFavorite.getId());
+        assertTrue(favorite.getProperty().contains(property));
         verify(favoriteRepository, times(1)).save(favorite);
     }
 
     @Test
-    void testGetById() {
-        when(favoriteRepository.findById(1)).thenReturn(Optional.of(favorite));
-        when(favoriteMapper.toDto(favorite)).thenReturn(favoriteDto);
+    void testAddPropertyToFavoritesPropertyNotFound() {
+        when(favoriteRepository.findByUserId(userId)).thenReturn(Optional.of(favorite));
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.empty());
 
-        FavoriteDto result = favoriteService.getById(1);
+        ServiceException exception = assertThrows(ServiceException.class, () -> favoriteService.addPropertyToFavorites(userId, propertyId));
 
-        assertNotNull(result);
-        assertEquals(1, result.getId());
+        assertEquals("Объект с ID 100 не найден", exception.getMessage());
     }
 
     @Test
-    void testGetByIdNotFound() {
-        when(favoriteRepository.findById(1)).thenReturn(Optional.empty());
+    void testAddPropertyToFavoritesAlreadyExists() {
+        when(favoriteRepository.findByUserId(userId)).thenReturn(Optional.of(favorite));
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(property));
 
-        ServiceException exception = assertThrows(ServiceException.class, () -> favoriteService.getById(1));
+        favorite.getProperty().add(property);
+
+        ServiceException exception = assertThrows(ServiceException.class, () -> favoriteService.addPropertyToFavorites(userId, propertyId));
+
+        assertEquals("Недвижимость с id 100 уже добавлена в избранное", exception.getMessage());
+    }
+
+    @Test
+    void testRemovePropertyFromFavorites() {
+        when(favoriteRepository.findByUserId(userId)).thenReturn(Optional.of(favorite));
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(property));
+
+        favorite.getProperty().add(property);
+
+        favoriteService.removePropertyFromFavorites(userId, propertyId);
+
+        assertFalse(favorite.getProperty().contains(property));
+        verify(favoriteRepository, times(1)).save(favorite);
+    }
+
+    @Test
+    void testRemovePropertyFromFavoritesPropertyNotFound() {
+        when(favoriteRepository.findByUserId(userId)).thenReturn(Optional.empty());
+
+        ServiceException exception = assertThrows(ServiceException.class, () -> favoriteService.removePropertyFromFavorites(userId, propertyId));
 
         assertEquals("Объект с ID 1 не найден", exception.getMessage());
     }
 
     @Test
-    void testUpdateById() {
-        when(favoriteRepository.findById(1)).thenReturn(Optional.of(favorite));
+    void testGetFavoritesByUserId() {
+        when(favoriteRepository.findByUserId(userId)).thenReturn(Optional.of(favorite));
+        when(propertyMapper.toDto(property)).thenReturn(new PropertyDto());
 
-        favoriteService.updateById(1, favoriteDto);
+        List<PropertyDto> favorites = favoriteService.getFavoritesByUserId(userId);
 
-        verify(favoriteMapper, times(1)).updateEntity(favoriteDto, favorite);
-        verify(favoriteRepository, times(1)).save(favorite);
+        assertNotNull(favorites);
+        assertTrue(favorites.isEmpty());
     }
 
     @Test
-    void testUpdateByIdNotFound() {
-        when(favoriteRepository.findById(1)).thenReturn(Optional.empty());
+    void testGetFavoritesByUserIdNotFound() {
+        when(favoriteRepository.findByUserId(userId)).thenReturn(Optional.empty());
 
-        ServiceException exception = assertThrows(ServiceException.class, () -> favoriteService.updateById(1, favoriteDto));
-
-        assertEquals("Объект с ID 1 не найден", exception.getMessage());
-    }
-
-    @Test
-    void testDeleteById() {
-        when(favoriteRepository.findById(1)).thenReturn(Optional.of(favorite));
-
-        favoriteService.deleteById(1);
-
-        verify(favoriteRepository, times(1)).delete(favorite);
-    }
-
-    @Test
-    void testDeleteByIdNotFound() {
-        when(favoriteRepository.findById(1)).thenReturn(Optional.empty());
-
-        ServiceException exception = assertThrows(ServiceException.class, () -> favoriteService.deleteById(1));
+        ServiceException exception = assertThrows(ServiceException.class, () -> favoriteService.getFavoritesByUserId(userId));
 
         assertEquals("Объект с ID 1 не найден", exception.getMessage());
     }

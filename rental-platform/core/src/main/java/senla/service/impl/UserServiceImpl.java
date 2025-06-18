@@ -17,6 +17,7 @@ import senla.repository.UserRepository;
 import senla.service.UserService;
 import senla.util.mappers.UserMapper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,14 +38,16 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User create(UserDto userDto) {
+    public UserDto create(UserDto userDto) {
         User user = userMapper.toEntity(userDto);
         user.setPassword((passwordEncoder.encode(userDto.getPassword())));
 
         Role userRole = roleRepository.findByRoleName("USER")
                 .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND_WITH_NAME, "USER"));
 
-        user.setRoles(Set.of(userRole));
+        List<Role> roles = new ArrayList<>();
+        roles.add(userRole);
+        user.setRoles(roles);
         userRole.getUsers().add(user);
 
         User savedUser;
@@ -56,7 +59,7 @@ public class UserServiceImpl implements UserService {
         }
 
         log.info("Пользователь с ID: {} успешно создан", savedUser.getId());
-        return savedUser;
+        return userMapper.toDto(savedUser);
     }
 
     @Override

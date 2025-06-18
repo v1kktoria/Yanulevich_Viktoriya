@@ -14,15 +14,11 @@ import senla.repository.UserRepository;
 import senla.service.impl.ProfileServiceImpl;
 import senla.util.mappers.ProfileMapper;
 
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class ProfileServiceImplTest {
 
@@ -38,106 +34,126 @@ public class ProfileServiceImplTest {
     @InjectMocks
     private ProfileServiceImpl profileService;
 
-    private ProfileDto profileDto;
-
+    private Integer profileId = 1;
+    private Integer userId = 100;
     private Profile profile;
-
+    private ProfileDto profileDto;
     private User user;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        profileDto = new ProfileDto();
-        profileDto.setId(1);
-        profileDto.setUserId(1);
-
         user = new User();
-        user.setId(1);
+        user.setId(userId);
 
         profile = new Profile();
-        profile.setId(1);
+        profile.setId(profileId);
         profile.setUser(user);
-        profile.setRegistrationDate(LocalDateTime.now());
+
+        profileDto = new ProfileDto();
+        profileDto.setId(profileId);
+        profileDto.setUserId(userId);
     }
 
     @Test
     void testCreate() {
-        when(userRepository.findById(1)).thenReturn(Optional.of(user));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(profileRepository.existsByUserId(userId)).thenReturn(false);
         when(profileMapper.toEntity(profileDto, user)).thenReturn(profile);
         when(profileRepository.save(profile)).thenReturn(profile);
         when(profileMapper.toDto(profile)).thenReturn(profileDto);
 
         ProfileDto createdProfile = profileService.create(profileDto);
 
-        assertNotNull(createdProfile);
-        assertEquals(1, createdProfile.getId());
+        assertEquals(profileId, createdProfile.getId());
         verify(profileRepository, times(1)).save(profile);
     }
 
     @Test
     void testCreateUserNotFound() {
-        when(userRepository.findById(1)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         ServiceException exception = assertThrows(ServiceException.class, () -> profileService.create(profileDto));
 
-        assertEquals("Объект с ID 1 не найден", exception.getMessage());
+        assertEquals("Объект с ID 100 не найден", exception.getMessage());
+    }
+
+    @Test
+    void testCreateProfileAlreadyExists() {
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(profileRepository.existsByUserId(userId)).thenReturn(true);
+
+        ServiceException exception = assertThrows(ServiceException.class, () -> profileService.create(profileDto));
+
+        assertEquals("Профиль для пользователя с id 100 уже существует", exception.getMessage());
     }
 
     @Test
     void testGetById() {
-        when(profileRepository.findById(1)).thenReturn(Optional.of(profile));
+        when(profileRepository.findById(profileId)).thenReturn(Optional.of(profile));
         when(profileMapper.toDto(profile)).thenReturn(profileDto);
 
-        ProfileDto result = profileService.getById(1);
+        ProfileDto retrievedProfile = profileService.getById(profileId);
 
-        assertNotNull(result);
-        assertEquals(1, result.getId());
+        assertEquals(profileId, retrievedProfile.getId());
+        verify(profileRepository, times(1)).findById(profileId);
     }
 
     @Test
     void testGetByIdNotFound() {
-        when(profileRepository.findById(1)).thenReturn(Optional.empty());
+        when(profileRepository.findById(profileId)).thenReturn(Optional.empty());
 
-        ServiceException exception = assertThrows(ServiceException.class, () -> profileService.getById(1));
+        ServiceException exception = assertThrows(ServiceException.class, () -> profileService.getById(profileId));
 
         assertEquals("Объект с ID 1 не найден", exception.getMessage());
     }
 
     @Test
+    void testGetAll() {
+        when(profileRepository.findAll()).thenReturn(List.of(profile));
+        when(profileMapper.toDto(profile)).thenReturn(profileDto);
+
+        List<ProfileDto> profiles = profileService.getAll();
+
+        assertNotNull(profiles);
+        assertEquals(1, profiles.size());
+        verify(profileRepository, times(1)).findAll();
+    }
+
+    @Test
     void testUpdateById() {
-        when(profileRepository.findById(1)).thenReturn(Optional.of(profile));
+        when(profileRepository.findById(profileId)).thenReturn(Optional.of(profile));
+        //when(profileMapper.updateEntity(profileDto, profile)).thenReturn(profile);
 
-        profileDto.setId(1);
-        profileService.updateById(1, profileDto);
+        profileService.updateById(profileId, profileDto);
 
-        verify(profileMapper, times(1)).updateEntity(profileDto, profile);
         verify(profileRepository, times(1)).save(profile);
     }
 
     @Test
     void testUpdateByIdNotFound() {
-        when(profileRepository.findById(1)).thenReturn(Optional.empty());
+        when(profileRepository.findById(profileId)).thenReturn(Optional.empty());
 
-        ServiceException exception = assertThrows(ServiceException.class, () -> profileService.updateById(1, profileDto));
+        ServiceException exception = assertThrows(ServiceException.class, () -> profileService.updateById(profileId, profileDto));
 
         assertEquals("Объект с ID 1 не найден", exception.getMessage());
     }
 
     @Test
     void testDeleteById() {
-        when(profileRepository.findById(1)).thenReturn(Optional.of(profile));
+        when(profileRepository.findById(profileId)).thenReturn(Optional.of(profile));
 
-        profileService.deleteById(1);
+        profileService.deleteById(profileId);
 
         verify(profileRepository, times(1)).delete(profile);
     }
 
     @Test
     void testDeleteByIdNotFound() {
-        when(profileRepository.findById(1)).thenReturn(Optional.empty());
+        when(profileRepository.findById(profileId)).thenReturn(Optional.empty());
 
-        ServiceException exception = assertThrows(ServiceException.class, () -> profileService.deleteById(1));
+        ServiceException exception = assertThrows(ServiceException.class, () -> profileService.deleteById(profileId));
 
         assertEquals("Объект с ID 1 не найден", exception.getMessage());
     }

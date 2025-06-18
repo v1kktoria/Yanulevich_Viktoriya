@@ -13,18 +13,16 @@ import senla.model.User;
 import senla.repository.PropertyRepository;
 import senla.repository.ReviewRepository;
 import senla.repository.UserRepository;
+import senla.service.PropertyService;
 import senla.service.impl.ReviewServiceImpl;
 import senla.util.mappers.ReviewMapper;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class ReviewServiceImplTest {
 
@@ -40,137 +38,155 @@ public class ReviewServiceImplTest {
     @Mock
     private ReviewMapper reviewMapper;
 
+    @Mock
+    private PropertyService propertyService;
+
     @InjectMocks
     private ReviewServiceImpl reviewService;
 
-    private ReviewDto reviewDto;
-
+    private Integer reviewId = 1;
+    private Integer propertyId = 100;
+    private Integer userId = 200;
     private Review review;
-
+    private ReviewDto reviewDto;
     private Property property;
-
     private User user;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        reviewDto = new ReviewDto();
-        reviewDto.setId(1);
-        reviewDto.setPropertyId(1);
-        reviewDto.setUserId(1);
-
         property = new Property();
-        property.setId(1);
+        property.setId(propertyId);
 
         user = new User();
-        user.setId(1);
+        user.setId(userId);
 
         review = new Review();
-        review.setId(1);
+        review.setId(reviewId);
+        review.setProperty(property);
         review.setUser(user);
+        review.setCreatedAt(LocalDateTime.now());
+
+        reviewDto = new ReviewDto();
+        reviewDto.setId(reviewId);
+        reviewDto.setPropertyId(propertyId);
+        reviewDto.setUserId(userId);
     }
 
     @Test
     void testCreate() {
-        when(propertyRepository.findById(1)).thenReturn(Optional.of(property));
-        when(userRepository.findById(1)).thenReturn(Optional.of(user));
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(property));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(reviewRepository.existsByUserIdAndPropertyId(userId, propertyId)).thenReturn(false);
         when(reviewMapper.toEntity(reviewDto, property, user)).thenReturn(review);
         when(reviewRepository.save(review)).thenReturn(review);
         when(reviewMapper.toDto(review)).thenReturn(reviewDto);
 
         ReviewDto createdReview = reviewService.create(reviewDto);
 
-        assertNotNull(createdReview);
-        assertEquals(1, createdReview.getId());
+        assertEquals(reviewId, createdReview.getId());
         verify(reviewRepository, times(1)).save(review);
+        verify(propertyService, times(1)).updateRating(propertyId);
     }
 
     @Test
     void testCreatePropertyNotFound() {
-        when(propertyRepository.findById(1)).thenReturn(Optional.empty());
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.empty());
 
         ServiceException exception = assertThrows(ServiceException.class, () -> reviewService.create(reviewDto));
 
-        assertEquals("Объект с ID 1 не найден", exception.getMessage());
+        assertEquals("Объект с ID 100 не найден", exception.getMessage());
     }
 
     @Test
     void testCreateUserNotFound() {
-        when(propertyRepository.findById(1)).thenReturn(Optional.of(property));
-        when(userRepository.findById(1)).thenReturn(Optional.empty());
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(property));
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         ServiceException exception = assertThrows(ServiceException.class, () -> reviewService.create(reviewDto));
 
-        assertEquals("Объект с ID 1 не найден", exception.getMessage());
+        assertEquals("Объект с ID 100 не найден", exception.getMessage());
+    }
+
+    @Test
+    void testCreateReviewAlreadyExists() {
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(property));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(reviewRepository.existsByUserIdAndPropertyId(userId, propertyId)).thenReturn(true);
+
+        ServiceException exception = assertThrows(ServiceException.class, () -> reviewService.create(reviewDto));
+
+        assertEquals("Отзыв пользователя с id 200 для недвижимости с id 100 уже существует", exception.getMessage());
     }
 
     @Test
     void testGetById() {
-        when(reviewRepository.findById(1)).thenReturn(Optional.of(review));
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
         when(reviewMapper.toDto(review)).thenReturn(reviewDto);
 
-        ReviewDto result = reviewService.getById(1);
+        ReviewDto retrievedReview = reviewService.getById(reviewId);
 
-        assertNotNull(result);
-        assertEquals(1, result.getId());
+        assertEquals(reviewId, retrievedReview.getId());
+        verify(reviewRepository, times(1)).findById(reviewId);
     }
 
     @Test
     void testGetByIdNotFound() {
-        when(reviewRepository.findById(1)).thenReturn(Optional.empty());
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.empty());
 
-        ServiceException exception = assertThrows(ServiceException.class, () -> reviewService.getById(1));
+        ServiceException exception = assertThrows(ServiceException.class, () -> reviewService.getById(reviewId));
 
         assertEquals("Объект с ID 1 не найден", exception.getMessage());
     }
 
     @Test
     void testGetAll() {
-        List<Review> reviews = List.of(review);
-        when(reviewRepository.findAll()).thenReturn(reviews);
+        when(reviewRepository.findAll()).thenReturn(List.of(review));
         when(reviewMapper.toDto(review)).thenReturn(reviewDto);
 
-        List<ReviewDto> result = reviewService.getAll();
+        List<ReviewDto> reviews = reviewService.getAll();
 
-        assertNotNull(result);
-        assertEquals(1, result.size());
+        assertNotNull(reviews);
+        assertEquals(1, reviews.size());
+        verify(reviewRepository, times(1)).findAll();
     }
 
     @Test
     void testUpdateById() {
-        when(reviewRepository.findById(1)).thenReturn(Optional.of(review));
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
+        //when(reviewMapper.updateEntity(reviewDto, review)).thenReturn(review);
 
-        reviewDto.setId(1);
-        reviewService.updateById(1, reviewDto);
+        reviewService.updateById(reviewId, reviewDto);
 
-        verify(reviewMapper, times(1)).updateEntity(reviewDto, review);
         verify(reviewRepository, times(1)).save(review);
+        verify(propertyService, times(1)).updateRating(propertyId);
     }
 
     @Test
     void testUpdateByIdNotFound() {
-        when(reviewRepository.findById(1)).thenReturn(Optional.empty());
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.empty());
 
-        ServiceException exception = assertThrows(ServiceException.class, () -> reviewService.updateById(1, reviewDto));
+        ServiceException exception = assertThrows(ServiceException.class, () -> reviewService.updateById(reviewId, reviewDto));
 
         assertEquals("Объект с ID 1 не найден", exception.getMessage());
     }
 
     @Test
     void testDeleteById() {
-        when(reviewRepository.findById(1)).thenReturn(Optional.of(review));
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
 
-        reviewService.deleteById(1);
+        reviewService.deleteById(reviewId);
 
         verify(reviewRepository, times(1)).delete(review);
+        verify(propertyService, times(1)).updateRating(propertyId);
     }
 
     @Test
     void testDeleteByIdNotFound() {
-        when(reviewRepository.findById(1)).thenReturn(Optional.empty());
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.empty());
 
-        ServiceException exception = assertThrows(ServiceException.class, () -> reviewService.deleteById(1));
+        ServiceException exception = assertThrows(ServiceException.class, () -> reviewService.deleteById(reviewId));
 
         assertEquals("Объект с ID 1 не найден", exception.getMessage());
     }

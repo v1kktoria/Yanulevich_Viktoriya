@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,18 +24,9 @@ public class UserDto {
     @Size(min = 8, message = "Пароль должен быть не меньше 8 символов")
     private String password;
 
-    private Set<RoleDto> roles;
+    private List<RoleDto> roles;
 
     private Integer profileId;
 
-    private Set<PropertyDto> properties;
-
-    private Set<ApplicationDto> applications;
-
     private Integer favoriteId;
-
-    private Set<ReportDto> reports;
-
-    private Set<ReviewDto> reviews;
-
 }

@@ -6,11 +6,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import senla.dto.UserDto;
-import senla.model.User;
+import senla.security.util.JwtUtils;
 import senla.service.UserService;
-
 
 @Service
 @RequiredArgsConstructor
@@ -24,10 +22,8 @@ public class AuthenticationService {
 
     private final UserDetailsService userDetailsService;
 
-    @Transactional
-    public String signUp(UserDto userDto) {
-        User user = userService.create(userDto);
-        return jwtService.generateToken(user);
+    public UserDto signUp(UserDto userDto) {
+        return userService.create(userDto);
     }
 
     public String signIn(UserDto userDto) {

@@ -8,4 +8,6 @@ import java.util.List;
 public interface ApplicationRepository extends JpaRepository<Application, Integer> {
 
     List<Application> findAllByPropertyId(Integer id);
+
+    boolean existsByTenantIdAndPropertyId(Integer tenantId, Integer propertyId);
 }

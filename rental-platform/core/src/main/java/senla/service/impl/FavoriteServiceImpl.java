@@ -5,15 +5,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.senla.aop.MeasureExecutionTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import senla.dto.FavoriteDto;
+import senla.dto.PropertyDto;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Favorite;
+import senla.model.Property;
 import senla.repository.FavoriteRepository;
+import senla.repository.PropertyRepository;
+import senla.repository.UserRepository;
 import senla.service.FavoriteService;
-import senla.util.mappers.FavoriteMapper;
+import senla.util.mappers.PropertyMapper;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,63 +30,48 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
 
-    private final FavoriteMapper favoriteMapper;
+    private final UserRepository userRepository;
+
+    private final PropertyRepository propertyRepository;
+
+    private final PropertyMapper propertyMapper;
 
     @Transactional
     @Override
-    public FavoriteDto create(FavoriteDto favoriteDto) {
-        Favorite favorite = favoriteMapper.toEntity(favoriteDto);
-        FavoriteDto createdFavorite = favoriteMapper.toDto(favoriteRepository.save(favorite));
-        log.info("Избранное успешно добавлено с ID: {}", createdFavorite.getId());
-        return createdFavorite;
-    }
+    public void addPropertyToFavorites(Integer userId, Integer propertyId) {
+        Favorite favorite = favoriteRepository.findByUserId(userId)
+                .orElseGet(() -> new Favorite(userRepository.getReferenceById(userId), new ArrayList<>()));
 
-    @Override
-    public FavoriteDto getById(Integer id) {
-        FavoriteDto favorite = favoriteMapper.toDto(favoriteRepository.findById(id)
-                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id)));
-        log.info("Избранное успешно получено: {}", favorite);
-        return favorite;
-    }
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, propertyId));
 
-    @Override
-    public List<FavoriteDto> getByUserId(Integer id) {
-        List<Favorite> favorites = favoriteRepository.findAllByUserId(id);
-        List<FavoriteDto> favoriteDtos = favorites.stream()
-                .map(favoriteMapper::toDto)
-                .collect(Collectors.toList());
-        log.info("Найдено {} избранных для пользователя с ID: {}", favoriteDtos.size(), id);
-        return favoriteDtos;
-    }
+        if (favorite.getProperty().contains(property)) {
+            throw new ServiceException(ServiceExceptionEnum.PROPERTY_ALREADY_EXIST, propertyId);
+        }
 
-    @Override
-    public List<FavoriteDto> getAll() {
-        List<Favorite> favorites = favoriteRepository.findAll();
-        List<FavoriteDto> favoriteDtos = favorites.stream()
-                .map(favoriteMapper::toDto)
-                .collect(Collectors.toList());
-        log.info("Найдено {} избранных", favoriteDtos.size());
-        return favoriteDtos;
-    }
-
-    @Transactional
-    @Override
-    public void updateById(Integer id, FavoriteDto favoriteDto) {
-        Favorite favorite = favoriteRepository.findById(id)
-                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
-
-        favoriteDto.setId(id);
-        favoriteMapper.updateEntity(favoriteDto, favorite);
+        favorite.getProperty().add(property);
         favoriteRepository.save(favorite);
-        log.info("Избранное с ID: {} успешно обновлено", id);
+        log.info("Объявление {} добавлено в избранное пользователя {}", propertyId, userId);
     }
 
     @Transactional
     @Override
-    public void deleteById(Integer id) {
-        Favorite favorite = favoriteRepository.findById(id)
-                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
-        favoriteRepository.delete(favorite);
-        log.info("Избранное с ID: {} успешно удалено", id);
+    public void removePropertyFromFavorites(Integer userId, Integer propertyId) {
+        Favorite favorite = favoriteRepository.findByUserId(userId)
+                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, userId));
+
+        favorite.getProperty().removeIf(p -> p.getId().equals(propertyId));
+        favoriteRepository.save(favorite);
+        log.info("Объявление {} удалено из избранного пользователя {}", propertyId, userId);
+    }
+
+    @Override
+    public List<PropertyDto> getFavoritesByUserId(Integer userId) {
+        Favorite favorite = favoriteRepository.findByUserId(userId)
+                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, userId));
+
+        return favorite.getProperty().stream()
+                .map(propertyMapper::toDto)
+                .collect(Collectors.toList());
     }
 }
