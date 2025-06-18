@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 007-create-images
+      author: Viktoriya
+      changes:
+        - createTable:
+            tableName: images
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: property_id
+                  type: INT
+                  constraints:
+                    foreignKeyName: fk_images_property
+                    references: properties(id)
+                    nullable: false
+              - column:
+                  name: filepath
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false

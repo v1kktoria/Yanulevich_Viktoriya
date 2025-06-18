@@ -2,6 +2,7 @@ package senla.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -11,8 +12,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import senla.model.constant.Status;
 
 import java.time.LocalDateTime;
@@ -38,8 +37,7 @@ public class Application extends BaseEntity {
     private String message;
 
     @Column(name = "status")
-    @Enumerated
-    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     @Column(name = "created_at")

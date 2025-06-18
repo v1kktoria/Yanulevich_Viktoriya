@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006-create-analytics
+      author: Viktoriya
+      changes:
+        - createTable:
+            tableName: analytics
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: property_id
+                  type: INT
+                  constraints:
+                    foreignKeyName: fk_analytics_property
+                    references: properties(id)
+              - column:
+                  name: views
+                  type: INT
+              - column:
+                  name: applications_count
+                  type: INT
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
