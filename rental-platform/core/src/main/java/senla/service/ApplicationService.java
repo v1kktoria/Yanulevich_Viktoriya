@@ -14,7 +14,9 @@ public interface ApplicationService {
 
     List<ApplicationDto> getAll();
 
-    void updateById(Integer id, ApplicationDto applicationDto);
+    void acceptApplication(Integer applicationId);
+
+    void rejectApplication(Integer applicationId);
 
     void deleteById(Integer id);
 }

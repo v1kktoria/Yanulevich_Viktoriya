@@ -2,13 +2,16 @@ package service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Sort;
 import senla.dto.PropertyDto;
 import senla.exception.ServiceException;
 import senla.model.Property;
-import senla.model.User;
+import senla.model.Review;
+import senla.model.constant.PropertyType;
 import senla.repository.PropertyRepository;
 import senla.service.impl.PropertyServiceImpl;
 import senla.util.mappers.PropertyMapper;
@@ -16,12 +19,8 @@ import senla.util.mappers.PropertyMapper;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class PropertyServiceImplTest {
 
@@ -34,25 +33,19 @@ public class PropertyServiceImplTest {
     @InjectMocks
     private PropertyServiceImpl propertyService;
 
-    private PropertyDto propertyDto;
-
+    private Integer propertyId = 1;
     private Property property;
-
-    private User owner;
+    private PropertyDto propertyDto;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        owner = new User();
-        owner.setId(1);
+        property = new Property();
+        property.setId(propertyId);
 
         propertyDto = new PropertyDto();
-        propertyDto.setId(1);
-
-        property = new Property();
-        property.setId(1);
-        property.setOwner(owner);
+        propertyDto.setId(propertyId);
     }
 
     @Test
@@ -63,102 +56,129 @@ public class PropertyServiceImplTest {
 
         PropertyDto createdProperty = propertyService.create(propertyDto);
 
-        assertNotNull(createdProperty);
-        assertEquals(1, createdProperty.getId());
+        assertEquals(propertyId, createdProperty.getId());
         verify(propertyRepository, times(1)).save(property);
     }
 
     @Test
     void testGetById() {
-        when(propertyRepository.findById(1)).thenReturn(Optional.of(property));
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(property));
         when(propertyMapper.toDto(property)).thenReturn(propertyDto);
 
-        PropertyDto result = propertyService.getById(1);
+        PropertyDto retrievedProperty = propertyService.getById(propertyId);
 
-        assertNotNull(result);
-        assertEquals(1, result.getId());
+        assertEquals(propertyId, retrievedProperty.getId());
+        verify(propertyRepository, times(1)).findById(propertyId);
     }
 
     @Test
     void testGetByIdNotFound() {
-        when(propertyRepository.findById(1)).thenReturn(Optional.empty());
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.empty());
 
-        ServiceException exception = assertThrows(ServiceException.class, () -> propertyService.getById(1));
-
-        assertEquals("Объект с ID 1 не найден", exception.getMessage());
-    }
-
-    @Test
-    void testGetAll() {
-        List<Property> properties = List.of(property);
-        when(propertyRepository.findAll()).thenReturn(properties);
-        when(propertyMapper.toDto(property)).thenReturn(propertyDto);
-
-        List<PropertyDto> result = propertyService.getAll();
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
-    }
-
-    @Test
-    void testUpdateById() {
-        when(propertyRepository.findById(1)).thenReturn(Optional.of(property));
-
-        propertyDto.setId(1);
-        propertyService.updateById(1, propertyDto);
-
-        verify(propertyMapper, times(1)).updateEntity(propertyDto, property);
-        verify(propertyRepository, times(1)).save(property);
-    }
-
-    @Test
-    void testUpdateByIdNotFound() {
-        when(propertyRepository.findById(1)).thenReturn(Optional.empty());
-
-        ServiceException exception = assertThrows(ServiceException.class, () -> propertyService.updateById(1, propertyDto));
-
-        assertEquals("Объект с ID 1 не найден", exception.getMessage());
-    }
-
-    @Test
-    void testDeleteById() {
-        when(propertyRepository.findById(1)).thenReturn(Optional.of(property));
-
-        propertyService.deleteById(1);
-
-        verify(propertyRepository, times(1)).delete(property);
-    }
-
-    @Test
-    void testDeleteByIdNotFound() {
-        when(propertyRepository.findById(1)).thenReturn(Optional.empty());
-
-        ServiceException exception = assertThrows(ServiceException.class, () -> propertyService.deleteById(1));
+        ServiceException exception = assertThrows(ServiceException.class, () -> propertyService.getById(propertyId));
 
         assertEquals("Объект с ID 1 не найден", exception.getMessage());
     }
 
     @Test
     void testGetByUserId() {
-        List<Property> properties = List.of(property);
-        when(propertyRepository.findAllByOwnerId(1)).thenReturn(properties);
+        when(propertyRepository.findAllByOwnerId(eq(propertyId), ArgumentMatchers.any(Sort.class))).thenReturn(List.of(property));
         when(propertyMapper.toDto(property)).thenReturn(propertyDto);
 
-        List<PropertyDto> result = propertyService.getByUserId(1);
+        List<PropertyDto> properties = propertyService.getByUserId(propertyId);
 
-        assertNotNull(result);
-        assertEquals(1, result.size());
+        assertNotNull(properties);
+        assertEquals(1, properties.size());
+        verify(propertyRepository, times(1)).findAllByOwnerId(eq(propertyId), ArgumentMatchers.any(Sort.class));
     }
 
     @Test
-    void testGetAllWithEssentialDetails() {
-        List<Property> properties = List.of(property);
-        when(propertyRepository.findAllWithEssentialDetails()).thenReturn(properties);
+    void testGetAll() {
+        when(propertyRepository.findAll(ArgumentMatchers.any(Sort.class))).thenReturn(List.of(property));
         when(propertyMapper.toDto(property)).thenReturn(propertyDto);
 
-        List<PropertyDto> result = propertyService.getAllWithEssentialDetails();
+        List<PropertyDto> properties = propertyService.getAll();
 
-        assertNotNull(result);
-        assertEquals(1, result.size());
+        assertNotNull(properties);
+        assertEquals(1, properties.size());
+        verify(propertyRepository, times(1)).findAll(ArgumentMatchers.any(Sort.class));
+    }
+
+    @Test
+    void testUpdateById() {
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(property));
+
+        propertyService.updateById(propertyId, propertyDto);
+
+        verify(propertyRepository, times(1)).save(property);
+    }
+
+    @Test
+    void testUpdateByIdNotFound() {
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.empty());
+
+        ServiceException exception = assertThrows(ServiceException.class, () -> propertyService.updateById(propertyId, propertyDto));
+
+        assertEquals("Объект с ID 1 не найден", exception.getMessage());
+    }
+
+    @Test
+    void testDeleteById() {
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(property));
+
+        propertyService.deleteById(propertyId);
+
+        verify(propertyRepository, times(1)).delete(property);
+    }
+
+    @Test
+    void testDeleteByIdNotFound() {
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.empty());
+
+        ServiceException exception = assertThrows(ServiceException.class, () -> propertyService.deleteById(propertyId));
+
+        assertEquals("Объект с ID 1 не найден", exception.getMessage());
+    }
+
+    @Test
+    void testSearchProperties() {
+        when(propertyRepository.searchProperties(eq(PropertyType.APARTMENT), eq(100.0), eq(500.0), eq(1), eq(3), eq("Test"), ArgumentMatchers.any(Sort.class)))
+                .thenReturn(List.of(property));
+        when(propertyMapper.toDto(property)).thenReturn(propertyDto);
+
+        List<PropertyDto> properties = propertyService.searchProperties(PropertyType.APARTMENT, 100.0, 500.0, 1, 3, "Test");
+
+        assertNotNull(properties);
+        assertEquals(1, properties.size());
+        verify(propertyRepository, times(1))
+                .searchProperties(eq(PropertyType.APARTMENT), eq(100.0), eq(500.0), eq(1), eq(3), eq("Test"), ArgumentMatchers.any(Sort.class));
+    }
+
+    @Test
+    void testUpdateRating() {
+        Review review1 = new Review();
+        review1.setRating(5);
+
+        Review review2 = new Review();
+        review2.setRating(3);
+
+        property.setReviews(List.of(review1, review2));
+
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(property));
+        when(propertyRepository.save(property)).thenReturn(property);
+
+        propertyService.updateRating(propertyId);
+
+        assertEquals(4.0, property.getRating());
+        verify(propertyRepository, times(1)).save(property);
+    }
+
+    @Test
+    void testUpdateRatingNotFound() {
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.empty());
+
+        ServiceException exception = assertThrows(ServiceException.class, () -> propertyService.updateRating(propertyId));
+
+        assertEquals("Объект с ID 1 не найден", exception.getMessage());
     }
 }

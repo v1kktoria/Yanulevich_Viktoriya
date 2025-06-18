@@ -46,6 +46,7 @@ public class ReviewController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<ReviewDto> getReview(@PathVariable("id") Integer id) {
         log.info("Запрос на получение отзыва с ID: {}", id);
         ReviewDto review = reviewService.getById(id);
@@ -53,7 +54,7 @@ public class ReviewController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or authentication.principal.id == #reviewDto.userId")
+    @PreAuthorize("authentication.principal.id == #reviewDto.userId")
     public ResponseEntity<String> updateReview(@PathVariable("id") Integer id, @RequestBody @Valid ReviewDto reviewDto) {
         log.info("Обновление отзыва с ID: {} с новыми данными: {}", id, reviewDto);
         reviewService.updateById(id, reviewDto);

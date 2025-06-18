@@ -16,7 +16,6 @@ public class ImageDto {
 
     private Integer propertyId;
 
-    @NotBlank(message = "Путь к файлу не может быть пустым")
-    private String filepath;
-
+    @NotBlank(message = "Ссылка на изображение не может быть пустой")
+    private String imageUrl;
 }

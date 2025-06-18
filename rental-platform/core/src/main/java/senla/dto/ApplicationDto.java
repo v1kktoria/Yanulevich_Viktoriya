@@ -21,6 +21,8 @@ public class ApplicationDto {
 
     private Integer tenantId;
 
+    private Integer ownerId;
+
     @Size(max = 500, message = "Сообщение не может быть длиннее 500 символов")
     private String message;
 

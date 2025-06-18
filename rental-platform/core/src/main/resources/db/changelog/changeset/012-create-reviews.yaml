@@ -41,9 +41,3 @@ databaseChangeLog:
                   name: created_at
                   type: TIMESTAMP
                   defaultValueComputed: CURRENT_TIMESTAMP
-              - column:
-                  name: deleted
-                  type: BOOLEAN
-                  constraints:
-                    nullable: false
-                  defaultValue: "false"

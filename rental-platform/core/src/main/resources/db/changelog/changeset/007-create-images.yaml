@@ -21,7 +21,7 @@ databaseChangeLog:
                     references: properties(id)
                     nullable: false
               - column:
-                  name: filepath
+                  name: image_url
                   type: VARCHAR(255)
                   constraints:
                     nullable: false

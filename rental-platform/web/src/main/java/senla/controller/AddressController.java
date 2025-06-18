@@ -46,6 +46,7 @@ public class AddressController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<AddressDto> getAddress(@PathVariable("id") Integer id) {
         log.info("Запрос на получение адреса с ID: {}", id);
         AddressDto address = addressService.getById(id);
@@ -53,6 +54,7 @@ public class AddressController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("@addressSecurityService.hasAccess(authentication, #id)")
     public ResponseEntity<String> updateAddress(@PathVariable("id") Integer id, @RequestBody @Valid AddressDto addressDto) {
         log.info("Обновление адреса с ID: {} с новыми данными: {}", id, addressDto);
         addressService.updateById(id, addressDto);
@@ -60,6 +62,7 @@ public class AddressController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("@addressSecurityService.hasAccess(authentication, #id)")
     public ResponseEntity<String> deleteAddress(@PathVariable("id") Integer id) {
         log.info("Удаление адреса с ID: {}", id);
         addressService.deleteById(id);

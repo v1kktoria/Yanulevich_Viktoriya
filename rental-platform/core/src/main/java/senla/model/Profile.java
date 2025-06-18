@@ -34,9 +34,6 @@ public class Profile extends BaseEntity {
     @Column(name = "phone")
     private String phone;
 
-    @Column(name = "registration_date")
-    private LocalDateTime registrationDate;
-
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;

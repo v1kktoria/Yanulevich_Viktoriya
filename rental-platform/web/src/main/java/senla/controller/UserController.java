@@ -45,7 +45,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or (#id == authentication.principal.id)")
+    @PreAuthorize("#id == authentication.principal.id")
     public ResponseEntity<String> updateUser(@PathVariable("id") Integer id, @RequestBody @Valid UserDto userDto) {
         log.info("Обновление пользователя с ID: {} с новыми данными: {}", id, userDto);
         userService.updateById(id, userDto);
@@ -53,7 +53,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or (#id == authentication.principal.id)")
+    @PreAuthorize("#id == authentication.principal.id")
     public ResponseEntity<String> deleteUser(@PathVariable("id") Integer id) {
         log.info("Удаление пользователя с ID: {}", id);
         userService.deleteById(id);

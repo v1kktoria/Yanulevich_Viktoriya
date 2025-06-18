@@ -9,6 +9,7 @@ import lombok.Setter;
 import senla.model.constant.PropertyType;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -35,16 +36,15 @@ public class PropertyDto {
     @Size(max = 500, message = "Описание не должно превышать 500 символов")
     private String description;
 
+    private double rating;
+
     private LocalDateTime createdAt;
 
-    private Set<PropertyParameterDto> propertiesParameters;
+    private List<ParameterDto> parameters;
 
     private AddressDto address;
 
-    private Set<ImageDto> images;
+    private List<ImageDto> images;
 
-    private Set<ReviewDto> reviews;
-
-    private AnalyticsDto analytics;
-
+    private List<ReviewDto> reviews;
 }

@@ -36,6 +36,9 @@ public class AddressServiceImpl implements AddressService {
         Property property = propertyRepository.findById(addressDto.getPropertyId())
                 .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, addressDto.getPropertyId()));
 
+        if (addressRepository.existsByPropertyId(property.getId())) {
+            throw new ServiceException(ServiceExceptionEnum.ADDRESS_ALREADY_EXISTS, property.getId());
+        }
         Address address = addressMapper.toEntity(addressDto, property);
         AddressDto createdAddress = addressMapper.toDto(addressRepository.save(address));
         log.info("Адрес успешно создан с ID: {}", createdAddress.getId());

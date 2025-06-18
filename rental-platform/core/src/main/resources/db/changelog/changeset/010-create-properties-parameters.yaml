@@ -22,9 +22,6 @@ databaseChangeLog:
                     referencedTableName: parameters
                     referencedColumnNames: id
                     foreignKeyName: fk_properties_parameters_parameter
-              - column:
-                  name: property_value
-                  type: VARCHAR(255)
               - primaryKey:
                   columnNames: property_id, parameter_id
                   constraintName: pk_properties_parameters

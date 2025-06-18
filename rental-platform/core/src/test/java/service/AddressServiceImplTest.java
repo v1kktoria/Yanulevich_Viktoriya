@@ -16,14 +16,8 @@ import senla.util.mappers.AddressMapper;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class AddressServiceImplTest {
 
@@ -63,6 +57,7 @@ public class AddressServiceImplTest {
     @Test
     void testCreate() {
         when(propertyRepository.findById(1)).thenReturn(Optional.of(property));
+        when(addressRepository.existsByPropertyId(property.getId())).thenReturn(false);
         when(addressMapper.toEntity(addressDto, property)).thenReturn(address);
         when(addressRepository.save(address)).thenReturn(address);
         when(addressMapper.toDto(address)).thenReturn(addressDto);
@@ -81,6 +76,17 @@ public class AddressServiceImplTest {
         ServiceException exception = assertThrows(ServiceException.class, () -> addressService.create(addressDto));
 
         assertEquals("Объект с ID 1 не найден", exception.getMessage());
+        verify(addressRepository, never()).save(any());
+    }
+
+    @Test
+    void testCreateAddressAlreadyExists() {
+        when(propertyRepository.findById(1)).thenReturn(Optional.of(property));
+        when(addressRepository.existsByPropertyId(property.getId())).thenReturn(true);
+
+        ServiceException exception = assertThrows(ServiceException.class, () -> addressService.create(addressDto));
+
+        assertEquals("Адрес для недвижимости с id 1 уже существует", exception.getMessage());
         verify(addressRepository, never()).save(any());
     }
 

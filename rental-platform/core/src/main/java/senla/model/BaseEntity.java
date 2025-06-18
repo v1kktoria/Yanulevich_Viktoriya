@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @MappedSuperclass
 @NoArgsConstructor
 @AllArgsConstructor
-public class BaseEntity implements Identifiable<Integer> {
+public class BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

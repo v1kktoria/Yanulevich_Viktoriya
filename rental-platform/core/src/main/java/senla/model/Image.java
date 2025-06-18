@@ -24,6 +24,6 @@ public class Image extends BaseEntity {
     @JoinColumn(name = "property_id")
     private Property property;
 
-    @Column(name = "filepath")
-    private String filepath;
+    @Column(name = "image_url")
+    private String imageUrl;
 }

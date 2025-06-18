@@ -1,27 +1,19 @@
 package senla.model;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedAttributeNode;
-import jakarta.persistence.NamedEntityGraph;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import senla.model.constant.PropertyType;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -31,10 +23,10 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @NamedEntityGraph(
-        name = "property-owner-address-images",
+        name = "property-parameters-reviews-images",
         attributeNodes = {
-                @NamedAttributeNode(Property_.OWNER),
-                @NamedAttributeNode(Property_.ADDRESS),
+                @NamedAttributeNode(Property_.PARAMETERS),
+                @NamedAttributeNode(Property_.REVIEWS),
                 @NamedAttributeNode(Property_.IMAGES)
         }
 )
@@ -61,37 +53,32 @@ public class Property extends BaseEntity {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "rating")
+    private Double rating;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "deleted")
-    private boolean deleted;
-
-    @OneToMany(mappedBy = "property", cascade = CascadeType.REMOVE)
-    private Set<PropertyParameter> propertyParameters = new HashSet<>();
+    @ManyToMany
+    @JoinTable (
+            name = "properties_parameters",
+            joinColumns = @JoinColumn(name = "property_id"),
+            inverseJoinColumns = @JoinColumn(name = "parameter_id")
+    )
+    private List<Parameter> parameters = new ArrayList<>();
 
     @OneToOne(mappedBy = "property", cascade = CascadeType.REMOVE)
     private Address address;
 
-    @OneToOne(mappedBy = "property", cascade = CascadeType.REMOVE)
-    private Analytics analytics;
+    @OneToMany(mappedBy = "property", cascade = CascadeType.REMOVE)
+    private List<Application> applications = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "property")
+    private List<Favorite> favorites = new ArrayList<>();
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.REMOVE)
-    private Set<Application> applications = new HashSet<>();
-
-    @ManyToMany(mappedBy = "property", cascade = CascadeType.REMOVE)
-    private Set<Favorite> favorites = new HashSet<>();
+    private List<Image> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.REMOVE)
-    private Set<Image> images = new HashSet<>();
-
-    @OneToMany(mappedBy = "property", cascade = CascadeType.REMOVE)
-    private Set<Review> reviews = new HashSet<>();
-
-    public void loadLazyFields() {
-        owner.getUsername();
-        if (address != null) {
-            address.getCountry();
-        }
-    }
+    private List<Review> reviews = new ArrayList<>();
 }

@@ -1,17 +1,15 @@
 package senla.model;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -29,6 +27,6 @@ public class Parameter extends BaseEntity {
     @Column(name = "description")
     private String description;
 
-    @OneToMany(mappedBy = "parameter", cascade = CascadeType.REMOVE)
-    private Set<PropertyParameter> propertyParameters = new HashSet<>();
+    @ManyToMany(mappedBy = "parameters")
+    private List<Property> properties = new ArrayList<>();
 }

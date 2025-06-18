@@ -11,12 +11,16 @@ import senla.exception.ServiceExceptionEnum;
 import senla.model.Application;
 import senla.model.Property;
 import senla.model.User;
+import senla.model.constant.Status;
 import senla.repository.ApplicationRepository;
 import senla.repository.PropertyRepository;
 import senla.repository.UserRepository;
 import senla.service.ApplicationService;
+import senla.service.ChatService;
+import senla.service.NotificationService;
 import senla.util.mappers.ApplicationMapper;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +38,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private final ApplicationMapper applicationMapper;
 
+    private final ChatService chatService;
+
+    private final NotificationService notificationService;
+
     @Transactional
     @Override
     public ApplicationDto create(ApplicationDto applicationDto) {
@@ -43,8 +51,22 @@ public class ApplicationServiceImpl implements ApplicationService {
         User tenant = userRepository.findById(applicationDto.getTenantId())
                 .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, applicationDto.getTenantId()));
 
+        User owner = userRepository.findById(applicationDto.getOwnerId())
+                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, applicationDto.getOwnerId()));
+
+        if (applicationRepository.existsByTenantIdAndPropertyId(applicationDto.getTenantId(), applicationDto.getPropertyId())) {
+            throw new ServiceException(ServiceExceptionEnum.APPLICATION_ALREADY_EXISTS,
+                    applicationDto.getTenantId(), applicationDto.getPropertyId());
+        }
+
         Application application = applicationMapper.toEntity(applicationDto, property, tenant);
+        application.setCreatedAt(LocalDateTime.now());
+        application.setStatus(Status.PENDING);
         ApplicationDto createdApplication = applicationMapper.toDto(applicationRepository.save(application));
+
+        notificationService.sendNewApplicationNotification(owner.getProfile().getEmail(),
+                tenant.getUsername(), property.getDescription());
+
         log.info("Заявка успешно создана с ID: {}", createdApplication.getId());
         return createdApplication;
     }
@@ -78,15 +100,37 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Transactional
-    @Override
-    public void updateById(Integer id, ApplicationDto applicationDto) {
-        Application application = applicationRepository.findById(id)
-                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+    public void acceptApplication(Integer applicationId) {
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, applicationId));
 
-        applicationDto.setId(id);
-        applicationMapper.updateEntity(applicationDto, application);
+        if (application.getStatus() == Status.APPROVED) {
+            log.info("Заявка уже принята");
+            return;
+        }
+
+        application.setStatus(Status.APPROVED);
         applicationRepository.save(application);
-        log.info("Заявка с ID: {} успешно обновлена", id);
+
+        chatService.create(application.getTenant().getId(), application.getOwner().getId());
+
+        notificationService.sendApprovalNotification(application);
+    }
+
+    @Transactional
+    public void rejectApplication(Integer applicationId) {
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, applicationId));
+
+        if (application.getStatus() == Status.REJECTED) {
+            log.info("Заявка уже отклонена");
+            return;
+        }
+
+        application.setStatus(Status.REJECTED);
+        applicationRepository.save(application);
+
+        notificationService.sendRejectionNotification(application);
     }
 
     @Transactional

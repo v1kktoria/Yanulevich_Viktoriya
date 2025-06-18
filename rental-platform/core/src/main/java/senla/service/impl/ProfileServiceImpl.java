@@ -37,8 +37,11 @@ public class ProfileServiceImpl implements ProfileService {
         User user = userRepository.findById(profileDto.getUserId())
                 .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, profileDto.getUserId()));
 
+        if (profileRepository.existsByUserId(profileDto.getUserId())) {
+            throw new ServiceException(ServiceExceptionEnum.PROFILE_ALREADY_EXISTS, profileDto.getUserId());
+        }
+
         Profile profile = profileMapper.toEntity(profileDto, user);
-        profile.setRegistrationDate(LocalDateTime.now());
         ProfileDto createdProfile = profileMapper.toDto(profileRepository.save(profile));
         log.info("Профиль успешно добавлен с ID: {}", createdProfile.getId());
         return createdProfile;

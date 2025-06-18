@@ -46,26 +46,34 @@ public class ApplicationController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or (authentication.principal.id == @applicationServiceImpl.getById(#id).tenantId)")
+    @PreAuthorize("@applicationSecurityService.hasAccess(authentication, #id)")
     public ResponseEntity<ApplicationDto> getApplication(@PathVariable("id") Integer id) {
         log.info("Запрос на получение заявки с ID: {}", id);
         ApplicationDto application = applicationService.getById(id);
         return ResponseEntity.ok(application);
     }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or (authentication.principal.id == #applicationDto.tenantId)")
-    public ResponseEntity<String> updateApplication(@PathVariable("id") Integer id, @RequestBody @Valid ApplicationDto applicationDto) {
-        log.info("Обновление заявки с ID: {} с новыми данными: {}", id, applicationDto);
-        applicationService.updateById(id, applicationDto);
-        return ResponseEntity.ok("Заявка успешно обновлена");
-    }
-
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or (authentication.principal.id == @applicationServiceImpl.getById(#id).tenantId)")
+    @PreAuthorize("@applicationSecurityService.hasAccess(authentication, #id)")
     public ResponseEntity<String> deleteApplication(@PathVariable("id") Integer id) {
         log.info("Удаление заявки с ID: {}", id);
         applicationService.deleteById(id);
         return ResponseEntity.ok("Заявка успешно удалена");
+    }
+
+    @PutMapping("/{id}/accept")
+    @PreAuthorize("authentication.principal.id == @applicationServiceImpl.getById(#id).ownerId")
+    public ResponseEntity<String> acceptApplication(@PathVariable("id") Integer id) {
+        log.info("Принятие заявки с ID: {}", id);
+        applicationService.acceptApplication(id);
+        return ResponseEntity.ok("Заявка принята");
+    }
+
+    @PutMapping("/{id}/reject")
+    @PreAuthorize("authentication.principal.id == @applicationServiceImpl.getById(#id).ownerId")
+    public ResponseEntity<String> rejectApplication(@PathVariable("id") Integer id) {
+        log.info("Отклонение заявки с ID: {}", id);
+        applicationService.rejectApplication(id);
+        return ResponseEntity.ok("Заявка отклонена");
     }
 }

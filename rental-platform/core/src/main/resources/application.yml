@@ -10,6 +10,11 @@ spring:
       fail-fast: true
     compatibility-verifier:
       enabled: false
+  mail:
+    host: smtp.mailtrap.ru
+    port: 2525
+    username: bakofqkd9f3bg
+    password: baymojd3wa8ey
 
 server:
   port: 8080

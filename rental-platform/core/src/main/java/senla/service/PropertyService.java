@@ -1,6 +1,7 @@
 package senla.service;
 
 import senla.dto.PropertyDto;
+import senla.model.constant.PropertyType;
 
 import java.util.List;
 
@@ -18,5 +19,8 @@ public interface PropertyService {
 
     void deleteById(Integer id);
 
-    List<PropertyDto> getAllWithEssentialDetails();
+    List<PropertyDto> searchProperties(PropertyType type, Double minPrice, Double maxPrice,
+                                       Integer minRooms, Integer maxRooms, String description);
+
+    void updateRating(Integer id);
 }

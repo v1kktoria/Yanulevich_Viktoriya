@@ -24,12 +24,6 @@ databaseChangeLog:
                   type: VARCHAR(255)
                   constraints:
                     nullable: false
-              - column:
-                  name: deleted
-                  type: BOOLEAN
-                  constraints:
-                    nullable: false
-                  defaultValue: "false"
   - changeSet:
       id: 001-insert-users
       author: Viktoriya
@@ -42,4 +36,17 @@ databaseChangeLog:
                   value: "user1"
               - column:
                   name: password
-                  value: "password1"
+                  value: "$2a$12$lsuPldIX6TOXihrMFG0mteQ5cDjnhi3nVCZWUES3VRFxZkUld4ZKi"
+  - changeSet:
+      id: 002-insert-users
+      author: Viktoriya
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: "user2"
+              - column:
+                  name: password
+                  value: "$2a$12$yk2Tbc6VXuAc/HS.n8B80e/G074xKCnshUZ3rDctlmkeCjSCRUtr"
