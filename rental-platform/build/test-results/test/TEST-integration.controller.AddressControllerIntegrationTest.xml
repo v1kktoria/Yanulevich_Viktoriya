@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="integration.controller.AddressControllerIntegrationTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-06-20T11:42:03" hostname="DESKTOP-5DAE0OK" time="1.775">
+  <properties/>
+  <testcase name="testDeleteAddress()" classname="integration.controller.AddressControllerIntegrationTest" time="1.775"/>
+  <system-out><![CDATA[  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.0)
+
+2025-06-20T14:41:54.716+03:00  INFO 3224 --- [rental-platform] [    Test worker] c.c.c.ConfigServicePropertySourceLocator : Fetching config from server at : http://localhost:8888
+2025-06-20T14:41:54.828+03:00  INFO 3224 --- [rental-platform] [    Test worker] c.c.c.ConfigServicePropertySourceLocator : Exception on Url - http://localhost:8888:org.springframework.web.client.ResourceAccessException: I/O error on GET request for "http://localhost:8888/rental-platform/test": Connection refused: no further information. Will be trying the next url if available
+2025-06-20T14:41:54.828+03:00  WARN 3224 --- [rental-platform] [    Test worker] c.c.c.ConfigServicePropertySourceLocator : Could not locate PropertySource: I/O error on GET request for "http://localhost:8888/rental-platform/test": Connection refused: no further information
+2025-06-20T14:41:54.836+03:00  INFO 3224 --- [rental-platform] [    Test worker] i.c.AddressControllerIntegrationTest     : The following 1 profile is active: "test"
+2025-06-20T14:41:55.480+03:00  INFO 3224 --- [rental-platform] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-20T14:41:55.568+03:00  INFO 3224 --- [rental-platform] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 79 ms. Found 12 JPA repository interfaces.
+2025-06-20T14:41:55.810+03:00  INFO 3224 --- [rental-platform] [    Test worker] o.s.cloud.context.scope.GenericScope     : BeanFactory id=c3a8b9d1-1e74-388c-979f-cc518d516ec8
+2025-06-20T14:41:56.467+03:00  INFO 3224 --- [rental-platform] [    Test worker] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 0 (http)
+2025-06-20T14:41:56.485+03:00  INFO 3224 --- [rental-platform] [    Test worker] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-20T14:41:56.486+03:00  INFO 3224 --- [rental-platform] [    Test worker] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.24]
+2025-06-20T14:41:56.593+03:00  INFO 3224 --- [rental-platform] [    Test worker] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-06-20T14:41:56.595+03:00  INFO 3224 --- [rental-platform] [    Test worker] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1755 ms
+2025-06-20T14:41:56.655+03:00  INFO 3224 --- [rental-platform] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-20T14:41:56.837+03:00  INFO 3224 --- [rental-platform] [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=USER
+2025-06-20T14:41:56.840+03:00  INFO 3224 --- [rental-platform] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-06-20T14:41:56.851+03:00  INFO 3224 --- [rental-platform] [    Test worker] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:testdb'
+2025-06-20T14:41:57.023+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.database                       : Set default schema name to PUBLIC
+2025-06-20T14:41:57.500+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/changeset/001-create-users.yaml
+2025-06-20T14:41:57.516+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/changeset/002-create-properties.yaml
+2025-06-20T14:41:57.522+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/changeset/003-create-addresses.yaml
+2025-06-20T14:41:57.526+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/changeset/004-create-applications.yaml
+2025-06-20T14:41:57.530+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/changeset/005-create-favorites.yaml
+2025-06-20T14:41:57.534+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/changeset/006-сreate-chats.yaml
+2025-06-20T14:41:57.539+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/changeset/007-create-images.yaml
+2025-06-20T14:41:57.543+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/changeset/008-create-parameters.yaml
+2025-06-20T14:41:57.548+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/changeset/009-create-profiles.yaml
+2025-06-20T14:41:57.556+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/changeset/010-create-properties-parameters.yaml
+2025-06-20T14:41:57.560+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/changeset/011-create-messages.yaml
+2025-06-20T14:41:57.565+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/changeset/012-create-reviews.yaml
+2025-06-20T14:41:57.570+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/changeset/013-create-roles.yaml
+2025-06-20T14:41:57.576+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/changeset/014-create-users-roles.yaml
+2025-06-20T14:41:57.583+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/changeset/015-create-favorites-properties.yaml
+2025-06-20T14:41:57.589+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/changeset/016-create-chats_users.yaml
+2025-06-20T14:41:57.665+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Creating database history table with name: PUBLIC.DATABASECHANGELOG
+2025-06-20T14:41:57.810+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Reading from PUBLIC.DATABASECHANGELOG
+2025-06-20T14:41:57.913+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.lockservice                    : Successfully acquired change log lock
+2025-06-20T14:41:57.915+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.command                        : Using deploymentId: 0419717914
+2025-06-20T14:41:57.916+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Reading from PUBLIC.DATABASECHANGELOG
+2025-06-20T14:41:57.965+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/001-create-users.yaml::001-create-users::Viktoriya
+2025-06-20T14:41:57.975+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Table users created
+2025-06-20T14:41:57.976+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/001-create-users.yaml::001-create-users::Viktoriya ran successfully in 10ms
+2025-06-20T14:41:57.984+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/001-create-users.yaml::001-insert-users::Viktoriya
+2025-06-20T14:41:57.986+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : New row inserted into users
+2025-06-20T14:41:57.987+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/001-create-users.yaml::001-insert-users::Viktoriya ran successfully in 3ms
+2025-06-20T14:41:57.989+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/001-create-users.yaml::002-insert-users::Viktoriya
+2025-06-20T14:41:57.991+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : New row inserted into users
+2025-06-20T14:41:57.991+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/001-create-users.yaml::002-insert-users::Viktoriya ran successfully in 2ms
+2025-06-20T14:41:57.995+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/002-create-properties.yaml::002-create-properties::Viktoriya
+2025-06-20T14:41:58.003+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Table properties created
+2025-06-20T14:41:58.003+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/002-create-properties.yaml::002-create-properties::Viktoriya ran successfully in 8ms
+2025-06-20T14:41:58.006+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/002-create-properties.yaml::002-insert-properties::Viktoriya
+2025-06-20T14:41:58.008+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : New row inserted into properties
+2025-06-20T14:41:58.009+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/002-create-properties.yaml::002-insert-properties::Viktoriya ran successfully in 2ms
+2025-06-20T14:41:58.011+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/003-create-addresses.yaml::003-create-addresses::Viktoriya
+2025-06-20T14:41:58.015+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Table addresses created
+2025-06-20T14:41:58.016+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/003-create-addresses.yaml::003-create-addresses::Viktoriya ran successfully in 3ms
+2025-06-20T14:41:58.018+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/004-create-applications.yaml::004-create-applications::Viktoriya
+2025-06-20T14:41:58.025+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Table applications created
+2025-06-20T14:41:58.025+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/004-create-applications.yaml::004-create-applications::Viktoriya ran successfully in 6ms
+2025-06-20T14:41:58.028+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/005-create-favorites.yaml::005-create-favorites::Viktoriya
+2025-06-20T14:41:58.032+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Table favorites created
+2025-06-20T14:41:58.033+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/005-create-favorites.yaml::005-create-favorites::Viktoriya ran successfully in 4ms
+2025-06-20T14:41:58.036+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/006-сreate-chats.yaml::006-create-chats::Viktoriya
+2025-06-20T14:41:58.041+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Table chats created
+2025-06-20T14:41:58.041+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/006-сreate-chats.yaml::006-create-chats::Viktoriya ran successfully in 5ms
+2025-06-20T14:41:58.044+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/006-сreate-chats.yaml::006-insert-chat::Viktoriya
+2025-06-20T14:41:58.046+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : New row inserted into chats
+2025-06-20T14:41:58.047+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/006-сreate-chats.yaml::006-insert-chat::Viktoriya ran successfully in 2ms
+2025-06-20T14:41:58.050+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/007-create-images.yaml::007-create-images::Viktoriya
+2025-06-20T14:41:58.057+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Table images created
+2025-06-20T14:41:58.057+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/007-create-images.yaml::007-create-images::Viktoriya ran successfully in 7ms
+2025-06-20T14:41:58.061+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/008-create-parameters.yaml::008-create-parameters::Viktoriya
+2025-06-20T14:41:58.065+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Table parameters created
+2025-06-20T14:41:58.065+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/008-create-parameters.yaml::008-create-parameters::Viktoriya ran successfully in 3ms
+2025-06-20T14:41:58.070+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/009-create-profiles.yaml::009-create-profiles::Viktoriya
+2025-06-20T14:41:58.078+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Table profiles created
+2025-06-20T14:41:58.079+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/009-create-profiles.yaml::009-create-profiles::Viktoriya ran successfully in 9ms
+2025-06-20T14:41:58.082+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/009-create-profiles.yaml::009-insert-profiles::Viktoriya
+2025-06-20T14:41:58.084+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : New row inserted into profiles
+2025-06-20T14:41:58.086+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : New row inserted into profiles
+2025-06-20T14:41:58.087+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/009-create-profiles.yaml::009-insert-profiles::Viktoriya ran successfully in 5ms
+2025-06-20T14:41:58.090+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/010-create-properties-parameters.yaml::010-create-properties-parameters::your_name
+2025-06-20T14:41:58.095+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Table properties_parameters created
+2025-06-20T14:41:58.096+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/010-create-properties-parameters.yaml::010-create-properties-parameters::your_name ran successfully in 6ms
+2025-06-20T14:41:58.099+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/011-create-messages.yaml::011-create-messages::Viktoriya
+2025-06-20T14:41:58.108+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Table messages created
+2025-06-20T14:41:58.109+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/011-create-messages.yaml::011-create-messages::Viktoriya ran successfully in 8ms
+2025-06-20T14:41:58.115+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/012-create-reviews.yaml::012-create-reviews::Viktoriya
+2025-06-20T14:41:58.122+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Table reviews created
+2025-06-20T14:41:58.123+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/012-create-reviews.yaml::012-create-reviews::Viktoriya ran successfully in 7ms
+2025-06-20T14:41:58.126+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/013-create-roles.yaml::013-create-roles::Viktoriya
+2025-06-20T14:41:58.130+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Table roles created
+2025-06-20T14:41:58.131+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/013-create-roles.yaml::013-create-roles::Viktoriya ran successfully in 4ms
+2025-06-20T14:41:58.133+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/013-create-roles.yaml::013-insert-user-role::Viktoriya
+2025-06-20T14:41:58.136+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : New row inserted into roles
+2025-06-20T14:41:58.137+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/013-create-roles.yaml::013-insert-user-role::Viktoriya ran successfully in 3ms
+2025-06-20T14:41:58.141+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/013-create-roles.yaml::013-insert-admin-role::Viktoriya
+2025-06-20T14:41:58.144+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : New row inserted into roles
+2025-06-20T14:41:58.145+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/013-create-roles.yaml::013-insert-admin-role::Viktoriya ran successfully in 3ms
+2025-06-20T14:41:58.149+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/014-create-users-roles.yaml::014-create-users-roles::Viktoriya
+2025-06-20T14:41:58.155+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Table users_roles created
+2025-06-20T14:41:58.156+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/014-create-users-roles.yaml::014-create-users-roles::Viktoriya ran successfully in 6ms
+2025-06-20T14:41:58.159+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/014-create-users-roles.yaml::014-insert-user-roles::Viktoriya
+2025-06-20T14:41:58.161+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : New row inserted into users_roles
+2025-06-20T14:41:58.163+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : New row inserted into users_roles
+2025-06-20T14:41:58.164+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : New row inserted into users_roles
+2025-06-20T14:41:58.165+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/014-create-users-roles.yaml::014-insert-user-roles::Viktoriya ran successfully in 4ms
+2025-06-20T14:41:58.168+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/015-create-favorites-properties.yaml::015-create-favorites-properties::Viktoriya
+2025-06-20T14:41:58.172+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Table favorites_properties created
+2025-06-20T14:41:58.172+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/015-create-favorites-properties.yaml::015-create-favorites-properties::Viktoriya ran successfully in 4ms
+2025-06-20T14:41:58.174+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/016-create-chats_users.yaml::016-create-chat_users::Viktoriya
+2025-06-20T14:41:58.178+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : Table chats_users created
+2025-06-20T14:41:58.178+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/016-create-chats_users.yaml::016-create-chat_users::Viktoriya ran successfully in 3ms
+2025-06-20T14:41:58.181+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Running Changeset: db/changelog/changeset/016-create-chats_users.yaml::016-insert-chat-users::Viktoriya
+2025-06-20T14:41:58.182+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : New row inserted into chats_users
+2025-06-20T14:41:58.184+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : New row inserted into chats_users
+2025-06-20T14:41:58.184+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changeset/016-create-chats_users.yaml::016-insert-chat-users::Viktoriya ran successfully in 3ms
+2025-06-20T14:41:58.192+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.util                           : UPDATE SUMMARY
+2025-06-20T14:41:58.192+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.util                           : Run:                         25
+2025-06-20T14:41:58.192+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.util                           : Previously run:               0
+2025-06-20T14:41:58.192+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.util                           : Filtered out:                 0
+2025-06-20T14:41:58.192+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.util                           : -------------------------------
+2025-06-20T14:41:58.192+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.util                           : Total change sets:           25
+2025-06-20T14:41:58.193+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.util                           : Update summary generated
+2025-06-20T14:41:58.196+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.command                        : Update command completed successfully.
+2025-06-20T14:41:58.197+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.ui                             : Liquibase: Update has been successful. Rows affected: 38
+2025-06-20T14:41:58.199+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.lockservice                    : Successfully released change log lock
+2025-06-20T14:41:58.200+03:00  INFO 3224 --- [rental-platform] [    Test worker] liquibase.command                        : Command execution complete
+2025-06-20T14:41:58.330+03:00  INFO 3224 --- [rental-platform] [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-20T14:41:58.396+03:00  INFO 3224 --- [rental-platform] [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.2.Final
+2025-06-20T14:41:58.441+03:00  INFO 3224 --- [rental-platform] [    Test worker] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-20T14:41:58.791+03:00  INFO 3224 --- [rental-platform] [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-20T14:41:58.847+03:00  WARN 3224 --- [rental-platform] [    Test worker] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-20T14:42:00.088+03:00  INFO 3224 --- [rental-platform] [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-06-20T14:42:00.091+03:00  INFO 3224 --- [rental-platform] [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-20T14:42:00.434+03:00  INFO 3224 --- [rental-platform] [    Test worker] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-20T14:42:01.806+03:00  INFO 3224 --- [rental-platform] [    Test worker] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-06-20T14:42:01.807+03:00  WARN 3224 --- [rental-platform] [    Test worker] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used for username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider.
+2025-06-20T14:42:02.586+03:00  INFO 3224 --- [rental-platform] [    Test worker] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@2c3ba256, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@7b257c6, org.springframework.security.web.context.SecurityContextHolderFilter@58576690, org.springframework.security.web.header.HeaderWriterFilter@7497f142, org.springframework.web.filter.CorsFilter@2de29667, org.springframework.security.web.authentication.logout.LogoutFilter@11c32b1b, senla.security.filter.JwtAuthFilter@2f49d34d, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@2b503b3b, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@3d2a2117, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@47cdfd0d, org.springframework.security.web.session.SessionManagementFilter@73a28617, org.springframework.security.web.access.ExceptionTranslationFilter@116d39e2, org.springframework.security.web.access.intercept.AuthorizationFilter@590dab83]
+2025-06-20T14:42:03.337+03:00  INFO 3224 --- [rental-platform] [    Test worker] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 65091 (http) with context path '/'
+2025-06-20T14:42:03.435+03:00  INFO 3224 --- [rental-platform] [    Test worker] i.c.AddressControllerIntegrationTest     : Started AddressControllerIntegrationTest in 9.724 seconds (process running for 11.194)
+2025-06-20T14:42:04.184+03:00  INFO 3224 --- [rental-platform] [o-auto-1-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-20T14:42:04.185+03:00  INFO 3224 --- [rental-platform] [o-auto-1-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-06-20T14:42:04.187+03:00  INFO 3224 --- [rental-platform] [o-auto-1-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-06-20T14:42:04.291+03:00  INFO 3224 --- [rental-platform] [o-auto-1-exec-1] senla.controller.AuthController          : Запрос на авторизацию пользователя с именем: user1
+2025-06-20T14:42:04.859+03:00  INFO 3224 --- [rental-platform] [o-auto-1-exec-1] senla.controller.AuthController          : Пользователь с именем: user1 успешно авторизован
+2025-06-20T14:42:04.949+03:00  INFO 3224 --- [rental-platform] [o-auto-1-exec-2] senla.controller.AddressController       : Создание нового адреса с данными: senla.dto.AddressDto@2b193789
+2025-06-20T14:42:05.068+03:00  INFO 3224 --- [rental-platform] [o-auto-1-exec-2] senla.service.impl.AddressServiceImpl    : Адрес успешно создан с ID: 1
+2025-06-20T14:42:05.069+03:00  INFO 3224 --- [rental-platform] [o-auto-1-exec-2] senla.aop.ExecutionTimeAspect            : Метод AddressServiceImpl.create выполнен за 113 мс
+2025-06-20T14:42:05.073+03:00  INFO 3224 --- [rental-platform] [o-auto-1-exec-2] senla.aop.ExecutionTimeAspect            : Метод AddressController.createAddress выполнен за 124 мс
+2025-06-20T14:42:05.102+03:00  INFO 3224 --- [rental-platform] [o-auto-1-exec-3] senla.service.impl.AddressServiceImpl    : Адрес успешно получен: senla.dto.AddressDto@2b196bbc
+2025-06-20T14:42:05.103+03:00  INFO 3224 --- [rental-platform] [o-auto-1-exec-3] senla.aop.ExecutionTimeAspect            : Метод AddressServiceImpl.getById выполнен за 5 мс
+2025-06-20T14:42:05.121+03:00  INFO 3224 --- [rental-platform] [o-auto-1-exec-3] senla.service.impl.PropertyServiceImpl   : Недвижимость с ID: 1 успешно получена
+2025-06-20T14:42:05.130+03:00  INFO 3224 --- [rental-platform] [o-auto-1-exec-3] senla.aop.ExecutionTimeAspect            : Метод PropertyServiceImpl.getById выполнен за 27 мс
+2025-06-20T14:42:05.131+03:00  INFO 3224 --- [rental-platform] [o-auto-1-exec-3] senla.controller.AddressController       : Удаление адреса с ID: 1
+2025-06-20T14:42:05.143+03:00  INFO 3224 --- [rental-platform] [o-auto-1-exec-3] senla.service.impl.AddressServiceImpl    : Адрес с ID: 1 успешно удален
+2025-06-20T14:42:05.143+03:00  INFO 3224 --- [rental-platform] [o-auto-1-exec-3] senla.aop.ExecutionTimeAspect            : Метод AddressServiceImpl.deleteById выполнен за 11 мс
+2025-06-20T14:42:05.150+03:00  INFO 3224 --- [rental-platform] [o-auto-1-exec-3] senla.aop.ExecutionTimeAspect            : Метод AddressController.deleteAddress выполнен за 19 мс
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
