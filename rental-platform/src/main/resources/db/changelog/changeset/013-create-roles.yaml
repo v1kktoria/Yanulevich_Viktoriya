@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: 013-create-roles
+      author: Viktoriya
+      changes:
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: role_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+                  constraints:
+                    nullable: true
+  - changeSet:
+      id: 013-insert-user-role
+      author: Viktoriya
+      changes:
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: role_name
+                  value: "USER"
+  - changeSet:
+      id: 013-insert-admin-role
+      author: Viktoriya
+      changes:
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: role_name
+                  value: "ADMIN"

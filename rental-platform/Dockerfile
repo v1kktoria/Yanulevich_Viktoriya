@@ -1,23 +1,16 @@
-FROM openjdk:17-jdk-slim AS build
+FROM gradle:8.7.0-jdk17 AS build
+
+WORKDIR /app
+COPY --chown=gradle:gradle . .
+
+RUN gradle bootJar --no-daemon
+
+FROM openjdk:17-jdk-slim AS runtime
 
 WORKDIR /app
 
-COPY pom.xml .
-COPY core/ /app/core/
-COPY web/ /app/web/
-COPY method-execution-time-starter/ /app/method-execution-time-starter/
-
-RUN apt-get update && apt-get install -y maven
-RUN mvn dependency:go-offline
-
-RUN mvn clean package -DskipTests
-
-FROM openjdk:17-jdk-slim
-
-WORKDIR /app
-
-COPY --from=build /app/web/target/web-1.0-SNAPSHOT.jar /app/web-1.0-SNAPSHOT.jar
+COPY --from=build /app/build/libs/*.jar app.jar
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "web-1.0-SNAPSHOT.jar"]
+CMD ["java", "-jar", "/app/app.jar"]

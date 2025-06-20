@@ -1,0 +1,84 @@
+databaseChangeLog:
+  - changeSet:
+      id: 009-create-profiles
+      author: Viktoriya
+      changes:
+        - createTable:
+            tableName: profiles
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: user_id
+                  type: INT
+                  constraints:
+                    foreignKeyName: fk_profiles_user
+                    references: users(id)
+                    nullable: false
+
+  - changeSet:
+      id: 009-insert-profiles
+      author: Viktoriya
+      changes:
+        - insert:
+            tableName: profiles
+            columns:
+              - column:
+                  name: first_name
+                  value: 'First Name1'
+              - column:
+                  name: last_name
+                  value: 'Last Name1'
+              - column:
+                  name: email
+                  value: 'User1@example.com'
+              - column:
+                  name: phone
+                  value: '123-456-7890'
+              - column:
+                  name: user_id
+                  value: "1"
+
+        - insert:
+            tableName: profiles
+            columns:
+              - column:
+                  name: first_name
+                  value: 'First Name2'
+              - column:
+                  name: last_name
+                  value: 'Last Name2'
+              - column:
+                  name: email
+                  value: 'User2@example.com'
+              - column:
+                  name: phone
+                  value: '987-654-3210'
+              - column:
+                  name: user_id
+                  value: "2"

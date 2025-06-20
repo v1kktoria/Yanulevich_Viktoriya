@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-create-favorites
+      author: Viktoriya
+      changes:
+        - createTable:
+            tableName: favorites
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: INT
+                  constraints:
+                    foreignKeyName: fk_favorites_user
+                    references: users(id)

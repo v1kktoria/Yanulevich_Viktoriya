@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      id: 016-create-chat_users
+      author: Viktoriya
+      changes:
+        - createTable:
+            tableName: chats_users
+            columns:
+              - column:
+                  name: chat_id
+                  type: INT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_chats_users_chat
+                    references: chats(id)
+              - column:
+                  name: user_id
+                  type: INT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_chats_users_user
+                    references: users(id)
+  - changeSet:
+      id: 016-insert-chat-users
+      author: Viktoriya
+      changes:
+        - insert:
+            tableName: chats_users
+            columns:
+              - column:
+                  name: chat_id
+                  value: "1"
+              - column:
+                  name: user_id
+                  value: "1"
+        - insert:
+            tableName: chats_users
+            columns:
+              - column:
+                  name: chat_id
+                  value: "1"
+              - column:
+                  name: user_id
+                  value: "2"
