@@ -1,39 +1,27 @@
 package senla.util.mappers;
 
-import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import senla.dto.ApplicationDto;
 import senla.model.Application;
 import senla.model.Property;
 import senla.model.User;
 
-@Component
-@RequiredArgsConstructor
-public class ApplicationMapper {
+@Mapper(componentModel = "spring")
+public interface ApplicationMapper {
 
-    private final ModelMapper modelMapper;
+    @Mapping(target = "propertyId", source = "property.id")
+    @Mapping(target = "tenantId", source = "tenant.id")
+    ApplicationDto toDto(Application application);
 
-    public ApplicationDto toDto(Application application) {
-        ApplicationDto applicationDto = modelMapper.map(application, ApplicationDto.class);
+    @Mapping(target = "property", expression = "java(property)")
+    @Mapping(target = "tenant", expression = "java(tenant)")
+    @Mapping(target = "createdAt",  ignore = true)
+    Application toEntity(ApplicationDto applicationDto, Property property, User tenant);
 
-        applicationDto.setPropertyId(application.getProperty() != null ? application.getProperty().getId() : null);
-        applicationDto.setTenantId(application.getTenant() != null ? application.getTenant().getId() : null);
-
-        return applicationDto;
-    }
-
-    public Application toEntity(ApplicationDto applicationDto, Property property, User tenant) {
-        Application application = modelMapper.map(applicationDto, Application.class);
-
-        application.setProperty(property);
-        application.setTenant(tenant);
-
-        return application;
-    }
-
-    public void updateEntity(ApplicationDto applicationDto, Application application) {
-        modelMapper.map(applicationDto, application);
-    }
+    @Mapping(target = "property", ignore = true)
+    @Mapping(target = "tenant", ignore = true)
+    void updateEntity(ApplicationDto applicationDto,@MappingTarget Application application);
 
 }

@@ -1,31 +1,21 @@
 package senla.util.mappers;
 
-import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import senla.dto.ProfileDto;
 import senla.model.Profile;
 import senla.model.User;
 
-@Component
-@RequiredArgsConstructor
-public class ProfileMapper {
+@Mapper(componentModel = "spring")
+public interface ProfileMapper {
 
-    private final ModelMapper modelMapper;
+    @Mapping(target = "userId", source = "user.id")
+    ProfileDto toDto(Profile profile);
 
-    public ProfileDto toDto(Profile profile) {
-        ProfileDto profileDto = modelMapper.map(profile, ProfileDto.class);
-        profileDto.setUserId(profile.getUser() != null ? profile.getUser().getId() : null);
-        return profileDto;
-    }
+    @Mapping(target = "user", expression = "java(user)")
+    Profile toEntity(ProfileDto profileDto, User user);
 
-    public Profile toEntity(ProfileDto profileDto, User user) {
-        Profile profile = modelMapper.map(profileDto, Profile.class);
-        profile.setUser(user);
-        return profile;
-    }
-
-    public void updateEntity(ProfileDto profileDto, Profile profile) {
-        modelMapper.map(profileDto, profile);
-    }
+    @Mapping(target = "user", ignore = true)
+    void updateEntity(ProfileDto profileDto,@MappingTarget Profile profile);
 }
