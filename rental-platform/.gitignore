@@ -30,3 +30,10 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+.gradle/
+build/
+*.log
+*.env
+*.local
+local.properties

@@ -2,6 +2,7 @@ import org.gradle.api.JavaVersion
 
 plugins {
     id("org.springframework.boot") version "3.3.0"
+    id("check-for-data-annotation")
     java
 }
 
@@ -24,7 +25,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-mail")
-    implementation("org.springframework.boot:spring-boot-starter-logging")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
     implementation("org.postgresql:postgresql")
@@ -50,4 +50,28 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+val functionalTestSourceSet = sourceSets.create("gradleTest") {
+    java.srcDir("src/gradleTest/java")
+    resources.srcDir("src/gradleTest/resources")
+    compileClasspath += sourceSets.main.get().output
+    runtimeClasspath += output + compileClasspath
+}
+
+configurations[functionalTestSourceSet.implementationConfigurationName].apply {
+    dependencies.add(project.dependencies.gradleTestKit())
+    dependencies.add(project.dependencies.platform("org.junit:junit-bom:5.10.0"))
+    dependencies.add(project.dependencies.create("org.junit.jupiter:junit-jupiter"))
+}
+
+tasks.register<Test>("gradleTest") {
+    testClassesDirs = functionalTestSourceSet.output.classesDirs
+    classpath = functionalTestSourceSet.runtimeClasspath
+    useJUnitPlatform()
+    shouldRunAfter("test")
+}
+
+tasks.named("check") {
+    dependsOn("gradleTest", "checkForDataAnnotation")
 }
