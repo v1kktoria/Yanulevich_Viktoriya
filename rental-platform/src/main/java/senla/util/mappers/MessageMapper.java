@@ -1,37 +1,25 @@
 package senla.util.mappers;
 
-import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import senla.dto.MessageDto;
 import senla.model.Chat;
 import senla.model.Message;
 import senla.model.User;
 
-@Component
-@RequiredArgsConstructor
-public class MessageMapper {
+@Mapper(componentModel = "spring")
+public interface MessageMapper {
 
-    private final ModelMapper modelMapper;
+    @Mapping(target = "senderId", source = "sender.id")
+    @Mapping(target = "chatId", source = "chat.id")
+    MessageDto toDto(Message message);
 
-    public MessageDto toDto(Message message) {
-        MessageDto messageDto = modelMapper.map(message, MessageDto.class);
+    @Mapping(target = "sender", expression = "java(sender)")
+    @Mapping(target = "chat", expression = "java(chat)")
+    Message toEntity(MessageDto messageDto, Chat chat, User sender);
 
-        messageDto.setCreatedAt(message.getCreatedAt());
-        messageDto.setSenderId(message.getSender() != null ? message.getSender().getId() : null);
-        messageDto.setChatId(message.getChat() != null ? message.getChat().getId() : null);
-
-        return messageDto;
-    }
-
-    public Message toEntity(MessageDto messageDto, Chat chat, User sender) {
-        Message message = modelMapper.map(messageDto, Message.class);
-        message.setChat(chat);
-        message.setSender(sender);
-        return message;
-    }
-
-    public void updateEntity(MessageDto messageDto, Message message) {
-        modelMapper.map(messageDto, message);
-    }
+    @Mapping(target = "sender", ignore = true)
+    @Mapping(target = "chat", ignore = true)
+    void updateEntity(MessageDto messageDto,@MappingTarget Message message);
 }

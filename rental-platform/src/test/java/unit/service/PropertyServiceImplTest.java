@@ -11,8 +11,10 @@ import senla.dto.PropertyDto;
 import senla.exception.ServiceException;
 import senla.model.Property;
 import senla.model.Review;
+import senla.model.User;
 import senla.model.constant.PropertyType;
 import senla.repository.PropertyRepository;
+import senla.repository.UserRepository;
 import senla.service.impl.PropertyServiceImpl;
 import senla.util.mappers.PropertyMapper;
 
@@ -28,6 +30,9 @@ public class PropertyServiceImplTest {
     private PropertyRepository propertyRepository;
 
     @Mock
+    private UserRepository userRepository;
+
+    @Mock
     private PropertyMapper propertyMapper;
 
     @InjectMocks
@@ -36,6 +41,7 @@ public class PropertyServiceImplTest {
     private Integer propertyId = 1;
     private Property property;
     private PropertyDto propertyDto;
+    private User owner;
 
     @BeforeEach
     public void setUp() {
@@ -43,20 +49,25 @@ public class PropertyServiceImplTest {
 
         property = new Property();
         property.setId(propertyId);
-
+        owner = new User();
+        owner.setId(1);
+        property.setOwner(owner);
         propertyDto = new PropertyDto();
         propertyDto.setId(propertyId);
+        propertyDto.setOwnerId(1);
     }
 
     @Test
     void testCreate() {
-        when(propertyMapper.toEntity(propertyDto)).thenReturn(property);
+        when(propertyMapper.toEntity(propertyDto, property.getOwner())).thenReturn(property);
         when(propertyRepository.save(property)).thenReturn(property);
         when(propertyMapper.toDto(property)).thenReturn(propertyDto);
+        when(userRepository.findById(1)).thenReturn(Optional.ofNullable(owner));
 
         PropertyDto createdProperty = propertyService.create(propertyDto);
 
         assertEquals(propertyId, createdProperty.getId());
+        assertEquals(owner.getId(), createdProperty.getOwnerId());
         verify(propertyRepository, times(1)).save(property);
     }
 

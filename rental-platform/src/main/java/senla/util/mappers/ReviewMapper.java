@@ -1,37 +1,27 @@
 package senla.util.mappers;
 
-import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import senla.dto.ReviewDto;
 import senla.model.Property;
 import senla.model.Review;
 import senla.model.User;
 
-@Component
-@RequiredArgsConstructor
-public class ReviewMapper {
+@Mapper(componentModel = "spring")
+public interface ReviewMapper {
 
-    private final ModelMapper modelMapper;
+    @Mapping(target = "propertyId", source = "property.id")
+    @Mapping(target = "userId", source = "user.id")
+    ReviewDto toDto(Review review);
 
-    public ReviewDto toDto(Review review) {
-        ReviewDto reviewDto = modelMapper.map(review, ReviewDto.class);
+    @Mapping(target = "property", expression = "java(property)")
+    @Mapping(target = "user", expression = "java(user)")
+    @Mapping(target = "rating", source = "reviewDto.rating")
+    @Mapping(target = "createdAt", ignore = true)
+    Review toEntity(ReviewDto reviewDto, Property property, User user);
 
-        reviewDto.setPropertyId(review.getProperty() != null ? review.getProperty().getId() : null);
-        reviewDto.setUserId(review.getUser() != null ? review.getUser().getId() : null);
-
-
-        return reviewDto;
-    }
-
-    public Review toEntity(ReviewDto reviewDto, Property property, User user) {
-        Review review = modelMapper.map(reviewDto, Review.class);
-        review.setProperty(property);
-        review.setUser(user);
-        return review;
-    }
-
-    public void updateEntity(ReviewDto reviewDto, Review review) {
-        modelMapper.map(reviewDto, review);
-    }
+    @Mapping(target = "property", ignore = true)
+    @Mapping(target = "user", ignore = true)
+    void updateEntity(ReviewDto reviewDto,@MappingTarget Review review);
 }

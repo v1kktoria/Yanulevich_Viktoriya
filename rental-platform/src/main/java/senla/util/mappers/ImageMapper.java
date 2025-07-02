@@ -1,31 +1,21 @@
 package senla.util.mappers;
 
-import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import senla.dto.ImageDto;
 import senla.model.Image;
 import senla.model.Property;
 
-@Component
-@RequiredArgsConstructor
-public class ImageMapper {
+@Mapper(componentModel = "spring")
+public interface ImageMapper {
 
-    private final ModelMapper modelMapper;
+    @Mapping(target = "propertyId", source = "property.id")
+    ImageDto toDto(Image image);
 
-    public ImageDto toDto(Image image) {
-        ImageDto imageDto = modelMapper.map(image, ImageDto.class);
-        imageDto.setPropertyId(image.getProperty() != null ? image.getProperty().getId() : null);
-        return imageDto;
-    }
+    @Mapping(target = "property", expression = "java(property)")
+    Image toEntity(ImageDto imageDto, Property property);
 
-    public Image toEntity(ImageDto imageDto, Property property) {
-        Image image = modelMapper.map(imageDto, Image.class);
-        image.setProperty(property);
-        return image;
-    }
-
-    public void updateEntity(ImageDto imageDto, Image image) {
-        modelMapper.map(imageDto, image);
-    }
+    @Mapping(target = "property", ignore = true)
+    void updateEntity(ImageDto imageDto,@MappingTarget Image image);
 }

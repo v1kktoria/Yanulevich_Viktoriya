@@ -1,47 +1,23 @@
 package senla.util.mappers;
 
-import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import senla.dto.*;
-import senla.model.Parameter;
 import senla.model.Property;
+import senla.model.User;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.stream.Collectors;
+@Mapper(
+        componentModel = "spring",
+        uses = {ParameterMapper.class, ImageMapper.class, ReviewMapper.class, AddressMapper.class}
+)
+public interface PropertyMapper {
 
-@Component
-@RequiredArgsConstructor
-public class PropertyMapper {
+    PropertyDto toDto(Property property);
 
-    private final ModelMapper modelMapper;
+    @Mapping(target = "owner", expression = "java(owner)")
+    @Mapping(target = "reviews", ignore = true)
+    Property toEntity(PropertyDto propertyDto, User owner);
 
-    public PropertyDto toDto(Property property) {
-        PropertyDto propertyDto = modelMapper.map(property, PropertyDto.class);
-
-        propertyDto.setParameters(property.getParameters() != null ? property.getParameters().stream()
-                .map(propertyParameter -> modelMapper.map(propertyParameter, ParameterDto.class))
-                .collect(Collectors.toList()) : new ArrayList<>());
-
-        propertyDto.setImages(property.getImages() != null ? property.getImages().stream()
-                .map(image -> modelMapper.map(image, ImageDto.class))
-                .collect(Collectors.toList()) : new ArrayList<>());
-
-        propertyDto.setReviews(property.getReviews() != null ? property.getReviews().stream()
-                .map(review -> modelMapper.map(review, ReviewDto.class))
-                .collect(Collectors.toList()) : new ArrayList<>());
-
-        propertyDto.setAddress(property.getAddress() != null ? modelMapper.map(property.getAddress(), AddressDto.class) : null);
-
-        return propertyDto;
-    }
-
-    public Property toEntity(PropertyDto propertyDto) {
-        return modelMapper.map(propertyDto, Property.class);
-    }
-
-    public void updateEntity(PropertyDto propertyDto, Property property) {
-        modelMapper.map(propertyDto, property);
-    }
+    void updateEntity(PropertyDto propertyDto,@MappingTarget Property property);
 }

@@ -1,26 +1,16 @@
 package senla.util.mappers;
 
-import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 import senla.dto.ParameterDto;
 import senla.model.Parameter;
 
-@Component
-@RequiredArgsConstructor
-public class ParameterMapper {
+@Mapper(componentModel = "spring")
+public interface ParameterMapper {
 
-    private final ModelMapper modelMapper;
+    ParameterDto toDto(Parameter parameter);
 
-    public ParameterDto toDto(Parameter parameter) {
-        return modelMapper.map(parameter, ParameterDto.class);
-    }
+    Parameter toEntity(ParameterDto parameterDto);
 
-    public Parameter toEntity(ParameterDto parameterDto) {
-        return modelMapper.map(parameterDto, Parameter.class);
-    }
-
-    public void updateEntity(ParameterDto parameterDto, Parameter parameter) {
-        modelMapper.map(parameterDto, parameter);
-    }
+    void updateEntity(ParameterDto parameterDto,@MappingTarget Parameter parameter);
 }

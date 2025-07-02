@@ -11,8 +11,10 @@ import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
 import senla.model.Property;
 import senla.model.Review;
+import senla.model.User;
 import senla.model.constant.PropertyType;
 import senla.repository.PropertyRepository;
+import senla.repository.UserRepository;
 import senla.service.PropertyService;
 import senla.util.mappers.PropertyMapper;
 
@@ -28,12 +30,17 @@ public class PropertyServiceImpl implements PropertyService {
 
     private final PropertyRepository propertyRepository;
 
+    private final UserRepository userRepository;
+
     private final PropertyMapper propertyMapper;
 
     @Transactional
     @Override
     public PropertyDto create(PropertyDto propertyDto) {
-        Property property = propertyMapper.toEntity(propertyDto);
+        User owner = userRepository.findById(propertyDto.getOwnerId())
+                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, propertyDto.getOwnerId()));
+
+        Property property = propertyMapper.toEntity(propertyDto, owner);
         property.setCreatedAt(LocalDateTime.now());
         Property savedProperty = propertyRepository.save(property);
         log.info("Недвижимость с ID: {} успешно создана", savedProperty.getId());

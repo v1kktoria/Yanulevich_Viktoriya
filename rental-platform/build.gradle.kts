@@ -32,7 +32,9 @@ dependencies {
     runtimeOnly("com.h2database:h2")
     implementation("org.liquibase:liquibase-core")
 
-    implementation("org.modelmapper:modelmapper:3.1.0")
+    implementation("org.mapstruct:mapstruct:1.6.3")
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
+    annotationProcessor("org.projectlombok:lombok-mapstruct-binding:0.2.0")
     implementation("jakarta.validation:jakarta.validation-api:3.0.2")
 
     implementation("io.jsonwebtoken:jjwt-api:0.12.3")

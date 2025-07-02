@@ -1,31 +1,21 @@
 package senla.util.mappers;
 
-import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import senla.dto.AddressDto;
 import senla.model.Address;
 import senla.model.Property;
 
-@Component
-@RequiredArgsConstructor
-public class AddressMapper {
+@Mapper(componentModel = "spring")
+public interface AddressMapper {
 
-    private final ModelMapper modelMapper;
+    @Mapping(target = "propertyId", source = "property.id")
+    AddressDto toDto(Address address);
 
-    public AddressDto toDto(Address address) {
-        AddressDto addressDto = modelMapper.map(address, AddressDto.class);
-        addressDto.setPropertyId(address.getProperty() != null ? address.getProperty().getId() : null);
-        return addressDto;
-    }
+    @Mapping(target = "property", expression = "java(property)")
+    Address toEntity(AddressDto addressDto, Property property);
 
-    public Address toEntity(AddressDto addressDto, Property property) {
-        Address address = modelMapper.map(addressDto, Address.class);
-        address.setProperty(property);
-        return address;
-    }
-
-    public void updateEntity(AddressDto addressDto, Address address) {
-        modelMapper.map(addressDto, address);
-    }
+    @Mapping(target = "property", ignore = true)
+    void updateEntity(AddressDto addressDto, @MappingTarget Address address);
 }

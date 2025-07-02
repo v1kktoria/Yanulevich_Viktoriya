@@ -1,26 +1,17 @@
 package senla.util.mappers;
 
-import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 import senla.dto.RoleDto;
 import senla.model.Role;
 
-@Component
-@RequiredArgsConstructor
-public class RoleMapper {
 
-    private final ModelMapper modelMapper;
+@Mapper(componentModel = "spring")
+public interface RoleMapper {
 
-    public RoleDto toDto(Role role) {
-        return modelMapper.map(role, RoleDto.class);
-    }
+    RoleDto toDto(Role role);
 
-    public Role toEntity(RoleDto roleDto) {
-        return modelMapper.map(roleDto, Role.class);
-    }
+    Role toEntity(RoleDto roleDto);
 
-    public void updateEntity(RoleDto roleDto, Role role) {
-        modelMapper.map(roleDto, role);
-    }
+    void updateEntity(RoleDto roleDto,@MappingTarget Role role);
 }
