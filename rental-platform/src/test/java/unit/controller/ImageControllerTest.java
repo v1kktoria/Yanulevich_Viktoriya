@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import senla.controller.ImageController;
 import senla.dto.ImageDto;
 import senla.service.ImageService;
@@ -25,6 +26,8 @@ class ImageControllerTest {
 
     private ImageDto imageDto;
 
+    private MockMultipartFile mockFile;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -33,13 +36,20 @@ class ImageControllerTest {
         imageDto.setId(1);
         imageDto.setPropertyId(1);
         imageDto.setImageUrl("http://example.com/image.jpg");
+
+        mockFile = new MockMultipartFile(
+                "file",
+                "image.jpg",
+                "image/jpeg",
+                "fake-image-content".getBytes()
+        );
     }
 
     @Test
     void testCreateImage() {
-        when(imageService.create(imageDto)).thenReturn(imageDto);
+        when(imageService.create(1, mockFile)).thenReturn(imageDto);
 
-        ResponseEntity<ImageDto> response = imageController.createImage(imageDto);
+        ResponseEntity<ImageDto> response = imageController.createImage(1, mockFile);
 
         assertNotNull(response);
         assertEquals(201, response.getStatusCodeValue());
@@ -71,13 +81,15 @@ class ImageControllerTest {
 
     @Test
     void testUpdateImage() {
-        doNothing().when(imageService).updateById(1, imageDto);
+        doNothing().when(imageService).updateById(1, mockFile);
 
-        ResponseEntity<String> response = imageController.updateImage(1, imageDto);
+        ResponseEntity<String> response = imageController.updateImage(1, mockFile);
 
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
         assertEquals("Изображение успешно обновлено", response.getBody());
+
+        verify(imageService, times(1)).updateById(1, mockFile);
     }
 
     @Test

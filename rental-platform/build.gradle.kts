@@ -45,6 +45,8 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.34")
     annotationProcessor("org.hibernate.orm:hibernate-jpamodelgen:6.3.1.Final")
 
+    implementation ("io.minio:minio:8.5.17")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.mockito:mockito-core")
     testImplementation("org.springframework.security:spring-security-test")

@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import senla.aop.MeasureExecutionTime;
+import senla.service.MinioService;
 import senla.dto.ImageDto;
 import senla.exception.ServiceException;
 import senla.exception.ServiceExceptionEnum;
@@ -30,13 +32,16 @@ public class ImageServiceImpl implements ImageService {
 
     private final ImageMapper imageMapper;
 
+    private final MinioService minioService;
+
     @Transactional
     @Override
-    public ImageDto create(ImageDto imageDto) {
-        Property property = propertyRepository.findById(imageDto.getPropertyId())
-                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, imageDto.getPropertyId()));
+    public ImageDto create(Integer propertyId, MultipartFile file) {
+        Property property = propertyRepository.findById(propertyId)
+                .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, propertyId));
 
-        Image image = imageMapper.toEntity(imageDto, property);
+        String url = minioService.upload(file);
+        Image image = Image.builder().property(property).imageUrl(url).build();
         ImageDto createdImage = imageMapper.toDto(imageRepository.save(image));
         log.info("Изображение успешно добавлено с ID: {}", createdImage.getId());
         return createdImage;
@@ -62,12 +67,14 @@ public class ImageServiceImpl implements ImageService {
 
     @Transactional
     @Override
-    public void updateById(Integer id, ImageDto imageDto) {
+    public void updateById(Integer id, MultipartFile file) {
         Image image = imageRepository.findById(id)
                 .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
 
-        imageDto.setId(id);
-        imageMapper.updateEntity(imageDto, image);
+        minioService.delete(image.getImageUrl());
+        String newUrl = minioService.upload(file);
+        image.setImageUrl(newUrl);
+
         imageRepository.save(image);
         log.info("Изображение с ID: {} успешно обновлено", id);
     }
@@ -77,6 +84,7 @@ public class ImageServiceImpl implements ImageService {
     public void deleteById(Integer id) {
         Image image = imageRepository.findById(id)
                 .orElseThrow(() -> new ServiceException(ServiceExceptionEnum.ENTITY_NOT_FOUND, id));
+        minioService.delete(image.getImageUrl());
         imageRepository.delete(image);
         log.info("Изображение с ID: {} успешно удалено", id);
     }

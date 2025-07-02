@@ -13,6 +13,7 @@ import senla.model.User;
 )
 public interface PropertyMapper {
 
+    @Mapping(target = "ownerId", source = "owner.id")
     PropertyDto toDto(Property property);
 
     @Mapping(target = "owner", expression = "java(owner)")
