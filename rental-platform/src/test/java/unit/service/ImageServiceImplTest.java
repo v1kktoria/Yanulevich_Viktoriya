@@ -5,12 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.web.multipart.MultipartFile;
 import senla.dto.ImageDto;
 import senla.exception.ServiceException;
 import senla.model.Image;
 import senla.model.Property;
 import senla.repository.ImageRepository;
 import senla.repository.PropertyRepository;
+import senla.service.MinioService;
 import senla.service.impl.ImageServiceImpl;
 import senla.util.mappers.ImageMapper;
 
@@ -31,6 +33,9 @@ public class ImageServiceImplTest {
     @Mock
     private ImageMapper imageMapper;
 
+    @Mock
+    private MinioService minioService;
+
     @InjectMocks
     private ImageServiceImpl imageService;
 
@@ -39,6 +44,8 @@ public class ImageServiceImplTest {
     private Image image;
     private ImageDto imageDto;
     private Property property;
+    private MultipartFile mockFile;
+
 
     @BeforeEach
     public void setUp() {
@@ -50,22 +57,32 @@ public class ImageServiceImplTest {
         image = new Image();
         image.setId(imageId);
         image.setProperty(property);
+        image.setImageUrl("http://example.com/image.jpg");
+
 
         imageDto = new ImageDto();
         imageDto.setId(imageId);
         imageDto.setPropertyId(propertyId);
+        imageDto.setImageUrl("http://example.com/image.jpg");
+
     }
 
     @Test
     void testCreate() {
         when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(property));
-        when(imageMapper.toEntity(imageDto, property)).thenReturn(image);
-        when(imageRepository.save(image)).thenReturn(image);
-        when(imageMapper.toDto(image)).thenReturn(imageDto);
+        when(minioService.upload(mockFile)).thenReturn("http://example.com/image.jpg");
+        when(imageRepository.save(any(Image.class))).thenAnswer(invocation -> {
+            Image img = invocation.getArgument(0);
+            img.setId(imageId);
+            return img;
+        });
+        when(imageMapper.toDto(any(Image.class))).thenReturn(imageDto);
 
-        ImageDto createdImage = imageService.create(imageDto);
+        ImageDto createdImage = imageService.create(propertyId, mockFile);
 
         assertEquals(imageId, createdImage.getId());
+        assertEquals("http://example.com/image.jpg", createdImage.getImageUrl());
+
         verify(imageRepository, times(1)).save(image);
     }
 
@@ -73,7 +90,7 @@ public class ImageServiceImplTest {
     void testCreatePropertyNotFound() {
         when(propertyRepository.findById(propertyId)).thenReturn(Optional.empty());
 
-        ServiceException exception = assertThrows(ServiceException.class, () -> imageService.create(imageDto));
+        ServiceException exception = assertThrows(ServiceException.class, () -> imageService.create(propertyId, mockFile));
 
         assertEquals("Объект с ID 100 не найден", exception.getMessage());
     }
@@ -113,9 +130,13 @@ public class ImageServiceImplTest {
     @Test
     void testUpdateById() {
         when(imageRepository.findById(imageId)).thenReturn(Optional.of(image));
+        when(minioService.upload(mockFile)).thenReturn("http://example.com/new-image.jpg");
+        when(imageRepository.save(any(Image.class))).thenReturn(image);
 
-        imageService.updateById(imageId, imageDto);
+        imageService.updateById(imageId, mockFile);
 
+        verify(imageRepository).findById(imageId);
+        verify(minioService).upload(mockFile);
         verify(imageRepository, times(1)).save(image);
     }
 
@@ -123,7 +144,7 @@ public class ImageServiceImplTest {
     void testUpdateByIdNotFound() {
         when(imageRepository.findById(imageId)).thenReturn(Optional.empty());
 
-        ServiceException exception = assertThrows(ServiceException.class, () -> imageService.updateById(imageId, imageDto));
+        ServiceException exception = assertThrows(ServiceException.class, () -> imageService.updateById(imageId, mockFile));
 
         assertEquals("Объект с ID 1 не найден", exception.getMessage());
     }

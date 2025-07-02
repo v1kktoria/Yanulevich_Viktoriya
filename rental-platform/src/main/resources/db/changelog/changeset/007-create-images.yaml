@@ -22,6 +22,6 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: image_url
-                  type: VARCHAR(255)
+                  type: text
                   constraints:
                     nullable: false

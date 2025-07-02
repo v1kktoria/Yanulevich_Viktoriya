@@ -1,11 +1,11 @@
 package senla.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import senla.aop.MeasureExecutionTime;
 import senla.dto.ImageDto;
 import senla.service.ImageService;
@@ -23,10 +23,9 @@ public class ImageController {
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<ImageDto> createImage(@RequestBody @Valid ImageDto imageDto) {
-        log.info("Добавление изображения с данными: {}", imageDto);
-        ImageDto createdImage = imageService.create(imageDto);
-        return ResponseEntity.status(201).body(createdImage);
+    public ResponseEntity<ImageDto> createImage(@RequestParam Integer propertyId, @RequestParam MultipartFile file) {
+        log.info("Добавление изображения с данными: {}", file.getOriginalFilename());
+        return ResponseEntity.status(201).body(imageService.create(propertyId, file));
     }
 
     @GetMapping("/{id}")
@@ -47,9 +46,9 @@ public class ImageController {
 
     @PutMapping("/{id}")
     @PreAuthorize("@imageSecurityService.hasAccess(authentication, #id)")
-    public ResponseEntity<String> updateImage(@PathVariable("id") Integer id, @RequestBody @Valid ImageDto imageDto) {
-        log.info("Обновление изображения с ID: {} с новыми данными: {}", id, imageDto);
-        imageService.updateById(id, imageDto);
+    public ResponseEntity<String> updateImage(@PathVariable("id") Integer id, @RequestParam MultipartFile file) {
+        log.info("Обновление изображения с ID: {} с новыми данными: {}", id, file.getOriginalFilename());
+        imageService.updateById(id, file);
         return ResponseEntity.ok("Изображение успешно обновлено");
     }
 

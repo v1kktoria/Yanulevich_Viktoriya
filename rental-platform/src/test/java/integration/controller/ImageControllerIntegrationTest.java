@@ -6,12 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import senla.Main;
 import senla.dto.ImageDto;
 import senla.dto.UserDto;
@@ -32,8 +36,6 @@ public class ImageControllerIntegrationTest {
 
     private String baseUrl;
 
-    private ImageDto imageDto;
-
     private String jwtToken;
 
     private HttpHeaders headers;
@@ -41,9 +43,6 @@ public class ImageControllerIntegrationTest {
     @BeforeEach
     void setUp() {
         baseUrl = "http://localhost:" + port + "/images";
-        imageDto = new ImageDto();
-        imageDto.setPropertyId(1);
-        imageDto.setImageUrl("http://example.com/image.jpg");
 
         UserDto userDto = new UserDto();
         userDto.setUsername("user1");
@@ -63,35 +62,54 @@ public class ImageControllerIntegrationTest {
 
     @Test
     void testCreateImage() {
-        HttpEntity<ImageDto> entity = new HttpEntity<>(imageDto, headers);
-        ResponseEntity<ImageDto> response = restTemplate.exchange(baseUrl, HttpMethod.POST, entity, ImageDto.class);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(Objects.requireNonNull(response.getBody()).getId()).isNotNull();
+        Integer createdId = createImageForTest();
+        assertThat(createdId).isNotNull();
     }
 
     @Test
     void testGetImageById() {
-        ResponseEntity<ImageDto> createResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, new HttpEntity<>(imageDto, headers), ImageDto.class);
-        Integer createdId = Objects.requireNonNull(createResponse.getBody()).getId();
+        Integer createdId = createImageForTest();
 
         HttpEntity<Void> entity = new HttpEntity<>(headers);
-        ResponseEntity<ImageDto> getResponse = restTemplate.exchange(baseUrl + "/" + createdId, HttpMethod.GET, entity, ImageDto.class);
+        ResponseEntity<ImageDto> response = restTemplate.exchange(baseUrl + "/" + createdId, HttpMethod.GET, entity, ImageDto.class);
 
-        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(getResponse.getBody()).isNotNull();
-        assertThat(getResponse.getBody().getId()).isEqualTo(createdId);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getId()).isEqualTo(createdId);
     }
 
     @Test
     void testDeleteImage() {
-        ResponseEntity<ImageDto> createResponse = restTemplate.exchange(baseUrl, HttpMethod.POST, new HttpEntity<>(imageDto, headers), ImageDto.class);
-        Integer createdId = Objects.requireNonNull(createResponse.getBody()).getId();
+        Integer createdId = createImageForTest();
 
         HttpEntity<Void> entity = new HttpEntity<>(headers);
-        ResponseEntity<String> deleteResponse = restTemplate.exchange(baseUrl + "/" + createdId, HttpMethod.DELETE, entity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(baseUrl + "/" + createdId, HttpMethod.DELETE, entity, String.class);
 
-        assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(deleteResponse.getBody()).isEqualTo("Изображение успешно удалено");
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo("Изображение успешно удалено");
+    }
+
+    private Integer createImageForTest() {
+        ByteArrayResource fileResource = new ByteArrayResource("test image content".getBytes()) {
+
+            @Override
+            public String getFilename() {
+                return "test.jpg";
+            }
+
+        };
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("file", fileResource);
+        body.add("propertyId", "1");
+
+        HttpHeaders multipartHeaders = new HttpHeaders();
+        multipartHeaders.set("Authorization", "Bearer " + jwtToken);
+        multipartHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(body, multipartHeaders);
+
+        ResponseEntity<ImageDto> response = restTemplate.exchange(baseUrl, HttpMethod.POST, entity, ImageDto.class);
+        return Objects.requireNonNull(response.getBody()).getId();
     }
 }
