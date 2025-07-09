@@ -26,7 +26,7 @@ public class FavoriteController {
     private final FavoriteService favoriteService;
 
     @PostMapping("/{userId}/{propertyId}")
-    @PreAuthorize("#userId == authentication.principal.id")
+    @PreAuthorize("@favoriteSecurityService.hasAccess(authentication, #userId)")
     public ResponseEntity<String> addToFavorites(@PathVariable Integer userId, @PathVariable Integer propertyId) {
         log.info("Добавление недвижимости ID={} в избранное пользователя ID={}", propertyId, userId);
         favoriteService.addPropertyToFavorites(userId, propertyId);
@@ -34,7 +34,7 @@ public class FavoriteController {
     }
 
     @DeleteMapping("/{userId}/{propertyId}")
-    @PreAuthorize("#userId == authentication.principal.id")
+    @PreAuthorize("@favoriteSecurityService.hasAccess(authentication, #userId)")
     public ResponseEntity<String> removeFromFavorites(@PathVariable Integer userId, @PathVariable Integer propertyId) {
         log.info("Удаление недвижимости ID={} из избранного пользователя ID={}", propertyId, userId);
         favoriteService.removePropertyFromFavorites(userId, propertyId);
@@ -42,7 +42,7 @@ public class FavoriteController {
     }
 
     @GetMapping("/{userId}")
-    @PreAuthorize("#userId == authentication.principal.id")
+    @PreAuthorize("@favoriteSecurityService.hasAccess(authentication, #userId)")
     public ResponseEntity<List<PropertyDto>> getFavorites(@PathVariable Integer userId) {
         log.info("Запрос избранных объектов недвижимости для пользователя ID={}", userId);
         return ResponseEntity.ok(favoriteService.getFavoritesByUserId(userId));

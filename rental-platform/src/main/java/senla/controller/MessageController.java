@@ -27,7 +27,7 @@ public class MessageController {
     private final MessageService messageService;
 
     @PostMapping
-    @PreAuthorize("#messageDto.senderId == authentication.principal.id")
+    @PreAuthorize("@chatSecurityService.isCurrentUser(authentication, #messageDto.senderId)")
     public ResponseEntity<MessageDto> sendMessage(@RequestBody @Valid MessageDto messageDto) {
         log.info("Отправка сообщения с данными: {}", messageDto);
         MessageDto message = messageService.sendMessage(messageDto);

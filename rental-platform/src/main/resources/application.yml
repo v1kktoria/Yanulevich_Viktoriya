@@ -8,6 +8,13 @@ spring:
     password: ${MAIL_PASSWORD}
   config:
     import: optional:file:./local.properties
+  security:
+    oauth2:
+      resourceserver:
+        opaquetoken:
+          introspection-uri: http://localhost:8081/realms/myrealm/protocol/openid-connect/token/introspect
+          client-id: property-service
+          client-secret: ${KEYCLOAK_SECRET}
 server:
   port: 8080
 

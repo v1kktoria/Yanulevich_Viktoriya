@@ -5,7 +5,7 @@ import org.mapstruct.MappingTarget;
 import senla.dto.ChatDto;
 import senla.model.Chat;
 
-@Mapper(componentModel = "spring", uses = {MessageMapper.class, UserMapper.class})
+@Mapper(componentModel = "spring", uses = {MessageMapper.class})
 public interface ChatMapper {
 
     ChatDto toDto(Chat chat);

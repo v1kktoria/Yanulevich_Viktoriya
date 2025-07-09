@@ -54,7 +54,7 @@ public class ReviewController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("authentication.principal.id == #reviewDto.userId")
+    @PreAuthorize("@reviewSecurityService.hasAccess(authentication, #id)")
     public ResponseEntity<String> updateReview(@PathVariable("id") Integer id, @RequestBody @Valid ReviewDto reviewDto) {
         log.info("Обновление отзыва с ID: {} с новыми данными: {}", id, reviewDto);
         reviewService.updateById(id, reviewDto);
@@ -62,7 +62,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or authentication.principal.id == @reviewServiceImpl.getById(#id).userId")
+    @PreAuthorize("hasRole('ADMIN') or @reviewSecurityService.hasAccess(authentication, #id)")
     public ResponseEntity<String> deleteReview(@PathVariable("id") Integer id) {
         log.info("Удаление отзыва с ID: {}", id);
         reviewService.deleteById(id);
