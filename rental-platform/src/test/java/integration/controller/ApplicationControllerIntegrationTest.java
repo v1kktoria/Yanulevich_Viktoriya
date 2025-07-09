@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import senla.Main;
 import senla.dto.ApplicationDto;
-import senla.dto.UserDto;
 
 import java.util.List;
 import java.util.Objects;

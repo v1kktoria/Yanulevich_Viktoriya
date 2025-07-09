@@ -15,7 +15,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import senla.Main;
 import senla.dto.ReviewDto;
-import senla.dto.UserDto;
 
 import java.util.List;
 import java.util.Objects;

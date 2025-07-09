@@ -18,7 +18,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import senla.Main;
 import senla.dto.ImageDto;
-import senla.dto.UserDto;
 
 import java.util.Objects;
 

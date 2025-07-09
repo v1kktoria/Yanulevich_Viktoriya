@@ -25,7 +25,7 @@ public class ChatController {
     private final ChatService chatService;
 
     @GetMapping("/user/{userId}")
-    @PreAuthorize("#userId == authentication.principal.id")
+    @PreAuthorize("@chatSecurityService.isCurrentUser(authentication, #userId)")
     public ResponseEntity<List<ChatDto>> getChatsForUser(@PathVariable("userId") Integer userId) {
         log.info("Запрос чатов для пользователя с ID: {}", userId);
         List<ChatDto> chats = chatService.getChatsForUser(userId);

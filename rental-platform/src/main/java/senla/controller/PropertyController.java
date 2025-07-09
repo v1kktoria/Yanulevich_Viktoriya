@@ -63,7 +63,7 @@ public class PropertyController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or (authentication.principal.id == #propertyDto.ownerId)")
+    @PreAuthorize("hasRole('ADMIN') or @propertySecurityService.hasAccess(authentication, #id)")
     public ResponseEntity<String> updateProperty(@PathVariable("id") Integer id, @RequestBody @Valid PropertyDto propertyDto) {
         log.info("Обновление недвижимости с ID: {} с новыми данными: {}", id, propertyDto);
         propertyService.updateById(id, propertyDto);
@@ -71,7 +71,7 @@ public class PropertyController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or (authentication.principal.id == @propertyServiceImpl.getById(#id).ownerId)")
+    @PreAuthorize("hasRole('ADMIN') or @propertySecurityService.hasAccess(authentication, #id)")
     public ResponseEntity<String> deleteProperty(@PathVariable("id") Integer id) {
         log.info("Удаление недвижимости с ID: {}", id);
         propertyService.deleteById(id);

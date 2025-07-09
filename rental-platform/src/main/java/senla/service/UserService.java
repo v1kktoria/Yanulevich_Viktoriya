@@ -1,20 +1,12 @@
 package senla.service;
 
 
-import senla.dto.UserDto;
+import org.springframework.security.core.Authentication;
 import senla.model.User;
-
-import java.util.List;
 
 public interface UserService {
 
-    UserDto create(UserDto userDto);
+    void create(Authentication authentication);
 
-    UserDto getById(Integer id);
-
-    List<UserDto> getAll();
-
-    void updateById(Integer id, UserDto userDto);
-
-    void deleteById(Integer id);
+    User getByKeycloakId(String id);
 }

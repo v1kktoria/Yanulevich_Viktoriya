@@ -46,7 +46,7 @@ public class ProfileController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("#profileDto.userId == authentication.principal.id")
+    @PreAuthorize("@profileSecurityService.hasAccess(authentication, #id)")
     public ResponseEntity<String> updateProfile(@PathVariable("id") Integer id, @RequestBody @Valid ProfileDto profileDto) {
         log.info("Обновление профиля с ID: {} с новыми данными: {}", id, profileDto);
         profileService.updateById(id, profileDto);
@@ -54,7 +54,7 @@ public class ProfileController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("@profileServiceImpl.getById(#id).userId == authentication.principal.id")
+    @PreAuthorize("@profileSecurityService.hasAccess(authentication, #id)")
     public ResponseEntity<String> deleteProfile(@PathVariable("id") Integer id) {
         log.info("Удаление профиля с ID: {}", id);
         profileService.deleteById(id);

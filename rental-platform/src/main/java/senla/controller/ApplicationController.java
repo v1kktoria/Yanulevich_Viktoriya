@@ -62,7 +62,7 @@ public class ApplicationController {
     }
 
     @PutMapping("/{id}/accept")
-    @PreAuthorize("authentication.principal.id == @applicationServiceImpl.getById(#id).ownerId")
+    @PreAuthorize("@applicationSecurityService.isOwner(authentication, #id)")
     public ResponseEntity<String> acceptApplication(@PathVariable("id") Integer id) {
         log.info("Принятие заявки с ID: {}", id);
         applicationService.acceptApplication(id);
@@ -70,7 +70,7 @@ public class ApplicationController {
     }
 
     @PutMapping("/{id}/reject")
-    @PreAuthorize("authentication.principal.id == @applicationServiceImpl.getById(#id).ownerId")
+    @PreAuthorize("@applicationSecurityService.isOwner(authentication, #id)")
     public ResponseEntity<String> rejectApplication(@PathVariable("id") Integer id) {
         log.info("Отклонение заявки с ID: {}", id);
         applicationService.rejectApplication(id);

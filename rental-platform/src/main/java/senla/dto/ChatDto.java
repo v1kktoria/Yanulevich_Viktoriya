@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import senla.model.User;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class ChatDto {
 
     private Integer id;
 
-    List<UserDto> users;
+    List<User> users;
 
     private List<MessageDto> messages;
 
